@@ -1,4 +1,44 @@
-O usúario poderá optar por criar uma conta ou logar na sua conta já existente. O site terá uma tela de cadastro para os usúarios guardarem suas informações nos servidores e logo em seguida uma tela de login para puxar as informações e verificar se usúario já tem conta.
-Logo após o login o usúario será redirecionado direto para outra tela onde será capaz de escolher qual função quer que o site o direcione, entre as opções de serviços que o site oferece estão, o cadastro de itens, monitoramento de itens e a manutenção do item.
-Para poder ter esses serviços ele terá que por as informações, após o cadastro o usúario poderá visualizar de forma remota o trem, ver a sua posição, a rota que ele fará e os horários precisamente.
-O site tambem tem um sistema de ajuda onde o usúario poderá relatar o problema que está ocorrendo com ele ou clicar em um dos pré escritos que mais se pareça com oque está ocorrendo. 
+# Ferrorama - Monitoramento de Trens
+
+## Descrição
+
+O **Ferrorama** é um sistema web para monitoramento de trens, permitindo que os usuários cadastrem, monitorem e gerenciem trens de forma remota e em tempo real.
+
+## Funcionalidades
+
+### Autenticação
+- Cadastro de nova conta
+- Login com conta existente
+- Armazenamento de informações do usuário
+
+### Após o Login
+O usuário é redirecionado para o dashboard, onde pode escolher entre:
+- **Cadastro de itens** (trens)
+- **Monitoramento de itens**
+- **Manutenção de itens**
+
+### Monitoramento em Tempo Real
+- Visualização remota do trem
+- Posição atual no mapa
+- Rota prevista
+- Horários precisos de partida e chegada
+
+### Sistema de Ajuda
+- Relatar problemas manualmente
+- Seleção de problemas pré-cadastrados
+
+## Tecnologias Utilizadas
+- HTML5, CSS3 e JavaScript
+- Bootstrap 5
+- LocalStorage (para demonstração)
+- Font Awesome
+
+## Próximos Passos
+- Implementar backend (para substituir o LocalStorage)
+- Conexão com banco de dados
+- Melhorar o mapa interativo
+- Sistema de notificações em tempo real
+
+---
+
+**Projeto em desenvolvimento**
