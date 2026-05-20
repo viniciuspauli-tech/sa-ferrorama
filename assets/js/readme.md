@@ -1,0 +1,4 @@
+O usúario poderá optar por criar uma conta ou logar na sua conta já existente. O site terá uma tela de cadastro para os usúarios guardarem suas informações nos servidores e logo em seguida uma tela de login para puxar as informações e verificar se usúario já tem conta.
+Logo após o login o usúario será redirecionado direto para outra tela onde será capaz de escolher qual função quer que o site o direcione, entre as opções de serviços que o site oferece estão, o cadastro de itens, monitoramento de itens e a manutenção do item.
+Para poder ter esses serviços ele terá que por as informações, após o cadastro o usúario poderá visualizar de forma remota o trem, ver a sua posição, a rota que ele fará e os horários precisamente.
+O site tambem tem um sistema de ajuda onde o usúario poderá relatar o problema que está ocorrendo com ele ou clicar em um dos pré escritos que mais se pareça com oque está ocorrendo.
