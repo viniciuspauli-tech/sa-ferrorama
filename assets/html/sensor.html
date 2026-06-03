@@ -1,111 +1,199 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Time Train</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento de Trens - Ferrorama</title>
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: Arial, sans-serif;
-}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-body{
-    background-color:#ffffff;
-}
+    <style>
+        body {
+            background-color: #f1f5f9;
+            font-family: Arial, sans-serif;
+        }
 
-/* Cabeçalho */
-header{
-    background:#003f99;
-    color:white;
-    height:120px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-}
+        .navbar {
+            background-color: #0f172a;
+        }
 
-.logo{
-    position:absolute;
-    left:20px;
-    text-align:center;
-}
+        .navbar-brand {
+            color: white;
+            font-weight: bold;
+        }
 
-.logo img{
-    width:90px;
-}
+        .navbar-brand:hover {
+            color: #cbd5e1;
+        }
 
-.logo p{
-    color:black;
-    font-size:22px;
-}
+        .card-train {
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-header h1{
-    font-size:40px;
-}
+        .card-train:hover {
+            transform: scale(1.03);
+        }
 
-/* Conteúdo */
-.container{
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    padding:50px;
-}
+        .sensor-box {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-.menu{
-    display:flex;
-    flex-direction:column;
-    gap:50px;
-}
+        .mapa {
+            background-color: #dbeafe;
+            height: 350px;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
 
-.btn{
-    width:350px;
-    height:100px;
-    border:3px solid black;
-    border-radius:50px;
-    background:white;
-    font-size:20px;
-    cursor:pointer;
-}
+        .linha {
+            position: absolute;
+            width: 90%;
+            height: 8px;
+            background-color: #475569;
+            top: 50%;
+            left: 5%;
+            border-radius: 10px;
+        }
 
-.btn:hover{
-    background:#dcdcdc;
-}
+        .trem {
+            position: absolute;
+            width: 60px;
+            height: 30px;
+            background-color: #2563eb;
+            border-radius: 8px;
+            top: 46%;
+            left: 20%;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            font-size: 12px;
+            font-weight: bold;
+        }
 
-.imagem img{
-    width:600px;
-    border-radius:5px;
-}
-</style>
+        .sensor {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background-color: red;
+            border-radius: 50%;
+            top: 44%;
+            left: 60%;
+            border: 3px solid white;
+        }
+
+        .sensor-info {
+            margin-top: 15px;
+        }
+
+        .status {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">
-        <img src="https://cdn-icons-png.flaticon.com/512/713/713311.png" alt="Trem">
-        <p>Time Train</p>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">FERRORAMA</a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+
+        <h2 class="mb-4">Monitoramento de Trens</h2>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="card p-4 card-train" onclick="mostrarSensor('Trem 01', 'Sensor de Velocidade', 'Trilho Norte', 'Ativo')">
+                    <h4>Trem 01</h4>
+                    <p>Status: <span class="status">Em operação</span></p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card p-4 card-train" onclick="mostrarSensor('Trem 02', 'Sensor de Temperatura', 'Estação Central', 'Ativo')">
+                    <h4>Trem 02</h4>
+                    <p>Status: <span class="status">Em operação</span></p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card p-4 card-train" onclick="mostrarSensor('Trem 03', 'Sensor de Presença', 'Ponte Sul', 'Inativo')">
+                    <h4>Trem 03</h4>
+                    <p>Status: <span style="color:red; font-weight:bold;">Parado</span></p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row mt-5">
+
+            <div class="col-md-5">
+                <div class="sensor-box">
+                    <h3>Informações do Sensor</h3>
+
+                    <div class="sensor-info">
+                        <p><strong>Trem:</strong> <span id="tremNome">Selecione um trem</span></p>
+
+                        <p><strong>Sensor:</strong> 
+                            <span id="sensorNome">-</span>
+                        </p>
+
+                        <p><strong>Localização:</strong> 
+                            <span id="sensorLocal">-</span>
+                        </p>
+
+                        <p><strong>Status:</strong> 
+                            <span id="sensorStatus">-</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="mapa">
+
+                    <div class="linha"></div>
+
+                    <div class="trem" id="mapaTrem">
+                        Trem
+                    </div>
+
+                    <div class="sensor" id="mapaSensor"></div>
+
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
-    <h1>Vamos lá!</h1>
-</header>
+    <script>
+        function mostrarSensor(trem, sensor, local, status) {
 
-<div class="container">
+            document.getElementById("tremNome").innerText = trem;
+            document.getElementById("sensorNome").innerText = sensor;
+            document.getElementById("sensorLocal").innerText = local;
+            document.getElementById("sensorStatus").innerText = status;
 
-    <div class="menu">
-        <button class="btn">Cadastrar Item</button>
-        <button class="btn">Monitorar Item</button>
-   
-    </div>
+            document.getElementById("mapaTrem").innerText = trem;
 
-    <div class="imagem">
-        <img src="https://images.unsplash.com/photo-1474487548417-781cb71495f3" alt="Trem">
-    </div>
+            let posicao = Math.floor(Math.random() * 70) + 10;
 
-</div>
+            document.getElementById("mapaTrem").style.left = posicao + "%";
+            document.getElementById("mapaSensor").style.left = (posicao - 15) + "%";
+        }
+    </script>
 
 </body>
 </html>
