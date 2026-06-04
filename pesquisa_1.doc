@@ -1,33 +1,27 @@
-O que é SCRUM;
-Scrum é um framework usado em gestão de projetos, que organiza equipes para desenvolver e entregar projetos por meio de trabalho colaborativo, com feedbacks e avaliações constantes
-Objetivo da metodologia;
-O objetivo do Scrum é tornar o desenvolvimento de projetos mais organizado, rápido e eficiente, promovendo colaboração entre a equipe, adaptação às mudanças e entregas contínuas de valor ao cliente. 
+Pesquisa: CRUD em PHP aplicado ao Sistema de Monitoramento de Trens
 
+O desenvolvimento de sistemas web modernos exige o armazenamento e gerenciamento eficiente de informações. 
+Para isso, utiliza-se o conceito de CRUD, sigla para Create, Read, Update e Delete, que representa as quatro operações fundamentais realizadas em bancos de dados. 
+Essas operações permitem criar, consultar, atualizar e excluir registros dentro de um sistema.
 
-Principais papéis:
-Product Owner;
-O Product Owner (PO) do Scrum é um membro fundamental da equipe Scrum, responsável por maximizar o valor do produto resultante do trabalho da equipe.
-Scrum Master;
-O Scrum Master é o responsável por garantir que a metodologia Scrum seja aplicada corretamente, ajudando a equipe a seguir os processos, remover obstáculos e melhorar o trabalho em equipe. 
-Development Team;
-Development team é o nome dado ao time de desenvolvimento dos projetos em scum, os grupos têm de 3 a 10 pessoas.
+No projeto de monitoramento de localização de trens por sensores, o CRUD é responsável pelo funcionamento do sistema. 
+Por meio dele, é possível cadastrar trens, registrar sensores instalados na linha ferroviária, armazenar leituras de localização e gerenciar informações operacionais.
 
-Eventos do SCRUM:
-Os eventos do Scrum são reuniões com tempo definido (timebox) feitas para criar regularidade, transparência e inspeção/adaptação no desenvolvimento de produtos.
-Sprint; - F
-Sprint é o nome dado a um ciclo de trabalho com duração fixa que gira em torno de 1 a 4 semanas onde a equipe desenvolve um incremento de produto utilizável e de alto valor. 
-Sprint Planning;
-A Sprint Planning é a reunião de planejamento da sprint, onde a equipe define quais tarefas serão realizadas e como o trabalho será executado durante o dia. 
-Daily Scrum;
-A Daily Scrum é uma reunião de desenvolvedores (geralmente diária) de 15 minutos, focada nos desenvolvedores, para inspecionar o progresso em direção à Meta da Sprint e ajustar o plano de trabalho nas próximas 24 horas, com objetivo de organizar o código.
+O Create corresponde à inserção de novos dados no banco de dados. 
+Essa operação é utilizada para cadastrar novos trens, adicionar sensores e registrar automaticamente as leituras recebidas em tempo real. 
+Cada nova informação adicionada ao sistema passa pelo processo de criação de registros.
 
-Sprint Review;
-A Sprint Review é a reunião realizada ao final da sprint para apresentar o que foi desenvolvido, receber feedback e analisar os resultados obtidos no projeto. 
-Sprint Retrospective;
+O Read é responsável pela consulta e visualização das informações armazenadas. 
+No sistema ferroviário, essa operação é uma das mais utilizadas, pois permite exibir a posição atual dos trens, consultar históricos de movimentação e acompanhar o funcionamento dos sensores instalados ao longo da linha.
 
+O Update  permite modificar dados já existentes. Dentro do projeto, essa função pode ser aplicada para alterar o status de um trem, atualizar informações dos sensores ou registrar manutenções realizadas. 
+Essa etapa garante que o sistema mantenha informações sempre corretas e atualizadas.
 
-Benefícios do uso do SCRUM em projetos de software
-O Scrum melhora a organização da equipe, aumenta a produtividade, facilita a comunicação, permite adaptação rápida às mudanças e garante entregas frequentes e de maior qualidade no desenvolvimento de software.
+O Delete é utilizado para remover registros do banco de dados. 
+Entretanto, em sistemas de monitoramento é comum utilizar o método chamado Soft Delete , que mantém o histórico armazenado e apenas marca os dados como inativos, permitindo futuras consultas e auditorias.
 
+Para realizar essas operações com segurança, o sistema utiliza PHP com PDO  para conectar ao banco de dados MySQL. 
+O PDO oferece suporte a Prepared Statements, que protegem o sistema contra ataques como SQL Injection e aumentam a segurança na manipulação das informações.
 
-
+Conclui-se que o CRUD é a base para o funcionamento de aplicações que dependem de armazenamento de dados. 
+No sistema de monitoramento de trens, essas operações trabalham em conjunto para permitir o cadastro, consulta, atualização e gerenciamento seguro das informações, garantindo controle operacional e acompanhamento em tempo real da movimentação ferroviária.

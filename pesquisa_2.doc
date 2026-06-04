@@ -1,30 +1,33 @@
-1. O que é o XAMPP?
-O XAMPP é uma distribuição do Apache totalmente gratuita e fácil de instalar, que tem o banco de dados MariaDB, o PHP e o Perl, é um pacote de software que transforma um computador comum em um servidor web local.
-O nome é um acrônimo onde:
-X: Multiplataforma (roda em Windows, Linux e macOS)
-A: Apache (Servidor Web)
-M: MariaDB / MySQL (Banco de Dados)
-P: PHP (Linguagem de Programação)
-P: Perl (Linguagem de Programação)
+O que é SCRUM;
+Scrum é um framework usado em gestão de projetos, que organiza equipes para desenvolver e entregar projetos por meio de trabalho colaborativo, com feedbacks e avaliações constantes
+Objetivo da metodologia;
+O objetivo do Scrum é tornar o desenvolvimento de projetos mais organizado, rápido e eficiente, promovendo colaboração entre a equipe, adaptação às mudanças e entregas contínuas de valor ao cliente. 
 
-2. Principais Componentes e suas Finalidades
-Para que o sistema do Ferrorama funcione, cada engrenagem do XAMPP tem um papel específico.
-Apache - É o responsável por receber as requisições do navegador (ex: quando o usuário digita http://localhost/ferrorama) e entregar a página web de volta, ele "serve" os arquivos HTML, CSS e imagens para o usuário.
-MySQL / MariaDB - É o sistema de gerenciamento de banco de dados relacional, no projeto Ferrorama, é aqui que ficarão salvas as tabelas de Cadastro de Sensores, logs de ativação, horários e dados capturados na pista.
-PHP - É a linguagem de programação que roda no backend, o PHP vai ser responsável por conectar o HTML no Banco de Dados, processar o formulário de cadastro de sensores, validar os dados e salvar tudo no MariaDB.
-phpMyAdmin - É uma interface gráfica web para gerenciar o banco de dados MySQL/MariaDB pelo navegador, em vez de usar linhas de comando complexas para criar as tabelas de sensores, a gente usa o phpMyAdmin de forma visual e intuitiva.
 
-3. Instalação e Configuração Básica
-Download: Baixar o instalador oficial no site da Apache Friends, escolhendo a versão compatível com o sistema operacional e com a versão do PHP desejada.
-Instalação: No Windows, a pasta padrão de instalação será C:\xampp.
-Painel de Controle: Para rodar a aplicação PHP e o banco de dados, é só abrir o painel e clicar em "Start" do lado do Apache e do MySQL.
-A Pasta Ouro (htdocs): Todos os arquivos do projeto do Ferrorama (arquivos .php, .html, .css) devem ser salvos dentro da pasta C:\xampp\htdocs\ferrorama (ou o nome que escolherem para o projeto).
-Acesso no Navegador: Para testar, é só abrir o navegador e digitar:
-Para o projeto: http://localhost/ferrorama/
-Para o banco de dados: http://localhost/phpmyadmin/
+Principais papéis:
+Product Owner;
+O Product Owner (PO) do Scrum é um membro fundamental da equipe Scrum, responsável por maximizar o valor do produto resultante do trabalho da equipe.
+Scrum Master;
+O Scrum Master é o responsável por garantir que a metodologia Scrum seja aplicada corretamente, ajudando a equipe a seguir os processos, remover obstáculos e melhorar o trabalho em equipe. 
+Development Team;
+Development team é o nome dado ao time de desenvolvimento dos projetos em scum, os grupos têm de 3 a 10 pessoas.
 
-4. Importância do Ambiente para Desenvolvimento Local
-Segurança e Privacidade: Os alunos podem errar, criar bugs e testar scripts de cadastro de sensores sem o risco de expor dados na internet ou derrubar um site que está no ar.
-Velocidade: Como o servidor está rodando na própria memória do computador, o carregamento e os testes das páginas PHP são instantâneos, sem depender da velocidade da internet.
-Custo Zero: Permite criar aplicações robustas e completas sem a necessidade de contratar serviços pagos de hospedagem web durante a fase de aprendizado.
-Autonomia: Simula com fidelidade o comportamento de um servidor de produção real, preparando o aluno para o mercado de trabalho.
+Eventos do SCRUM:
+Os eventos do Scrum são reuniões com tempo definido (timebox) feitas para criar regularidade, transparência e inspeção/adaptação no desenvolvimento de produtos.
+Sprint; - F
+Sprint é o nome dado a um ciclo de trabalho com duração fixa que gira em torno de 1 a 4 semanas onde a equipe desenvolve um incremento de produto utilizável e de alto valor. 
+Sprint Planning;
+A Sprint Planning é a reunião de planejamento da sprint, onde a equipe define quais tarefas serão realizadas e como o trabalho será executado durante o dia. 
+Daily Scrum;
+A Daily Scrum é uma reunião de desenvolvedores (geralmente diária) de 15 minutos, focada nos desenvolvedores, para inspecionar o progresso em direção à Meta da Sprint e ajustar o plano de trabalho nas próximas 24 horas, com objetivo de organizar o código.
+
+Sprint Review;
+A Sprint Review é a reunião realizada ao final da sprint para apresentar o que foi desenvolvido, receber feedback e analisar os resultados obtidos no projeto. 
+Sprint Retrospective;
+
+
+Benefícios do uso do SCRUM em projetos de software
+O Scrum melhora a organização da equipe, aumenta a produtividade, facilita a comunicação, permite adaptação rápida às mudanças e garante entregas frequentes e de maior qualidade no desenvolvimento de software.
+
+
+
