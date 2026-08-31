@@ -10,7 +10,7 @@ body {
   background-image: url("../images/bg-signin.jpg");
   background-repeat: no-repeat;
   background-size: cover;
-  background-attachment: fixed
+  background-attachment: fixed;
   
 }
 
@@ -25,13 +25,13 @@ body {
   background-color: #ffffff80;
   padding: 30px;
   border-radius: 4%;
-  box-shadow: 3px 3px 1px 0px #00000060
+  box-shadow: 3px 3px 1px 0px #00000060;
 }
 
 h1{
   text-align: center;
   margin-bottom: 20px;
-  color: #272262
+  color: #272262;
 }
 
 .label-float input{
@@ -74,7 +74,7 @@ h1{
 .label-float input:valid + label{
   font-size: 13px;
   margin-top: 0;
-  color: #4038a0
+  color: #4038a0;
 }
 
 button{
