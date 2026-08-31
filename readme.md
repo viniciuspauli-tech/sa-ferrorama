@@ -43,6 +43,8 @@ O usuário é redirecionado para o dashboard, onde pode escolher entre:
 - Melhorar o mapa interativo
 - Sistema de notificações em tempo real
 
+##linguagem utilizada
+-HTML, CSS, js PHP e MYSQL
 ---
 
 **Projeto em desenvolvimento**
