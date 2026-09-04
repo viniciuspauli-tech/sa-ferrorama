@@ -21,6 +21,7 @@ O usuário é redirecionado para o dashboard, onde pode escolher entre:
 - **Monitoramento de itens**
 - **Manutenção de itens**
 
+
 ### Monitoramento em Tempo Real
 - Visualização remota do trem
 - Posição atual no mapa
