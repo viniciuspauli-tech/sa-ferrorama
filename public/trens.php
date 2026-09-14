@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . '/connect/db.php';
+
+require_once "../infra/connect.php";
 
 // Filtro por status
 $statusFiltro = $_GET['status'] ?? '';
