@@ -1,7 +1,6 @@
 <?php
 
 require_once "../infra/connect.php";
-
 ?>
 
 <!DOCTYPE html>
