@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
 $user = "root";
-$senha = "";
+$senha = "ferrorama123";
 $dbname = "ferrorama";
 $porta = 3306; 
 
