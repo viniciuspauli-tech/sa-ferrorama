@@ -227,7 +227,6 @@ select {
     <form
         class="formulario"
         method="POST"
-        action=""
     >
 
         <?php if ($erro !== ''): ?>
