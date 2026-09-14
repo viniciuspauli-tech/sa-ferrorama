@@ -27,6 +27,7 @@ $stmt->execute($params);
 $trens = $stmt->fetchAll();
 
 // Mapeia o status para uma cor de badge do Bootstrap
+
 function badgeStatus(string $status): string
 {
     return match ($status) {
