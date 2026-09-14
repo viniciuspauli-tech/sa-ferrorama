@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/connect/db.php';
 
 // Filtro simples por status e busca por identificador/modelo
 $statusFiltro = $_GET['status'] ?? '';

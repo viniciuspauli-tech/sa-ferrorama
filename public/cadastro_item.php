@@ -1,6 +1,6 @@
 <?php
 // cadastro.php - Cadastro de Sensor (Ferrorama)
-require_once 'config.php';
+require_once 'connect.php';
 
 $erro = '';
 $sucesso = false;

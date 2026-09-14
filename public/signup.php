@@ -1,6 +1,6 @@
 <?php
 
-require_once "../conexao/conexao.php";
+require_once "../conexao/connect.php";
 
 $mensagem = "";
 $erro = "";

@@ -2,7 +2,7 @@
 
 session_start();
 
-require_once "../conexao/conexao.php";
+require_once "../conexao/connect.php";
 
 $erro = "";
 
