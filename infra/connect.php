@@ -2,12 +2,14 @@
 $host = "localhost";
 $user = "root";
 $senha = "root";
-$dbname = "petshop_db";
+$dbname = "ferrorama";
+$porta = 3349; 
 
-$conn = mysqli_connect($host, $user, $senha, $dbname);
+$conn = mysqli_connect($host, $user, $senha, $dbname, $porta);
 
 if (!$conn) {
-    die("Falha na conexão: " . mysqli_connect_error());
+    die("Falha na conexão com o banco de dados: " . mysqli_connect_error());
 }
+
 mysqli_set_charset($conn, "utf8mb4");
 ?>
