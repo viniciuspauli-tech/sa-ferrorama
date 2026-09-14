@@ -1,9 +1,76 @@
 <?php
 
 require_once "../infra/connect.php";
+
+/*
+|--------------------------------------------------------------------------
+| Buscar os trens
+|--------------------------------------------------------------------------
+*/
+
+$sqlTrens = "
+    SELECT 
+        id,
+        identificador,
+        modelo,
+        status,
+        velocidade_atual,
+        localizacao_atual
+    FROM trens
+    ORDER BY identificador
+";
+
+$resultadoTrens = mysqli_query($conn, $sqlTrens);
+
+if (!$resultadoTrens) {
+    die("Erro ao buscar trens: " . mysqli_error($conn));
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Buscar sensores
+|--------------------------------------------------------------------------
+*/
+
+$sqlSensores = "
+    SELECT
+        sensores.id,
+        sensores.nome,
+        sensores.localizacao,
+        sensores.tipo_dado,
+        sensores.trem_id,
+        trens.identificador
+    FROM sensores
+    INNER JOIN trens
+        ON sensores.trem_id = trens.id
+    ORDER BY sensores.trem_id, sensores.id
+";
+
+$resultadoSensores = mysqli_query($conn, $sqlSensores);
+
+if (!$resultadoSensores) {
+    die("Erro ao buscar sensores: " . mysqli_error($conn));
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Transformar os sensores em um array
+|--------------------------------------------------------------------------
+*/
+
+$sensores = [];
+
+while ($sensor = mysqli_fetch_assoc($resultadoSensores)) {
+
+    $sensores[] = $sensor;
+}
+
 ?>
 
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
@@ -17,49 +84,171 @@ require_once "../infra/connect.php";
 
     <title>Monitoramento de Trens - Ferrorama</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
 
     <style>
 
-        body {
-            background-color: #f1f5f9;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: Arial, sans-serif;
         }
 
+
+        body {
+            background-color: #f1f5f9;
+        }
+
+
+        /* NAVBAR */
+
         .navbar {
             background-color: #0f172a;
+            padding: 20px;
         }
+
+
+        .navbar .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
 
         .navbar-brand {
             color: white;
+            text-decoration: none;
+            font-size: 25px;
             font-weight: bold;
         }
 
-        .navbar-brand:hover {
-            color: #cbd5e1;
+
+        /* CONTAINER */
+
+        .principal {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
-        .card-train {
-            cursor: pointer;
-            transition: 0.3s;
-            border: none;
+
+        h1 {
+            margin-bottom: 30px;
+            color: #0f172a;
+        }
+
+
+        /* TRENS */
+
+        .trens {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+
+        .card-trem {
+            background-color: white;
+            padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10);
+            transition: 0.2s;
         }
 
-        .card-train:hover {
-            transform: scale(1.03);
+
+        .card-trem:hover {
+            transform: scale(1.02);
+            border-color: #2563eb;
         }
 
-        .sensor-box {
+
+        .card-trem h2 {
+            margin-bottom: 10px;
+        }
+
+
+        .card-trem p {
+            margin-top: 7px;
+        }
+
+
+        /* STATUS */
+
+        .status-ativo {
+            color: green;
+            font-weight: bold;
+        }
+
+
+        .status-inativo {
+            color: #64748b;
+            font-weight: bold;
+        }
+
+
+        .status-manutencao {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+
+        .status-falha {
+            color: red;
+            font-weight: bold;
+        }
+
+
+        /* ÁREA DE INFORMAÇÕES */
+
+        .area {
+            display: grid;
+            grid-template-columns: 40% 60%;
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+
+        .caixa {
             background-color: white;
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10);
         }
+
+
+        .caixa h2 {
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+
+        /* SENSOR */
+
+        .sensor-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+
+        .sensor-card h3 {
+            margin-bottom: 10px;
+        }
+
+
+        .sensor-card p {
+            margin-top: 6px;
+        }
+
+
+        .sem-sensor {
+            color: #64748b;
+        }
+
+
+        /* MAPA */
 
         .mapa {
             background-color: #dbeafe;
@@ -68,6 +257,7 @@ require_once "../infra/connect.php";
             position: relative;
             overflow: hidden;
         }
+
 
         .linha {
             position: absolute;
@@ -79,52 +269,62 @@ require_once "../infra/connect.php";
             border-radius: 10px;
         }
 
-        .trem {
+
+        .trem-mapa {
             position: absolute;
-            width: 60px;
-            height: 30px;
+            width: 80px;
+            height: 35px;
             background-color: #2563eb;
             border-radius: 8px;
-            top: 46%;
+            top: 45%;
             left: 20%;
             color: white;
             text-align: center;
-            line-height: 30px;
+            line-height: 35px;
             font-size: 12px;
             font-weight: bold;
         }
 
-        .sensor {
+
+        .ponto-sensor {
             position: absolute;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             background-color: red;
             border-radius: 50%;
-            top: 44%;
-            left: 60%;
+            top: 43%;
             border: 3px solid white;
         }
 
-        .sensor-info {
-            margin-top: 15px;
-        }
 
-        .status {
-            color: green;
-            font-weight: bold;
+        /* RESPONSIVIDADE */
+
+        @media (max-width: 800px) {
+
+            .area {
+                grid-template-columns: 1fr;
+            }
+
         }
 
     </style>
 
 </head>
 
+
 <body>
 
-    <nav class="navbar navbar-expand-lg">
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
 
         <div class="container">
 
-            <a class="navbar-brand" href="sistema.php">
+            <a
+                class="navbar-brand"
+                href="sistema.php"
+            >
                 FERRORAMA
             </a>
 
@@ -132,158 +332,192 @@ require_once "../infra/connect.php";
 
     </nav>
 
-    <div class="container mt-5">
 
-        <h2 class="mb-4">
+    <!-- CONTEÚDO -->
+
+    <main class="principal">
+
+
+        <h1>
             Monitoramento de Trens
-        </h2>
+        </h1>
 
-        <div class="row g-4">
 
-            <div class="col-md-4">
+        <!-- LISTA DE TRENS -->
 
-                <div
-                    class="card p-4 card-train"
-                    onclick="mostrarSensor(
-                        'Trem 01',
-                        'Sensor de Velocidade',
-                        'Trilho Norte',
-                        'Ativo'
-                    )"
-                >
+        <div class="trens">
 
-                    <h4>Trem 01</h4>
+            <?php if (mysqli_num_rows($resultadoTrens) > 0): ?>
 
-                    <p>
-                        Status:
-                        <span class="status">
-                            Em operação
-                        </span>
-                    </p>
+                <?php while ($trem = mysqli_fetch_assoc($resultadoTrens)): ?>
 
-                </div>
+                    <?php
 
-            </div>
+                    $status = $trem["status"];
 
-            <div class="col-md-4">
+                    $statusTexto = "";
 
-                <div
-                    class="card p-4 card-train"
-                    onclick="mostrarSensor(
-                        'Trem 02',
-                        'Sensor de Temperatura',
-                        'Estação Central',
-                        'Ativo'
-                    )"
-                >
+                    if ($status === "ativo") {
+                        $statusTexto = "Em operação";
+                    } elseif ($status === "inativo") {
+                        $statusTexto = "Inativo";
+                    } elseif ($status === "manutencao") {
+                        $statusTexto = "Em manutenção";
+                    } elseif ($status === "falha") {
+                        $statusTexto = "Falha";
+                    }
 
-                    <h4>Trem 02</h4>
+                    ?>
 
-                    <p>
-                        Status:
-                        <span class="status">
-                            Em operação
-                        </span>
-                    </p>
+                    <div
+                        class="card-trem"
+                        onclick="mostrarTrem(<?= $trem['id'] ?>)"
+                    >
 
-                </div>
+                        <h2>
 
-            </div>
+                            <?= htmlspecialchars($trem["identificador"]) ?>
 
-            <div class="col-md-4">
+                        </h2>
 
-                <div
-                    class="card p-4 card-train"
-                    onclick="mostrarSensor(
-                        'Trem 03',
-                        'Sensor de Presença',
-                        'Ponte Sul',
-                        'Inativo'
-                    )"
-                >
-
-                    <h4>Trem 03</h4>
-
-                    <p>
-                        Status:
-                        <span style="color:red; font-weight:bold;">
-                            Parado
-                        </span>
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="row mt-5">
-
-            <div class="col-md-5">
-
-                <div class="sensor-box">
-
-                    <h3>
-                        Informações do Sensor
-                    </h3>
-
-                    <div class="sensor-info">
 
                         <p>
-                            <strong>Trem:</strong>
 
-                            <span id="tremNome">
-                                Selecione um trem
-                            </span>
+                            <strong>Modelo:</strong>
+
+                            <?= htmlspecialchars($trem["modelo"]) ?>
+
                         </p>
 
-                        <p>
-                            <strong>Sensor:</strong>
-
-                            <span id="sensorNome">
-                                -
-                            </span>
-                        </p>
 
                         <p>
-                            <strong>Localização:</strong>
 
-                            <span id="sensorLocal">
-                                -
-                            </span>
-                        </p>
-
-                        <p>
                             <strong>Status:</strong>
 
-                            <span id="sensorStatus">
-                                -
+                            <span class="status-<?= htmlspecialchars($status) ?>">
+
+                                <?= $statusTexto ?>
+
                             </span>
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>Velocidade:</strong>
+
+                            <?= htmlspecialchars($trem["velocidade_atual"]) ?>
+
+                            km/h
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>Localização:</strong>
+
+                            <?= htmlspecialchars($trem["localizacao_atual"] ?? "Não informada") ?>
+
                         </p>
 
                     </div>
 
+                <?php endwhile; ?>
+
+            <?php else: ?>
+
+                <p>
+                    Nenhum trem cadastrado.
+                </p>
+
+            <?php endif; ?>
+
+        </div>
+
+
+        <!-- INFORMAÇÕES -->
+
+        <div class="area">
+
+
+            <!-- SENSORES -->
+
+            <div class="caixa">
+
+                <h2>
+                    Sensores
+                </h2>
+
+
+                <div id="sensoresContainer">
+
+                    <p class="sem-sensor">
+
+                        Clique em um trem para visualizar seus sensores.
+
+                    </p>
+
                 </div>
 
             </div>
 
-            <div class="col-md-7">
+
+            <!-- MAPA -->
+
+            <div class="caixa">
+
+                <h2>
+                    Localização
+                </h2>
+
 
                 <div class="mapa">
 
                     <div class="linha"></div>
 
+
                     <div
-                        class="trem"
-                        id="mapaTrem"
+                        class="trem-mapa"
+                        id="tremMapa"
                     >
                         Trem
                     </div>
 
-                    <div
-                        class="sensor"
-                        id="mapaSensor"
-                    ></div>
+
+                    <?php
+
+                    $posicoes = [
+                        15,
+                        30,
+                        45,
+                        60,
+                        75
+                    ];
+
+                    $contador = 0;
+
+                    foreach ($sensores as $sensor):
+
+                        $posicao = $posicoes[$contador % count($posicoes)];
+
+                    ?>
+
+                        <div
+                            class="ponto-sensor sensor-mapa"
+                            data-trem="<?= $sensor["trem_id"] ?>"
+                            style="left: <?= $posicao ?>%; display: none;"
+                            title="<?= htmlspecialchars($sensor["nome"]) ?>"
+                        ></div>
+
+                    <?php
+
+                        $contador++;
+
+                    endforeach;
+
+                    ?>
 
                 </div>
 
@@ -291,54 +525,197 @@ require_once "../infra/connect.php";
 
         </div>
 
-    </div>
+    </main>
+
+
+    <!-- JAVASCRIPT -->
 
     <script>
 
-        function mostrarSensor(
-            trem,
-            sensor,
-            local,
-            status
-        ) {
 
-            document.getElementById(
-                "tremNome"
-            ).innerText = trem;
+        /*
+        |--------------------------------------------------------------------------
+        | Sensores vindos do PHP
+        |--------------------------------------------------------------------------
+        */
 
-            document.getElementById(
-                "sensorNome"
-            ).innerText = sensor;
+        const sensores = <?= json_encode(
+            $sensores,
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+        ) ?>;
 
-            document.getElementById(
-                "sensorLocal"
-            ).innerText = local;
 
-            document.getElementById(
-                "sensorStatus"
-            ).innerText = status;
+        /*
+        |--------------------------------------------------------------------------
+        | Mostrar trem
+        |--------------------------------------------------------------------------
+        */
 
-            document.getElementById(
-                "mapaTrem"
-            ).innerText = trem;
+        function mostrarTrem(tremId) {
+
+
+            const container =
+                document.getElementById(
+                    "sensoresContainer"
+                );
+
+
+            const tremMapa =
+                document.getElementById(
+                    "tremMapa"
+                );
+
+
+            /*
+            | Limpar sensores anteriores
+            */
+
+            container.innerHTML = "";
+
+
+            /*
+            | Esconder todos os pontos do mapa
+            */
+
+            const pontos =
+                document.querySelectorAll(
+                    ".sensor-mapa"
+                );
+
+
+            pontos.forEach(function(ponto) {
+
+                ponto.style.display = "none";
+
+            });
+
+
+            /*
+            | Filtrar sensores do trem escolhido
+            */
+
+            const sensoresDoTrem =
+                sensores.filter(function(sensor) {
+
+                    return Number(sensor.trem_id) === Number(tremId);
+
+                });
+
+
+            /*
+            | Se não tiver sensores
+            */
+
+            if (sensoresDoTrem.length === 0) {
+
+                container.innerHTML = `
+                    <p class="sem-sensor">
+                        Este trem não possui sensores cadastrados.
+                    </p>
+                `;
+
+            }
+
+
+            /*
+            | Mostrar sensores
+            */
+
+            sensoresDoTrem.forEach(function(sensor) {
+
+
+                const card =
+                    document.createElement("div");
+
+
+                card.className =
+                    "sensor-card";
+
+
+                card.innerHTML = `
+
+                    <h3>
+                        ${escapeHtml(sensor.nome)}
+                    </h3>
+
+                    <p>
+                        <strong>Localização:</strong>
+                        ${escapeHtml(sensor.localizacao)}
+                    </p>
+
+                    <p>
+                        <strong>Tipo de dado:</strong>
+                        ${escapeHtml(sensor.tipo_dado)}
+                    </p>
+
+                `;
+
+
+                container.appendChild(card);
+
+            });
+
+
+            /*
+            | Mostrar os sensores no mapa
+            */
+
+            pontos.forEach(function(ponto) {
+
+                if (
+                    Number(ponto.dataset.trem)
+                    ===
+                    Number(tremId)
+                ) {
+
+                    ponto.style.display = "block";
+
+                }
+
+            });
+
+
+            /*
+            | Mover o trem no mapa
+            */
 
             let posicao =
                 Math.floor(
                     Math.random() * 70
                 ) + 10;
 
-            document.getElementById(
-                "mapaTrem"
-            ).style.left =
+
+            tremMapa.style.left =
                 posicao + "%";
 
-            document.getElementById(
-                "mapaSensor"
-            ).style.left =
-                (posicao - 15) + "%";
+
+            tremMapa.innerText =
+                "Trem " + tremId;
+
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Segurança para texto vindo do banco
+        |--------------------------------------------------------------------------
+        */
+
+        function escapeHtml(texto) {
+
+            const div =
+                document.createElement("div");
+
+            div.textContent =
+                texto ?? "";
+
+            return div.innerHTML;
+
+        }
+
+
     </script>
+
 
 </body>
 
