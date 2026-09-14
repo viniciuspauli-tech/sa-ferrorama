@@ -1,6 +1,6 @@
 <?php
 
-require_once "../config/conexao.php";
+require_once "../infra/connect.php";
 
 ?>
 
