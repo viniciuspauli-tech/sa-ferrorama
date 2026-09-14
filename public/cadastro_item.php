@@ -1,3 +1,36 @@
+<?php
+// cadastro.php - Cadastro de Sensor (Ferrorama)
+require_once 'config.php';
+
+$erro = '';
+$sucesso = false;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nome = trim($_POST['nome'] ?? '');
+    $localizacao = trim($_POST['localizacao'] ?? '');
+    $dataCriacao = trim($_POST['data_criacao'] ?? '');
+
+    if ($nome === '' || $localizacao === '' || $dataCriacao === '') {
+        $erro = 'Preencha todos os campos.';
+    } else {
+        try {
+            $stmt = $pdo->prepare(
+                'INSERT INTO sensores (nome, localizacao, data_criacao) VALUES (:nome, :localizacao, :data_criacao)'
+            );
+            $stmt->execute([
+                ':nome' => $nome,
+                ':localizacao' => $localizacao,
+                ':data_criacao' => $dataCriacao,
+            ]);
+
+            header('Location: sistema.php');
+            exit;
+        } catch (PDOException $e) {
+            $erro = 'Erro ao cadastrar sensor: ' . $e->getMessage();
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -118,13 +151,20 @@ input{
 .btn-confirmar:hover{
     background:#dcdcdc;
 }
+
+.mensagem-erro{
+    color:#b91c1c;
+    font-size:18px;
+    margin-bottom:10px;
+    text-align:center;
+}
 </style>
 </head>
 <body>
 
 <header>
     <div class="logo">
-         
+
         <h3></h3>
     </div>
 
@@ -134,33 +174,33 @@ input{
 <div class="container">
 
     <div class="menu">
-        
-        <button class="item-btn">Sensor</button>
-       
+
+        <button type="button" class="item-btn">Sensor</button>
+
     </div>
 
-    <form class="formulario">
+    <form class="formulario" method="POST" action="cadastro.php">
+
+        <?php if ($erro !== ''): ?>
+            <p class="mensagem-erro"><?= htmlspecialchars($erro) ?></p>
+        <?php endif; ?>
 
         <div class="campo">
-            <label>De um nome:</label>
-            <input type="text">
+            <label for="nome">De um nome:</label>
+            <input type="text" id="nome" name="nome" required>
         </div>
 
         <div class="campo">
-            <label>Localização:</label>
-            <input type="text">
+            <label for="localizacao">Localização:</label>
+            <input type="text" id="localizacao" name="localizacao" required>
         </div>
 
         <div class="campo">
-            <label>Data de Criação:</label>
-            <input type="date">
+            <label for="data_criacao">Data de Criação:</label>
+            <input type="date" id="data_criacao" name="data_criacao" required>
         </div>
 
-       
-
-        <button type="submit" class="btn-confirmar">
-           <a href="sistema.html">Cadastrar</a>
-        </button>
+        <button type="submit" class="btn-confirmar">Cadastrar</button>
 
     </form>
 
