@@ -1,15 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Train - Selecione uma categoria</title>
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
-        body { background-color: #ececec; }
+        body {
+            background-color: #ececec;
+        }
 
-        /* Header igual ao da imagem 2 */
         header {
             background: #0f172a;
             height: 200px;
@@ -24,7 +32,6 @@
             font-weight: bold;
         }
 
-        /* Conteúdo centralizado */
         .container {
             display: flex;
             justify-content: center;
@@ -33,7 +40,6 @@
             padding: 80px 60px;
         }
 
-        /* Cards iguais ao botão "Sensor" da imagem 2 */
         .card-btn {
             width: 240px;
             height: 95px;
@@ -56,6 +62,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <header>
@@ -63,9 +70,17 @@
     </header>
 
     <div class="container">
-        <a class="card-btn" href="sensor.html">Sensor</a>
-        <a class="card-btn" href="cadastro_item.html">Cadastrar Sensor</a>
+
+        <a class="card-btn" href="sensor.php">
+            Sensor
+        </a>
+
+        <a class="card-btn" href="cadastro_item.php">
+            Cadastrar Sensor
+        </a>
+
     </div>
 
 </body>
+
 </html>
