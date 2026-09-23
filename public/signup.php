@@ -57,8 +57,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             );
 
             $sql = "INSERT INTO usuarios
-                    (nome, email, senha)
-                    VALUES (?, ?, ?)";
+                    (nome, email, senha, perfil)
+                    VALUES (?, ?, ?, 'usuario')
 
             $stmt = $conn->prepare($sql);
 
