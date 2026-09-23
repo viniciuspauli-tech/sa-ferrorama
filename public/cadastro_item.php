@@ -1,5 +1,6 @@
 <?php
 
+require_once "../infra/auth.php";
 require_once "../infra/connect.php";
 
 $erro = '';
@@ -10,7 +11,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = trim($_POST['nome'] ?? '');
     $localizacao = trim($_POST['localizacao'] ?? '');
     $tipo_dado = trim($_POST['tipo_dado'] ?? '');
-    $trem_id = $_POST['trem_id'] ?? '';
+
+    $trem_id = filter_input(
+    INPUT_POST,
+    "trem_id",
+    FILTER_VALIDATE_INT
+);
+
+    if (!$trem_id) {
+    die("Trem inválido.");
+
+}
+
+$sql = "SELECT id FROM trens WHERE id = ?";
+
+$stmt = mysqli_prepare($conn, $sql);
+
+mysqli_stmt_bind_param(
+    $stmt,
+    "i",
+    $trem_id
+);
+
+mysqli_stmt_execute($stmt);
+
+$resultado = mysqli_stmt_get_result($stmt);
+
+if (mysqli_num_rows($resultado) === 0) {
+    die("O trem selecionado não existe.");
+}
+
+mysqli_stmt_close($stmt);
 
     if ($nome === '' || $localizacao === '' || $tipo_dado === '' || $trem_id === '') {
 

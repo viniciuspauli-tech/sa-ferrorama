@@ -5,6 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION["usuario_id"])) {
-    header("Location: sigin.php");
+
+    header("Location: ../public/sigin.php");
     exit;
+
 }
