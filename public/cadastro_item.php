@@ -1,4 +1,3 @@
-```php
 <?php
 
 /*
@@ -10,137 +9,144 @@
 require_once "../infra/auth.php";
 require_once "../infra/connect.php";
 
+$erro = '';
+$sucesso = '';
 
 /*
 |--------------------------------------------------------------------------
-| Recebe os dados do formulário
+| Processa o formulário somente quando for enviado
 |--------------------------------------------------------------------------
 */
 
-$nome = trim($_POST["nome"] ?? "");
-$localizacao = trim($_POST["localizacao"] ?? "");
-$tipo_dado = trim($_POST["tipo_dado"] ?? "");
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-$trem_id = filter_input(
-    INPUT_POST,
-    "trem_id",
-    FILTER_VALIDATE_INT
-);
+    /*
+    |--------------------------------------------------------------------------
+    | Recebe os dados do formulário
+    |--------------------------------------------------------------------------
+    */
+
+    $nome = trim($_POST['nome'] ?? '');
+    $localizacao = trim($_POST['localizacao'] ?? '');
+    $tipo_dado = trim($_POST['tipo_dado'] ?? '');
+
+    $trem_id = filter_input(
+        INPUT_POST,
+        'trem_id',
+        FILTER_VALIDATE_INT
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validação dos campos
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        $nome === '' ||
+        $localizacao === '' ||
+        $tipo_dado === ''
+    ) {
+
+        $erro = 'Preencha todos os campos.';
+
+    } elseif (!$trem_id) {
+
+        $erro = 'Selecione um trem válido.';
+
+    } else {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Verifica se o trem existe
+        |--------------------------------------------------------------------------
+        */
+
+        $sql = "SELECT id FROM trens WHERE id = ?";
+
+        $stmt = mysqli_prepare($conn, $sql);
+
+        if (!$stmt) {
+
+            $erro = 'Não foi possível verificar o trem.';
+
+        } else {
+
+            mysqli_stmt_bind_param(
+                $stmt,
+                'i',
+                $trem_id
+            );
+
+            if (!mysqli_stmt_execute($stmt)) {
+
+                $erro = 'Não foi possível verificar o trem.';
+
+            } else {
+
+                $resultado = mysqli_stmt_get_result($stmt);
+
+                if (mysqli_num_rows($resultado) === 0) {
+
+                    $erro = 'O trem selecionado não existe.';
+                }
+            }
+
+            mysqli_stmt_close($stmt);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cadastra o sensor
+        |--------------------------------------------------------------------------
+        */
+
+        if ($erro === '') {
+
+            $sql = "INSERT INTO sensores
+                    (nome, localizacao, tipo_dado, trem_id)
+                    VALUES (?, ?, ?, ?)";
+
+            $stmt = mysqli_prepare($conn, $sql);
+
+            if (!$stmt) {
+
+                $erro = 'Não foi possível preparar o cadastro.';
+
+            } else {
+
+                mysqli_stmt_bind_param(
+                    $stmt,
+                    'sssi',
+                    $nome,
+                    $localizacao,
+                    $tipo_dado,
+                    $trem_id
+                );
+
+                if (mysqli_stmt_execute($stmt)) {
+
+                    $sucesso = 'Sensor cadastrado com sucesso!';
+
+                } else {
+
+                    $erro = 'Não foi possível cadastrar o sensor.';
+                }
+
+                mysqli_stmt_close($stmt);
+            }
+        }
+    }
+}
 
 
 /*
 |--------------------------------------------------------------------------
-| Validação dos campos obrigatórios
+| Busca os trens cadastrados para aparecer no formulário
 |--------------------------------------------------------------------------
 */
-
-if (
-    empty($nome) ||
-    empty($localizacao) ||
-    empty($tipo_dado)
-) {
-    die("Preencha todos os campos obrigatórios.");
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Validação do ID do trem
-|--------------------------------------------------------------------------
-*/
-
-if (!$trem_id) {
-    die("Trem inválido.");
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Verifica se o trem realmente existe
-|--------------------------------------------------------------------------
-*/
-
-$sql = "SELECT id FROM trens WHERE id = ?";
-
-$stmt = mysqli_prepare($conn, $sql);
-
-if (!$stmt) {
-    die("Não foi possível realizar a operação.");
-}
-
-mysqli_stmt_bind_param(
-    $stmt,
-    "i",
-    $trem_id
-);
-
-if (!mysqli_stmt_execute($stmt)) {
-
-    mysqli_stmt_close($stmt);
-
-    die("Não foi possível verificar o trem.");
-}
-
-$resultado = mysqli_stmt_get_result($stmt);
-
-if (mysqli_num_rows($resultado) === 0) {
-
-    mysqli_stmt_close($stmt);
-
-    die("O trem selecionado não existe.");
-}
-
-mysqli_stmt_close($stmt);
-
-
-/*
-|--------------------------------------------------------------------------
-| Cadastra o sensor
-|--------------------------------------------------------------------------
-*/
-
-$sql = "INSERT INTO sensores
-        (nome, localizacao, tipo_dado, trem_id)
-        VALUES (?, ?, ?, ?)";
-
-$stmt = mysqli_prepare($conn, $sql);
-
-if (!$stmt) {
-    die("Não foi possível cadastrar o sensor.");
-}
-
-mysqli_stmt_bind_param(
-    $stmt,
-    "sssi",
-    $nome,
-    $localizacao,
-    $tipo_dado,
-    $trem_id
-);
-
-
-/*
-|--------------------------------------------------------------------------
-| Executa o cadastro
-|--------------------------------------------------------------------------
-*/
-
-if (mysqli_stmt_execute($stmt)) {
-
-    mysqli_stmt_close($stmt);
-
-    header("Location: sensor.php?sucesso=1");
-    exit;
-
-} else {
-
-    mysqli_stmt_close($stmt);
-
-    die("Não foi possível cadastrar o sensor.");
-}
-```
-
-/* Busca os trens cadastrados para aparecer no formulário */
 
 $trens = mysqli_query(
     $conn,
@@ -344,6 +350,7 @@ select {
                 type="text"
                 id="nome"
                 name="nome"
+                value="<?= htmlspecialchars($_POST['nome'] ?? '') ?>"
                 required
             >
 
@@ -360,6 +367,7 @@ select {
                 type="text"
                 id="localizacao"
                 name="localizacao"
+                value="<?= htmlspecialchars($_POST['localizacao'] ?? '') ?>"
                 required
             >
 
@@ -377,6 +385,7 @@ select {
                 id="tipo_dado"
                 name="tipo_dado"
                 placeholder="Ex: Temperatura"
+                value="<?= htmlspecialchars($_POST['tipo_dado'] ?? '') ?>"
                 required
             >
 
@@ -401,7 +410,14 @@ select {
 
                 <?php while ($trem = mysqli_fetch_assoc($trens)): ?>
 
-                    <option value="<?= $trem['id'] ?>">
+                    <option
+                        value="<?= $trem['id'] ?>"
+                        <?= (
+                            isset($_POST['trem_id']) &&
+                            $_POST['trem_id'] == $trem['id']
+                        ) ? 'selected' : ''
+                        ?>
+                    >
 
                         <?= htmlspecialchars($trem['identificador']) ?>
                         -
