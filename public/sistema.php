@@ -1,3 +1,4 @@
+```php
 <?php
 
 require_once "../infra/auth.php";
@@ -5,79 +6,17 @@ require_once "../infra/auth.php";
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-BR">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Train - Selecione uma categoria</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background-color: #ececec;
-        }
-
-        header {
-            background: #0f172a;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        header h1 {
-            color: white;
-            font-size: 40px;
-            font-weight: bold;
-        }
-
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 60px;
-            padding: 80px 60px;
-        }
-
-        .card-btn {
-            width: 240px;
-            height: 95px;
-            border: 3px solid black;
-            border-radius: 22px;
-            background: white;
-            font-size: 22px;
-            cursor: pointer;
-            text-decoration: none;
-            color: black;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 500;
-            transition: background 0.2s;
-        }
-
-        .card-btn:hover {
-            background: #dcdcdc;
-        }
-    </style>
-</head>
-
-<body>
-
-<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Ferrorama - Selecione uma categoria</title>
 
@@ -114,6 +53,7 @@ require_once "../infra/auth.php";
             align-items: center;
             gap: 60px;
             padding: 80px 60px;
+            flex-wrap: wrap;
         }
 
         .card-btn {
@@ -149,14 +89,45 @@ require_once "../infra/auth.php";
 
     </header>
 
+
     <div class="container">
 
-        <a class="card-btn" href="sensor.php">
+        <a
+            class="card-btn"
+            href="sensor.php"
+        >
             Trem
         </a>
 
-        <a class="card-btn" href="cadastro_item.php">
+
+        <a
+            class="card-btn"
+            href="cadastro_item.php"
+        >
             Cadastrar Sensor
+        </a>
+
+
+        <?php if (
+            isset($_SESSION["usuario_perfil"]) &&
+            $_SESSION["usuario_perfil"] === "administrador"
+        ): ?>
+
+            <a
+                class="card-btn"
+                href="usuarios/index.php"
+            >
+                Usuários
+            </a>
+
+        <?php endif; ?>
+
+
+        <a
+            class="card-btn"
+            href="logout.php"
+        >
+            Sair
         </a>
 
     </div>
@@ -164,3 +135,4 @@ require_once "../infra/auth.php";
 </body>
 
 </html>
+```
