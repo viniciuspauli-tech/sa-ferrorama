@@ -1,31 +1,72 @@
+```php
 <?php
+
+/*
+|--------------------------------------------------------------------------
+| Protege a página: somente usuários logados podem cadastrar sensores
+|--------------------------------------------------------------------------
+*/
 
 require_once "../infra/auth.php";
 require_once "../infra/connect.php";
 
-$erro = '';
-$sucesso = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+/*
+|--------------------------------------------------------------------------
+| Recebe os dados do formulário
+|--------------------------------------------------------------------------
+*/
 
-    $nome = trim($_POST['nome'] ?? '');
-    $localizacao = trim($_POST['localizacao'] ?? '');
-    $tipo_dado = trim($_POST['tipo_dado'] ?? '');
+$nome = trim($_POST["nome"] ?? "");
+$localizacao = trim($_POST["localizacao"] ?? "");
+$tipo_dado = trim($_POST["tipo_dado"] ?? "");
 
-    $trem_id = filter_input(
+$trem_id = filter_input(
     INPUT_POST,
     "trem_id",
     FILTER_VALIDATE_INT
 );
 
-    if (!$trem_id) {
-    die("Trem inválido.");
 
+/*
+|--------------------------------------------------------------------------
+| Validação dos campos obrigatórios
+|--------------------------------------------------------------------------
+*/
+
+if (
+    empty($nome) ||
+    empty($localizacao) ||
+    empty($tipo_dado)
+) {
+    die("Preencha todos os campos obrigatórios.");
 }
+
+
+/*
+|--------------------------------------------------------------------------
+| Validação do ID do trem
+|--------------------------------------------------------------------------
+*/
+
+if (!$trem_id) {
+    die("Trem inválido.");
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Verifica se o trem realmente existe
+|--------------------------------------------------------------------------
+*/
 
 $sql = "SELECT id FROM trens WHERE id = ?";
 
 $stmt = mysqli_prepare($conn, $sql);
+
+if (!$stmt) {
+    die("Não foi possível realizar a operação.");
+}
 
 mysqli_stmt_bind_param(
     $stmt,
@@ -33,56 +74,71 @@ mysqli_stmt_bind_param(
     $trem_id
 );
 
-mysqli_stmt_execute($stmt);
+if (!mysqli_stmt_execute($stmt)) {
+
+    mysqli_stmt_close($stmt);
+
+    die("Não foi possível verificar o trem.");
+}
 
 $resultado = mysqli_stmt_get_result($stmt);
 
 if (mysqli_num_rows($resultado) === 0) {
+
+    mysqli_stmt_close($stmt);
+
     die("O trem selecionado não existe.");
 }
 
 mysqli_stmt_close($stmt);
 
-    if ($nome === '' || $localizacao === '' || $tipo_dado === '' || $trem_id === '') {
 
-        $erro = 'Preencha todos os campos.';
+/*
+|--------------------------------------------------------------------------
+| Cadastra o sensor
+|--------------------------------------------------------------------------
+*/
 
-    } else {
+$sql = "INSERT INTO sensores
+        (nome, localizacao, tipo_dado, trem_id)
+        VALUES (?, ?, ?, ?)";
 
-        $stmt = mysqli_prepare(
-            $conn,
-            "INSERT INTO sensores (nome, localizacao, tipo_dado, trem_id)
-             VALUES (?, ?, ?, ?)"
-        );
+$stmt = mysqli_prepare($conn, $sql);
 
-        if ($stmt) {
-
-            mysqli_stmt_bind_param(
-                $stmt,
-                "sssi",
-                $nome,
-                $localizacao,
-                $tipo_dado,
-                $trem_id
-            );
-
-            if (mysqli_stmt_execute($stmt)) {
-
-                $sucesso = 'Sensor cadastrado com sucesso!';
-
-            } else {
-
-                $erro = 'Erro ao cadastrar sensor: ' . mysqli_stmt_error($stmt);
-            }
-
-            mysqli_stmt_close($stmt);
-
-        } else {
-
-            $erro = 'Erro ao preparar o cadastro: ' . mysqli_error($conn);
-        }
-    }
+if (!$stmt) {
+    die("Não foi possível cadastrar o sensor.");
 }
+
+mysqli_stmt_bind_param(
+    $stmt,
+    "sssi",
+    $nome,
+    $localizacao,
+    $tipo_dado,
+    $trem_id
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| Executa o cadastro
+|--------------------------------------------------------------------------
+*/
+
+if (mysqli_stmt_execute($stmt)) {
+
+    mysqli_stmt_close($stmt);
+
+    header("Location: sensor.php?sucesso=1");
+    exit;
+
+} else {
+
+    mysqli_stmt_close($stmt);
+
+    die("Não foi possível cadastrar o sensor.");
+}
+```
 
 /* Busca os trens cadastrados para aparecer no formulário */
 

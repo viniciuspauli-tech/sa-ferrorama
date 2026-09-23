@@ -1,3 +1,9 @@
+<?php
+
+require_once "../infra/auth.php";
+
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
