@@ -146,7 +146,7 @@
     <div class="container">
 
         <a class="card-btn" href="sensor.php">
-            Sensor
+            Trem
         </a>
 
         <a class="card-btn" href="cadastro_item.php">
