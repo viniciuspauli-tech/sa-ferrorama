@@ -128,6 +128,21 @@ O sistema deve realizar validações nos campos dos formulários antes de efetua
 RNF 15
 O sistema deve possuir arquitetura que permita futuras manutenções e inclusão de novas funcionalidades.
 
+RNF 16
+O sistema deve utilizar consultas parametrizadas para impedir ataques de SQL Injection.
+
+RNF 17
+O sistema deve controlar o acesso às funcionalidades de acordo com o perfil do usuário.
+
+RNF 18
+O sistema não deve permitir que usuários comuns atribuam a si mesmos o perfil de administrador.
+
+RNF 19
+As informações de senha não devem ser exibidas nas telas de consulta ou edição de usuários.
+
+RNF 20
+O sistema deve utilizar mensagens de erro que não exponham informações internas do banco de dados ou da aplicação.
+
 ## Regras de Negócio
 RN 1
 Apenas usuários cadastrados como administradores podem acessar o sistema. O acesso é realizado exclusivamente por e-mail e senha.
@@ -223,6 +238,22 @@ O usuário é redirecionado para o dashboard, onde pode escolher entre:
 - Melhorar o mapa interativo
 - Sistema de notificações em tempo real
 
+## Criação do primeiro administrador
 
+Por segurança, o cadastro público não permite que o usuário escolha
+o perfil de administrador.
+
+O primeiro administrador deve ser criado por um responsável pelo banco
+de dados.
+
+Primeiro, realiza-se o cadastro normalmente pela tela `signup.php`.
+
+Após o cadastro, o responsável pelo banco pode alterar o perfil do usuário
+para administrador através do banco de dados:
+
+```sql
+UPDATE usuarios
+SET perfil = 'administrador'
+WHERE email = 'email_do_usuario';
 
 **Projeto em desenvolvimento**
