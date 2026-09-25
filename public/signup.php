@@ -12,6 +12,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $senha = $_POST["senha"] ?? "";
     $confirmar_senha = $_POST["confirmar_senha"] ?? "";
 
+    /*
+    |--------------------------------------------------------------------------
+    | Validação dos campos
+    |--------------------------------------------------------------------------
+    */
+
     if (
         empty($nome) ||
         empty($email) ||
@@ -29,59 +35,91 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $erro = "As senhas não são iguais.";
 
-    } elseif (strlen($senha) < 6) {
+    } elseif (strlen($senha) < 8) {
 
-        $erro = "A senha deve possuir pelo menos 6 caracteres.";
+        $erro = "A senha deve possuir pelo menos 8 caracteres.";
 
     } else {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Verifica se o e-mail já existe
+        |--------------------------------------------------------------------------
+        */
 
         $sql = "SELECT id FROM usuarios WHERE email = ?";
 
         $stmt = $conn->prepare($sql);
 
-        $stmt->bind_param("s", $email);
+        if (!$stmt) {
 
-        $stmt->execute();
-
-        $resultado = $stmt->get_result();
-
-        if ($resultado->num_rows > 0) {
-
-            $erro = "Este e-mail já está cadastrado.";
+            $erro = "Não foi possível realizar o cadastro.";
 
         } else {
 
-            $senha_hash = password_hash(
-                $senha,
-                PASSWORD_DEFAULT
-            );
+            $stmt->bind_param("s", $email);
 
-            $sql = "INSERT INTO usuarios
-                    (nome, email, senha)
-                    VALUES (?, ?, ?)";
+            $stmt->execute();
 
-            $stmt = $conn->prepare($sql);
+            $resultado = $stmt->get_result();
 
-            $stmt->bind_param(
-                "sss",
-                $nome,
-                $email,
-                $senha_hash
-            );
+            if ($resultado->num_rows > 0) {
 
-            if ($stmt->execute()) {
-
-                $mensagem =
-                    "Cadastro realizado com sucesso!";
+                $erro = "Este e-mail já está cadastrado.";
 
             } else {
 
-                $erro =
-                    "Erro ao realizar o cadastro.";
-            }
-        }
+                /*
+                |--------------------------------------------------------------------------
+                | Protege a senha
+                |--------------------------------------------------------------------------
+                */
 
-        $stmt->close();
+                $senha_hash = password_hash(
+                    $senha,
+                    PASSWORD_DEFAULT
+                );
+
+                /*
+                |--------------------------------------------------------------------------
+                | Cadastra sempre como usuário comum
+                |--------------------------------------------------------------------------
+                */
+
+                $sql = "INSERT INTO usuarios
+                        (nome, email, senha, perfil)
+                        VALUES (?, ?, ?, 'usuario')";
+
+                $stmt->close();
+
+                $stmt = $conn->prepare($sql);
+
+                if (!$stmt) {
+
+                    $erro = "Não foi possível realizar o cadastro.";
+
+                } else {
+
+                    $stmt->bind_param(
+                        "sss",
+                        $nome,
+                        $email,
+                        $senha_hash
+                    );
+
+                    if ($stmt->execute()) {
+
+                        $mensagem = "Cadastro realizado com sucesso!";
+
+                    } else {
+
+                        $erro = "Erro ao realizar o cadastro.";
+                    }
+                }
+            }
+
+            $stmt->close();
+        }
     }
 }
 
@@ -173,6 +211,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 id="senha"
                 name="senha"
                 required
+                minlength="8"
             >
 
             <label for="confirmar_senha">
@@ -184,6 +223,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 id="confirmar_senha"
                 name="confirmar_senha"
                 required
+                minlength="8"
             >
 
             <button type="submit">
@@ -204,3 +244,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </body>
 
 </html>
+
