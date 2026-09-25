@@ -1,4 +1,4 @@
-```php
+
 <?php
 
 header("Location: public/sigin.php");
