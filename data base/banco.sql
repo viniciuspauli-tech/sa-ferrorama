@@ -16,7 +16,7 @@ CREATE TABLE usuarios (
 CREATE TABLE trens (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    identificacao VARCHAR(100) NOT NULL UNIQUE,
+    identificador VARCHAR(100) NOT NULL UNIQUE,
     modelo VARCHAR(100) NOT NULL
 );
 
