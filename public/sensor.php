@@ -20,9 +20,9 @@ $sqlTrens = "
     ORDER BY identificador
 ";
 
-$resultadoTrens = mysqli_query($conn, $sqlTrens);
+$resultadotrens = mysqli_query($conn, $sqltrens);
 
-if (!$resultadoTrens) {
+if (!$resultadotrens) {
     die("Erro ao buscar trens: " . mysqli_error($conn));
 }
 
