@@ -150,10 +150,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $trens = mysqli_query(
     $conn,
-    "SELECT id, identificador, modelo
+    "SELECT id, identificador
      FROM trens
      ORDER BY identificador"
 );
+
 
 ?>
 

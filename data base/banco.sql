@@ -17,7 +17,7 @@ CREATE TABLE trens (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     identificador VARCHAR(100) NOT NULL UNIQUE,
-    modelo VARCHAR(100) NOT NULL
+   
 );
 
 CREATE TABLE sensores (
