@@ -5,7 +5,7 @@ $senha = "";
 $dbname = "ferrorama";
 $porta = 3306; 
 
-$conn = mysqli_connect($host, $user, $senha, $dbname, $porta);
+   $conn = mysqli_connect('localhost', 'root', '', 'ferrorama', 3306);
 
 if (!$conn) {
     die("Não foi possível conectar ao banco de dados.");
