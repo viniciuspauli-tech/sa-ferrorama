@@ -215,13 +215,25 @@ if (!$resultado) {
                         Editar
                     </a>
 
-                    <a
-                        href="excluir.php?id=<?= $usuario["id"] ?>"
-                        class="excluir"
-                        onclick="return confirm('Tem certeza que deseja excluir este usuário?');"
+                    <form
+                        method="POST"
+                        action="excluir.php"
+                        style="display:inline"
+                        onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');"
                     >
-                        Excluir
-                    </a>
+                        <input
+                            type="hidden"
+                            name="id"
+                            value="<?= (int) $usuario["id"] ?>"
+                        >
+                        <button
+                            type="submit"
+                            class="excluir"
+                            style="background:none;border:none;cursor:pointer;font-size:1em;"
+                        >
+                            Excluir
+                        </button>
+                    </form>
 
                 </td>
 

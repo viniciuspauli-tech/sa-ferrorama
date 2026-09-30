@@ -103,6 +103,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         |--------------------------------------------------------------------------
         */
 
+        /*
+        |--------------------------------------------------------------------------
+        | RN4: não permite sensor com mesmo nome e localização no mesmo trem
+        |--------------------------------------------------------------------------
+        */
+
+        if ($erro === '') {
+
+            $stmt = mysqli_prepare(
+                $conn,
+                "SELECT id FROM sensores
+                 WHERE nome = ? AND localizacao = ? AND trem_id = ?"
+            );
+
+            mysqli_stmt_bind_param($stmt, 'ssi', $nome, $localizacao, $trem_id);
+            mysqli_stmt_execute($stmt);
+
+            if (mysqli_num_rows(mysqli_stmt_get_result($stmt)) > 0) {
+
+                $erro = 'Já existe um sensor com este nome e localização neste trem.';
+            }
+
+            mysqli_stmt_close($stmt);
+        }
+
         if ($erro === '') {
 
             $sql = "INSERT INTO sensores
@@ -150,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $trens = mysqli_query(
     $conn,
-    "SELECT id, identificador
+    "SELECT id, identificador, modelo
      FROM trens
      ORDER BY identificador"
 );

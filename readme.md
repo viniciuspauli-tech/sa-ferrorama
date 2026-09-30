@@ -227,14 +227,12 @@ O usuário é redirecionado para o dashboard, onde pode escolher entre:
 - Seleção de problemas pré-cadastrados
 
 ## Tecnologias Utilizadas
+- PHP 8 e MySQL (mysqli)
 - HTML5, CSS3 e JavaScript
 - Bootstrap 5
-- LocalStorage (para demonstração)
-- Font Awesome
+- XAMPP (ambiente local)
 
 ## Próximos Passos
-- Implementar backend (para substituir o LocalStorage)
-- Conexão com banco de dados
 - Melhorar o mapa interativo
 - Sistema de notificações em tempo real
 
@@ -255,5 +253,6 @@ para administrador através do banco de dados:
 UPDATE usuarios
 SET perfil = 'administrador'
 WHERE email = 'email_do_usuario';
+```
 
 **Projeto em desenvolvimento**

@@ -102,6 +102,22 @@ require_once "../infra/auth.php";
 
         <a
             class="card-btn"
+            href="trem/listagemtrem.php"
+        >
+            Gerenciar Trens
+        </a>
+
+
+        <a
+            class="card-btn"
+            href="rotas/rotas.php"
+        >
+            Rotas
+        </a>
+
+
+        <a
+            class="card-btn"
             href="cadastro_item.php"
         >
             Cadastrar Sensor
