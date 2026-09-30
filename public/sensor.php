@@ -326,7 +326,7 @@ while ($sensor = mysqli_fetch_assoc($resultadoSensores)) {
                 class="navbar-brand"
                 href="sistema.php"
             >
-                FERRORAMA
+                VOLTAR
             </a>
 
         </div>
