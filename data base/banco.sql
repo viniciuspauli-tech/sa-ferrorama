@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS ferrorama
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
 USE ferrorama;
 
 CREATE TABLE usuarios (
@@ -27,11 +31,40 @@ CREATE TABLE sensores (
     localizacao VARCHAR(150) NOT NULL,
     tipo_dado VARCHAR(100) NOT NULL,
     trem_id INT NOT NULL,
-    
+
+    -- RN4: mesmo nome + localização não se repete no mesmo trem
+    UNIQUE KEY uq_sensor_trem (nome, localizacao, trem_id),
+
     CONSTRAINT fk_sensores_trem
         FOREIGN KEY (trem_id)
         REFERENCES trens(id)
         ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- Tabela usada pelas telas de rotas (public/rotas)
+CREATE TABLE rotas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    origem VARCHAR(100) NOT NULL,
+    destino VARCHAR(100) NOT NULL,
+    distancia_km DECIMAL(8,2) NOT NULL,
+    tempo_estimado VARCHAR(20) NOT NULL,
+    status ENUM('ativa', 'inativa', 'manutencao') NOT NULL DEFAULT 'ativa'
+) ENGINE=InnoDB;
+
+-- RF13/RN5: leituras dos sensores (RESTRICT impede excluir sensor com dados)
+CREATE TABLE dados_sensor (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sensor_id INT NOT NULL,
+    valor DECIMAL(10,2) NOT NULL,
+    falha TINYINT(1) NOT NULL DEFAULT 0,
+    registrado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_dados_sensor
+        FOREIGN KEY (sensor_id)
+        REFERENCES sensores(id)
+        ON DELETE RESTRICT
         ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 

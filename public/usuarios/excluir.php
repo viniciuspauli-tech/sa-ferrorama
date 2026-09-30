@@ -3,8 +3,15 @@
 require_once "../../infra/admin.php";
 require_once "../../infra/connect.php";
 
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+
+    http_response_code(405);
+    die("Método não permitido.");
+
+}
+
 $id = filter_input(
-    INPUT_GET,
+    INPUT_POST,
     "id",
     FILTER_VALIDATE_INT
 );

@@ -51,6 +51,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $erro = "Perfil inválido.";
 
     } elseif (
+        $id == $_SESSION["usuario_id"] &&
+        $perfil !== "administrador"
+    ) {
+
+        $erro = "Você não pode remover seu próprio perfil de administrador.";
+
+    } elseif (
         !empty($senha) &&
         strlen($senha) < 8
     ) {

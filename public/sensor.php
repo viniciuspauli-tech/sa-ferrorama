@@ -1,5 +1,6 @@
 <?php
 
+require_once "../infra/auth.php";
 require_once "../infra/connect.php";
 
 /*
@@ -12,6 +13,8 @@ $sqlTrens = "
     SELECT 
         id,
         identificador,
+        modelo,
+        status,
         velocidade_atual,
         localizacao_atual
     FROM trens

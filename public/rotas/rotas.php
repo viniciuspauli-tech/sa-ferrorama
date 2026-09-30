@@ -1,5 +1,6 @@
 <?php
-require_once "../infra/connect.php";
+require_once "../../infra/auth.php";
+require_once "../../infra/connect.php";
 
 $busca = trim($_GET["busca"] ?? "");
 $statusFiltro = $_GET["status"] ?? "";
@@ -94,7 +95,7 @@ function corStatus($status)
 
         <div>
 
-            <a href="listagemtrem.php"
+            <a href="../trem/listagemtrem.php"
                class="btn btn-secondary">
                 Trens
             </a>
