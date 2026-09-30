@@ -12,7 +12,6 @@ $sql = "
         origem,
         destino,
         distancia_km,
-        tempo_estimado_min,
         status
     FROM rotas
     WHERE 1=1
@@ -180,8 +179,8 @@ function corStatusRota($status)
                                 <td><strong><?= htmlspecialchars($rota["nome"]) ?></strong></td>
                                 <td><?= htmlspecialchars($rota["origem"]) ?></td>
                                 <td><?= htmlspecialchars($rota["destino"]) ?></td>
-                                <td><?= number_format((float)$rota["distancia_km"], 2, ",", ".") ?> km</td>
-                                <td><?= (int)$rota["tempo_estimado_min"] ?> min</td>
+                                <td><?= number_format((float)($rota["distancia_km"] ?? 0), 2, ",", ".") ?> km</td>
+                                <td><?= isset($rota["tempo_estimado_min"]) ? (int)$rota["tempo_estimado_min"] . " min" : "—" ?></td>
                                 <td>
                                     <span class="badge bg-<?= corStatusRota($rota["status"]) ?>">
                                         <?= ucfirst(htmlspecialchars($rota["status"])) ?>
