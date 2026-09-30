@@ -163,17 +163,25 @@ function corStatusTrem($status)
         </h1>
 
 
-        <div>
+        <div class="d-flex gap-2">
 
-            <a
-                href="rotas.php"
-                class="btn btn-secondary">
+    <a
+        href="sistema.php"
+        class="btn btn-primary">
 
-                Rotas
+        Voltar ao Sistema
 
-            </a>
+    </a>
 
-        </div>
+    <a
+        href="rotas.php"
+        class="btn btn-secondary">
+
+        Rotas
+
+    </a>
+
+</div>
 
 
     </div>
