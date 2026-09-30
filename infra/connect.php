@@ -2,7 +2,7 @@
 
 $host = "localhost";
 $user = "root";
-$senha = "root";
+$senha = "";
 $dbname = "ferrorama";
 $porta = 3306;
 
