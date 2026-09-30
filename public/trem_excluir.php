@@ -1,7 +1,7 @@
 <?php
 
 require_once "../../infra/admin.php";
-require_once "../../infra/connect.php";
+require_once __DIR__ . '/../infra/conect.php';
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: trens.php");
