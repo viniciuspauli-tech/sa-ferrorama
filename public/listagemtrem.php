@@ -1,6 +1,6 @@
 <?php
 
-require_once "../infra/connect.php";
+require_once "../../infra/connect.php";
 
 
 $busca = trim($_GET["busca"] ?? "");
@@ -165,23 +165,23 @@ function corStatusTrem($status)
 
         <div class="d-flex gap-2">
 
-    <a
-        href="sistema.php"
-        class="btn btn-primary">
+            <a
+                href="../sistema.php"
+                class="btn btn-primary">
 
-        Voltar ao Sistema
+                Voltar ao Sistema
 
-    </a>
+            </a>
 
-    <a
-        href="rotas.php"
-        class="btn btn-secondary">
+            <a
+                href="../rotas/rotas.php"
+                class="btn btn-secondary">
 
-        Rotas
+                Rotas
 
-    </a>
+            </a>
 
-</div>
+        </div>
 
 
     </div>
