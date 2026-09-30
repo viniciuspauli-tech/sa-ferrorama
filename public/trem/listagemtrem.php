@@ -1,6 +1,5 @@
 <?php
 
-require_once "../../infra/auth.php";
 require_once "../../infra/connect.php";
 
 
@@ -164,7 +163,15 @@ function corStatusTrem($status)
         </h1>
 
 
-        <div>
+        <div class="d-flex gap-2">
+
+            <a
+                href="../sistema.php"
+                class="btn btn-primary">
+
+                Voltar ao Sistema
+
+            </a>
 
             <a
                 href="../rotas/rotas.php"
