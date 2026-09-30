@@ -1,5 +1,5 @@
 <?php
-require_once "../infra/connect.php";
+require_once('../../infra/connect.php');
 
 $busca = trim($_GET["busca"] ?? "");
 $statusFiltro = $_GET["status"] ?? "";

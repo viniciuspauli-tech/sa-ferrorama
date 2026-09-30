@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else {
 
         $sql = "SELECT id, nome, email, senha, perfil
-                FROM banco
+                FROM usuarios
                 WHERE email = ?";
 
         $stmt = $conn->prepare($sql);

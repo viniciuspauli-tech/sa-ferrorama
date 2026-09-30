@@ -1,6 +1,6 @@
 <?php
 
-require_once "../infra/connect.php";
+require_once('../../infra/connect.php');
 
 $erros = [];
 
