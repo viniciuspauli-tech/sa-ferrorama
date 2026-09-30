@@ -96,7 +96,7 @@ require_once "../infra/auth.php";
             class="card-btn"
             href="sensor.php"
         >
-            Trem
+            Trens e Sensor
         </a>
 
 

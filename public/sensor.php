@@ -340,7 +340,7 @@ while ($sensor = mysqli_fetch_assoc($resultadoSensores)) {
 
 
         <h1>
-            Monitoramento de Trens
+            Trens e Sensores
         </h1>
 
 
