@@ -12,17 +12,15 @@ $sqlTrens = "
     SELECT 
         id,
         identificador,
-        modelo,
-        status,
         velocidade_atual,
         localizacao_atual
     FROM trens
     ORDER BY identificador
 ";
 
-$resultadotrens = mysqli_query($conn, $sqltrens);
+$resultadoTrens = mysqli_query($conn, $sqlTrens);
 
-if (!$resultadotrens) {
+if (!$resultadoTrens) {
     die("Erro ao buscar trens: " . mysqli_error($conn));
 }
 
