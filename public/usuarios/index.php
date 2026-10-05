@@ -217,7 +217,7 @@ if (!$resultado) {
 
                     <form
                         method="POST"
-                        action="excluir.php"
+                        action="excluir_usuario.php"
                         style="display:inline"
                         onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');"
                     >
