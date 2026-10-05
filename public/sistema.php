@@ -112,7 +112,7 @@ require_once "../infra/auth.php";
             class="card-btn"
             href="rotas/rotas.php"
         >
-            Rotas
+            Gerenciar Rotas
         </a>
 
 
