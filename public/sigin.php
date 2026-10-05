@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <link
         rel="stylesheet"
-        href="../style/style.css"
+        href="../style/estilo.css"
     >
 
 </head>

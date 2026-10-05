@@ -12,12 +12,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $senha = $_POST["senha"] ?? "";
     $confirmar_senha = $_POST["confirmar_senha"] ?? "";
 
-    /*
-    |--------------------------------------------------------------------------
-    | Validação dos campos
-    |--------------------------------------------------------------------------
-    */
-
     if (
         empty($nome) ||
         empty($email) ||
@@ -41,12 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     } else {
 
-        /*
-        |--------------------------------------------------------------------------
-        | Verifica se o e-mail já existe
-        |--------------------------------------------------------------------------
-        */
-
+        // Verifica se o e-mail já existe
         $sql = "SELECT id FROM usuarios WHERE email = ?";
 
         $stmt = $conn->prepare($sql);
@@ -69,23 +58,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             } else {
 
-                /*
-                |--------------------------------------------------------------------------
-                | Protege a senha
-                |--------------------------------------------------------------------------
-                */
-
+                // Protege a senha
                 $senha_hash = password_hash(
                     $senha,
                     PASSWORD_DEFAULT
                 );
 
-                /*
-                |--------------------------------------------------------------------------
-                | Cadastra sempre como usuário comum
-                |--------------------------------------------------------------------------
-                */
-
+                // Cadastra sempre como usuário comum
                 $sql = "INSERT INTO usuarios
                         (nome, email, senha, perfil)
                         VALUES (?, ?, ?, 'usuario')";
@@ -141,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <link
         rel="stylesheet"
-        href="../style/signup.css"
+        href="../style/estilo.css"
     >
 
 </head>
@@ -244,4 +223,3 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </body>
 
 </html>
-

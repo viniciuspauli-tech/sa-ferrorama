@@ -1,4 +1,3 @@
-
 <?php
 
 require_once "../infra/auth.php";
@@ -6,19 +5,15 @@ require_once "../infra/auth.php";
 ?>
 
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Ferrorama - Selecione uma categoria</title>
+    <title>Ferrorama - Sistema</title>
 
     <style>
 
@@ -47,6 +42,12 @@ require_once "../infra/auth.php";
             font-weight: bold;
         }
 
+        .boas-vindas {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 22px;
+        }
+
         .container {
             display: flex;
             justify-content: center;
@@ -63,7 +64,6 @@ require_once "../infra/auth.php";
             border-radius: 22px;
             background: white;
             font-size: 22px;
-            cursor: pointer;
             text-decoration: none;
             color: black;
             display: flex;
@@ -84,65 +84,31 @@ require_once "../infra/auth.php";
 <body>
 
     <header>
-
-        <h1>Selecione uma categoria</h1>
-
+        <h1>Ferrorama</h1>
     </header>
 
+    <p class="boas-vindas">
+        Bem-vindo, <?= htmlspecialchars($_SESSION["usuario_nome"] ?? "") ?>!
+    </p>
 
     <div class="container">
-
-        <a
-            class="card-btn"
-            href="sensor.php"
-        >
-            Trens e Sensor
-        </a>
-
-
-        <a
-            class="card-btn"
-            href="trem/listagemtrem.php"
-        >
-            Gerenciar Trens
-        </a>
-
-
-        <a
-            class="card-btn"
-            href="rotas/rotas.php"
-        >
-            Rotas
-        </a>
-
-
-        <a
-            class="card-btn"
-            href="cadastro_item.php"
-        >
-            Cadastrar Sensor
-        </a>
-
 
         <?php if (
             isset($_SESSION["usuario_perfil"]) &&
             $_SESSION["usuario_perfil"] === "administrador"
         ): ?>
 
-            <a
-                class="card-btn"
-                href="usuarios/index.php"
-            >
+            <a class="card-btn" href="usuarios/index.php">
                 Usuários
             </a>
 
         <?php endif; ?>
 
+        <a class="card-btn" href="perfil.php">
+            Meu perfil
+        </a>
 
-        <a
-            class="card-btn"
-            href="logout.php"
-        >
+        <a class="card-btn" href="logout.php">
             Sair
         </a>
 
@@ -151,4 +117,3 @@ require_once "../infra/auth.php";
 </body>
 
 </html>
-```
