@@ -4,7 +4,7 @@ $host = "localhost";
 $user = "root";
 $senha = "";
 $dbname = "ferrorama";
-$porta = 3306;
+$porta = 3307;
 
 $conn = mysqli_connect($host, $user, $senha, $dbname, $porta);
 
@@ -15,4 +15,4 @@ if (!$conn) {
 mysqli_set_charset($conn, "utf8mb4");
 
 ?>
-
+i
