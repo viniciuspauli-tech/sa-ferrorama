@@ -3,7 +3,7 @@
 $host = "localhost";
 $user = "root";
 $senha = "";
-$dbname = "ferrorama";
+$dbname = "sa-ferrorama";
 $porta = 3306;
 
 $conn = mysqli_connect($host, $user, $senha, $dbname, $porta);
