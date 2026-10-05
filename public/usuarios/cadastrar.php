@@ -76,6 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $senha,
                     PASSWORD_DEFAULT
                 );
+                
 
                 $sql = "INSERT INTO usuarios
                         (nome, email, senha, perfil)

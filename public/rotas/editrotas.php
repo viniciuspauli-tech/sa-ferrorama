@@ -1,5 +1,6 @@
 <?php
-require_once "../infra/connect.php";
+require_once "../../infra/auth.php";
+require_once "../../infra/connect.php";
 
 $statusValidos = ["ativa", "inativa", "manutencao"];
 $erros = [];
@@ -78,6 +79,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 }
+
+
+
+
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">

@@ -1,5 +1,6 @@
 <?php
 
+require_once "../infra/auth.php";
 require_once "../infra/connect.php";
 
 /*
@@ -325,7 +326,7 @@ while ($sensor = mysqli_fetch_assoc($resultadoSensores)) {
                 class="navbar-brand"
                 href="sistema.php"
             >
-                FERRORAMA
+                VOLTAR
             </a>
 
         </div>
@@ -339,7 +340,7 @@ while ($sensor = mysqli_fetch_assoc($resultadoSensores)) {
 
 
         <h1>
-            Monitoramento de Trens
+            Trens e Sensores
         </h1>
 
 

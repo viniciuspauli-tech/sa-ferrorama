@@ -1,4 +1,4 @@
-```php
+
 <?php
 
 require_once "../infra/auth.php";
@@ -96,7 +96,23 @@ require_once "../infra/auth.php";
             class="card-btn"
             href="sensor.php"
         >
-            Trem
+            Trens e Sensor
+        </a>
+
+
+        <a
+            class="card-btn"
+            href="trem/listagemtrem.php"
+        >
+            Gerenciar Trens
+        </a>
+
+
+        <a
+            class="card-btn"
+            href="rotas/rotas.php"
+        >
+            Rotas
         </a>
 
 
