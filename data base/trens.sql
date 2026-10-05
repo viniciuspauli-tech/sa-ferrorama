@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS trens (
     atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- Dados de exemplo para testar a tela
+
 INSERT INTO trens (identificador, modelo, status, velocidade_atual, localizacao_atual, consumo_energia) VALUES
 ('TR-001', 'Expresso 4000', 'ativo', 87.50, 'KM 12 - Trecho Norte', 320.10),
 ('TR-002', 'Regional 2200', 'manutencao', 0.00, 'Pátio Central', 0.00),
