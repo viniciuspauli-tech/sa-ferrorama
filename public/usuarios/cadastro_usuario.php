@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email           = trim($_POST['email'] ?? '');
     $senha           = $_POST['senha'] ?? '';
     $confirmar_senha = $_POST['confirmar_senha'] ?? '';
-    $cargo           = $_POST['cargo'] ?? 'comum';
+    $cargo           = $_POST['perfil'] ?? 'comum';
 
     if (!hash_equals($_SESSION['csrf'], $_POST['csrf'] ?? '')) {
         $erro = "Requisição inválida.";
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($senha !== $confirmar_senha) {
         $erro = "As senhas não são iguais.";
 
-    } elseif ($cargo !== 'comum' && $cargo !== 'adm') {
+    } elseif ($perfil !== 'comum' && $perfil !== 'adm') {
         $erro = "Cargo inválido.";
 
     } else {
