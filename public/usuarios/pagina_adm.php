@@ -55,9 +55,9 @@ if (!$resultado) {
 
         <div class="botoes">
 
-       <a href="/public/cadastro_usuario.php" class="botao">Cadastrar usuário</a>
-<a href="/public/home.php" class="botao">Meu perfil</a>
-<a href="/public/sistema.php" class="botao">Sistema</a>
+<a href="cadastro_usuario.php" class="botao">Cadastrar usuário</a>
+<a href="../home.php" class="botao">Meu perfil</a>
+<a href="../sistema.php" class="botao">Sistema</a>
 
         </div>
 
