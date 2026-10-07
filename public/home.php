@@ -167,8 +167,6 @@ $eAdmin = ($_SESSION["usuario_perfil"] === "administrador");
 
     </table>
 
-    <a href="sistema.php" class="voltar">← Voltar para o sistema</a>
-
     <a href="logout.php" class="voltar">Sair</a>
 
 </div>
