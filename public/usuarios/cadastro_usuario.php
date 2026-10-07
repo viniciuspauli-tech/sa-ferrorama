@@ -1,18 +1,7 @@
 <?php
-session_start();
 
-// Verificação de acesso (do primeiro código, sem a checagem duplicada)
-if (!isset($_SESSION['usuario'])) {
-    header('Location: adm.php');
-    exit();
-}
-
-if (($_SESSION['tipo'] ?? '') !== 'adm') {
-    header('Location: home.php');
-    exit();
-}
-
-require_once '../../infra/connect.php';
+require_once "../../infra/adm.php";
+require_once "../../infra/connect.php";
 
 // Token CSRF
 if (empty($_SESSION['csrf'])) {
@@ -26,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email           = trim($_POST['email'] ?? '');
     $senha           = $_POST['senha'] ?? '';
     $confirmar_senha = $_POST['confirmar_senha'] ?? '';
-    $cargo           = $_POST['cargo'] ?? 'comum';
+    $perfil = $_POST['perfil'] ?? 'usuario';
 
     if (!hash_equals($_SESSION['csrf'], $_POST['csrf'] ?? '')) {
         $erro = "Requisição inválida.";
@@ -43,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($senha !== $confirmar_senha) {
         $erro = "As senhas não são iguais.";
 
-    } elseif ($cargo !== 'comum' && $cargo !== 'adm') {
-        $erro = "Cargo inválido.";
+    } elseif ($perfil !== 'usuario' && $perfil !== 'administrador') {
+        $erro = "Perfil inválido.";
 
     } else {
         // Verifica se o e-mail já existe
@@ -66,13 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $stmt = mysqli_prepare(
                     $conn,
-                    "INSERT INTO usuarios (email, senha, cargo) VALUES (?, ?, ?)"
+                    "INSERT INTO usuarios (email, senha, perfil) VALUES (?, ?, ?)"
                 );
 
                 if (!$stmt) {
                     $erro = "Erro ao preparar o cadastro.";
                 } else {
-                    mysqli_stmt_bind_param($stmt, "sss", $email, $senha_hash, $cargo);
+                    mysqli_stmt_bind_param($stmt, "sss", $email, $senhaHash, $perfil);
 
                     if (mysqli_stmt_execute($stmt)) {
                         mysqli_stmt_close($stmt);
@@ -130,11 +119,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="confirmar_senha">Confirmar senha</label>
         <input type="password" id="confirmar_senha" name="confirmar_senha" minlength="8" required>
 
-        <label for="cargo">Cargo</label>
-        <select id="cargo" name="cargo" required>
-            <option value="comum">Usuário comum</option>
-            <option value="adm">Administrador</option>
-        </select>
+        <label for="perfil">Perfil</label>
+    <select id="perfil" name="perfil" required>
+    <option value="usuario">Usuário comum</option>
+    <option value="administrador">Administrador</option>
+    </select>
 
         <button type="submit">Cadastrar</button>
     </form>
