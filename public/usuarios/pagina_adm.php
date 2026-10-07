@@ -31,7 +31,7 @@ if (!$resultado) {
 
     <title>Tela de ADM - Ferrorama</title>
 
-    <link rel="stylesheet" href="../../style/usuarios.css">
+    <link rel="stylesheet" href="../../style/style.css">
 
 </head>
 
