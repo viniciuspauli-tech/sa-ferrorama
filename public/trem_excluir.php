@@ -1,6 +1,6 @@
 <?php
 
-require_once "../../infra/admin.php";
+require_once "../../infra/adm.php";
 require_once __DIR__ . '/../infra/conect.php';
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {

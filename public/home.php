@@ -120,7 +120,7 @@ $eAdmin = ($_SESSION["usuario_perfil"] === "administrador");
 
         <?php if ($eAdmin): ?>
 
-            <a class="botao" href="usuarios/index.php">Administração</a>
+            <a class="botao" href="usuarios/pagina_adm.php">Administração</a>
 
         <?php endif; ?>
 
