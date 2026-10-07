@@ -153,20 +153,6 @@ if (!$resultado) {
 
     </table>
 
-    <a
-        href="../sistema.php"
-        class="voltar"
-    >
-        ← Voltar para o sistema
-    </a>
-
-    <a
-        href="../logout.php"
-        class="voltar"
-    >
-        Sair
-    </a>
-
 </div>
 
 </body>
