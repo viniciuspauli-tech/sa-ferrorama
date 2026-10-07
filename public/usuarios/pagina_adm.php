@@ -63,7 +63,7 @@ if (!$resultado) {
             </a>
 
             <a
-                href="../perfil.php"
+                href="../home.php"
                 class="botao"
             >
                 Meu perfil
