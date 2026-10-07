@@ -59,18 +59,18 @@ if (!$resultado) {
                 href="cadastro_usuario.php"
                 class="botao"
             >
-                + Cadastrar usuário
+                Cadastrar usuário
             </a>
 
             <a
-                href="../perfil.php"
+                href="home.php"
                 class="botao"
             >
                 Meu perfil
             </a>
 
             <a
-                href="../sistema.php"
+                href="sistema.php"
                 class="botao"
             >
                 Sistema

@@ -3,7 +3,7 @@ session_start();
 
 // Verificação de acesso (do primeiro código, sem a checagem duplicada)
 if (!isset($_SESSION['usuario'])) {
-    header('Location: index.php');
+    header('Location: adm.php');
     exit();
 }
 
@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">Cadastrar</button>
     </form>
 
-    <a href="adm.php" class="voltar">← Voltar para usuários</a>
+    <a href="pagina_adm.php" class="voltar">← Voltar para usuários</a>
 </div>
 
 </body>
