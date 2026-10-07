@@ -1,7 +1,12 @@
 <?php
+require_once "../../infra/auth.php";
 
-require_once "../../infra/adm.php";
-require_once "../../infra/connect.php";
+if (($_SESSION["usuario_perfil"] ?? "") !== "administrador") {
+    header("Location: ../home.php");
+    exit;
+}
+
+require_once '../../infra/connect.php';
 
 // Token CSRF
 if (empty($_SESSION['csrf'])) {
@@ -15,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email           = trim($_POST['email'] ?? '');
     $senha           = $_POST['senha'] ?? '';
     $confirmar_senha = $_POST['confirmar_senha'] ?? '';
-    $perfil = $_POST['perfil'] ?? 'usuario';
+    $perfil           = $_POST['perfil'] ?? 'usuario';
 
     if (!hash_equals($_SESSION['csrf'], $_POST['csrf'] ?? '')) {
         $erro = "Requisição inválida.";
@@ -32,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($senha !== $confirmar_senha) {
         $erro = "As senhas não são iguais.";
 
-    } elseif ($perfil !== 'usuario' && $perfil !== 'administrador') {
-        $erro = "Perfil inválido.";
+    } elseif ($perfil !== 'usuario' && $perfil !== 'adm') {
+        $erro = "perfil inválido.";
 
     } else {
         // Verifica se o e-mail já existe
@@ -61,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!$stmt) {
                     $erro = "Erro ao preparar o cadastro.";
                 } else {
-                    mysqli_stmt_bind_param($stmt, "sss", $email, $senhaHash, $perfil);
+                    mysqli_stmt_bind_param($stmt, "sss", $email, $senha_hash, $perfil);
 
                     if (mysqli_stmt_execute($stmt)) {
                         mysqli_stmt_close($stmt);
@@ -119,11 +124,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="confirmar_senha">Confirmar senha</label>
         <input type="password" id="confirmar_senha" name="confirmar_senha" minlength="8" required>
 
-        <label for="perfil">Perfil</label>
-    <select id="perfil" name="perfil" required>
-    <option value="usuario">Usuário comum</option>
-    <option value="administrador">Administrador</option>
-    </select>
+        <label for="perfil">Cargo</label>
+        <select id="perfil" name="perfil" required>
+            <option value=usuario">Usuário comum</option>
+            <option value="adm">Administrador</option>
+        </select>
 
         <button type="submit">Cadastrar</button>
     </form>
