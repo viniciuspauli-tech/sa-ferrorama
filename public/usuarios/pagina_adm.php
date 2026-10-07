@@ -5,7 +5,7 @@
  * Somente administradores: lista os usuários cadastrados.
  */
 
-require_once "../../infra/admin.php";
+require_once "../../infra/adm.php";
 require_once "../../infra/connect.php";
 
 $sql = "SELECT id, email, perfil
