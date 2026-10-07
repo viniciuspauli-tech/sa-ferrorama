@@ -56,21 +56,21 @@ if (!$resultado) {
         <div class="botoes">
 
             <a
-                href="cadastro_usuario.php"
+                href="../cadastro_usuario.php"
                 class="botao"
             >
                 Cadastrar usuário
             </a>
 
             <a
-                href="home.php"
+                href="../home.php"
                 class="botao"
             >
                 Meu perfil
             </a>
 
             <a
-                href="sistema.php"
+                href="../sistema.php"
                 class="botao"
             >
                 Sistema
