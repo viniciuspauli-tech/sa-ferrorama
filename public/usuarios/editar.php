@@ -382,7 +382,7 @@ if (!$usuario) {
     </form>
 
     <a
-        href="index.php"
+        href="pagina_adm.php"
         class="voltar"
     >
         ← Voltar para usuários
