@@ -131,7 +131,7 @@ require_once "../infra/auth.php";
 
             <a
                 class="card-btn"
-                href="usuarios/index.php"
+                href="usuarios/pagina_adm.php"
             >
                 Usuários
             </a>
