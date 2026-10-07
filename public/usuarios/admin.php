@@ -1,19 +1,17 @@
 
 <?php
-// adm.php — painel do administrador (Ferrorama)
-// Baseado no gabarito: icrcode-senai/gabarito-login-sessao
+
 session_start();
 
-// 1) Controle de acesso: só entra quem está logado E é adm
+
 if (!isset($_SESSION['usuario']) || ($_SESSION['tipo'] ?? '') !== 'adm') {
     header('Location: home.php');
     exit();
 }
 
-// 2) Conexão (mesmo connect.php do gabarito, que define $conn = mysqli)
 require_once 'connect.php';
 
-// 3) Consulta usando prepared statement (evita SQL Injection)
+
 $stmt = $conn->prepare("SELECT id, email, cargo FROM usuarios ORDER BY email");
 $stmt->execute();
 $usuarios = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -21,7 +19,6 @@ $stmt->close();
 
 $totalAdm = count(array_filter($usuarios, fn($u) => $u['cargo'] === 'adm'));
 
-// Função curta para escapar saída (evita XSS)
 function e(string $v): string {
     return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
 }

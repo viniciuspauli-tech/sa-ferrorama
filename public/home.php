@@ -2,7 +2,8 @@
 
 /*
  * Tela "Meu perfil" (equivalente ao home.php do gabarito).
- * Mostra os dados do usuário logado, com botões de acordo com o perfil.
+ * Exige login, mostra e-mail e cargo do usuário logado,
+ * exibe os botões de acordo com o perfil e permite sair.
  */
 
 require_once "../infra/auth.php";
@@ -10,7 +11,7 @@ require_once "../infra/connect.php";
 
 $id = (int) $_SESSION["usuario_id"];
 
-$sql = "SELECT nome, email, perfil FROM usuarios WHERE id = ?";
+$sql = "SELECT email, perfil FROM usuarios WHERE id = ?";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
@@ -132,9 +133,8 @@ $eAdmin = ($_SESSION["usuario_perfil"] === "administrador");
         <thead>
 
             <tr>
-                <th>Nome</th>
                 <th>E-mail</th>
-                <th>Perfil</th>
+                <th>Cargo</th>
             </tr>
 
         </thead>
@@ -144,8 +144,6 @@ $eAdmin = ($_SESSION["usuario_perfil"] === "administrador");
         <?php if ($usuario): ?>
 
             <tr>
-
-                <td><?= htmlspecialchars($usuario["nome"]) ?></td>
 
                 <td><?= htmlspecialchars($usuario["email"]) ?></td>
 
@@ -160,7 +158,7 @@ $eAdmin = ($_SESSION["usuario_perfil"] === "administrador");
         <?php else: ?>
 
             <tr>
-                <td colspan="3">Nenhum usuário encontrado</td>
+                <td colspan="2">Nenhum usuário encontrado</td>
             </tr>
 
         <?php endif; ?>
