@@ -1,4 +1,5 @@
 <?php
+
 require_once "../../infra/auth.php";
 
 if (($_SESSION["usuario_perfil"] ?? "") !== "administrador") {
@@ -6,7 +7,7 @@ if (($_SESSION["usuario_perfil"] ?? "") !== "administrador") {
     exit;
 }
 
-require_once '../../infra/connect.php';
+require_once "../../infra/connect.php";
 
 // Token CSRF
 if (empty($_SESSION['csrf'])) {
@@ -17,64 +18,99 @@ $erro = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $email           = trim($_POST['email'] ?? '');
-    $senha           = $_POST['senha'] ?? '';
+    $email = trim($_POST['email'] ?? '');
+    $senha = $_POST['senha'] ?? '';
     $confirmar_senha = $_POST['confirmar_senha'] ?? '';
-    $perfil           = $_POST['perfil'] ?? 'usuario';
+    $perfil = $_POST['perfil'] ?? 'usuario';
 
     if (!hash_equals($_SESSION['csrf'], $_POST['csrf'] ?? '')) {
+
         $erro = "Requisição inválida.";
 
     } elseif ($email === '' || $senha === '' || $confirmar_senha === '') {
+
         $erro = "Preencha todos os campos.";
 
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
         $erro = "Digite um e-mail válido.";
 
     } elseif (strlen($senha) < 8) {
+
         $erro = "A senha deve possuir pelo menos 8 caracteres.";
 
     } elseif ($senha !== $confirmar_senha) {
+
         $erro = "As senhas não são iguais.";
 
-    } elseif ($perfil !== 'usuario' && $perfil !== 'adm') {
-        $erro = "perfil inválido.";
+    } elseif ($perfil !== 'usuario' && $perfil !== 'administrador') {
+
+        $erro = "Perfil inválido.";
 
     } else {
+
         // Verifica se o e-mail já existe
-        $stmt = mysqli_prepare($conn, "SELECT id FROM usuarios WHERE email = ?");
+        $stmt = mysqli_prepare(
+            $conn,
+            "SELECT id FROM usuarios WHERE email = ?"
+        );
 
         if (!$stmt) {
+
             $erro = "Erro ao preparar a consulta.";
+
         } else {
+
             mysqli_stmt_bind_param($stmt, "s", $email);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_store_result($stmt);
+
             $existe = mysqli_stmt_num_rows($stmt) > 0;
+
             mysqli_stmt_close($stmt);
 
             if ($existe) {
+
                 $erro = "Este e-mail já está cadastrado.";
+
             } else {
+
+                // Criptografa a senha
                 $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
 
+                // Cadastra o usuário
                 $stmt = mysqli_prepare(
                     $conn,
                     "INSERT INTO usuarios (email, senha, perfil) VALUES (?, ?, ?)"
                 );
 
                 if (!$stmt) {
+
                     $erro = "Erro ao preparar o cadastro.";
+
                 } else {
-                    mysqli_stmt_bind_param($stmt, "sss", $email, $senha_hash, $perfil);
+
+                    mysqli_stmt_bind_param(
+                        $stmt,
+                        "sss",
+                        $email,
+                        $senha_hash,
+                        $perfil
+                    );
 
                     if (mysqli_stmt_execute($stmt)) {
+
                         mysqli_stmt_close($stmt);
+
                         $_SESSION['msg'] = "Usuário cadastrado com sucesso!";
-                        header('Location: adm.php');
-                        exit();
+
+                        header('Location: pagina_adm.php');
+                        exit;
+
                     } else {
+
                         $erro = "Não foi possível cadastrar o usuário.";
+
                         mysqli_stmt_close($stmt);
                     }
                 }
@@ -82,59 +118,175 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Cadastrar usuário - Ferrorama</title>
+
     <style>
-        * { box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #f2f2f2; padding: 30px; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 10px; }
-        h1 { margin-bottom: 25px; }
-        label { display: block; margin-top: 15px; margin-bottom: 5px; }
-        input, select { width: 100%; padding: 11px; border: 1px solid #ccc; border-radius: 6px; }
-        button { width: 100%; margin-top: 25px; padding: 12px; border: none; border-radius: 6px; background: #111827; color: white; cursor: pointer; }
-        button:hover { background: #374151; }
-        .erro { background: #fee2e2; color: #991b1b; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
-        .voltar { display: inline-block; margin-top: 20px; color: #333; text-decoration: none; }
+
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f2f2f2;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: #111827;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #374151;
+        }
+
+        .erro {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-top: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
     </style>
+
 </head>
+
 <body>
 
 <div class="container">
+
     <h1>Cadastrar usuário</h1>
 
     <?php if ($erro !== ""): ?>
-        <div class="erro"><?= htmlspecialchars($erro) ?></div>
+
+        <div class="erro">
+            <?= htmlspecialchars($erro) ?>
+        </div>
+
     <?php endif; ?>
 
     <form method="POST">
-        <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
+
+        <input
+            type="hidden"
+            name="csrf"
+            value="<?= htmlspecialchars($_SESSION['csrf']) ?>"
+        >
 
         <label for="email">E-mail</label>
-        <input type="email" id="email" name="email" maxlength="150"
-               value="<?= htmlspecialchars($email ?? '') ?>" required>
+
+        <input
+            type="email"
+            id="email"
+            name="email"
+            maxlength="150"
+            value="<?= htmlspecialchars($email ?? '') ?>"
+            required
+        >
 
         <label for="senha">Senha</label>
-        <input type="password" id="senha" name="senha" minlength="8" required>
+
+        <input
+            type="password"
+            id="senha"
+            name="senha"
+            minlength="8"
+            required
+        >
 
         <label for="confirmar_senha">Confirmar senha</label>
-        <input type="password" id="confirmar_senha" name="confirmar_senha" minlength="8" required>
 
-        <label for="perfil">Cargo</label>
-        <select id="perfil" name="perfil" required>
-            <option value=usuario">Usuário comum</option>
-            <option value="adm">Administrador</option>
+        <input
+            type="password"
+            id="confirmar_senha"
+            name="confirmar_senha"
+            minlength="8"
+            required
+        >
+
+        <label for="perfil">Perfil</label>
+
+        <select
+            id="perfil"
+            name="perfil"
+            required
+        >
+
+            <option value="usuario">
+                Usuário comum
+            </option>
+
+            <option value="administrador">
+                Administrador
+            </option>
+
         </select>
 
-        <button type="submit">Cadastrar</button>
+        <button type="submit">
+            Cadastrar
+        </button>
+
     </form>
 
-    <a href="pagina_adm.php" class="voltar">← Voltar para usuários</a>
+    <a href="pagina_adm.php" class="voltar">
+        ← Voltar para usuários
+    </a>
+
 </div>
 
 </body>
+
 </html>
