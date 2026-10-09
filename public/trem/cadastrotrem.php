@@ -1,6 +1,7 @@
 <?php
 
-require_once "../../infra/connect.php";
+require_once __DIR__ . "/../../infra/adm.php";
+require_once __DIR__ . "/../../infra/connect.php";
 
 $mensagemErro = "";
 $mensagemSucesso = "";
@@ -19,20 +20,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $sql = "INSERT INTO trens (identificador, modelo, status, velocidade_atual, localizacao_atual, consumo_energia) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
 
-        if ($stmt) {
-            $stmt->bind_param("sssdsd", $identificador, $modelo, $status, $velocidade, $localizacao, $consumo);
-            
-            if ($stmt->execute()) {
-                header("Location: listagemtrem.php");
-                exit;
-            } else {
-                $mensagemErro = "Erro ao cadastrar trem: " . $conn->error;
-            }
-            $stmt->close();
+if ($stmt) {
+    $stmt->bind_param(
+        "sssdsd",
+        $identificador,
+        $modelo,
+        $status,
+        $velocidade,
+        $localizacao,
+        $consumo
+    );
+
+    try {
+        $stmt->execute();
+
+        $stmt->close();
+
+        header("Location: listagemtrem.php?sucesso=cadastrado");
+        exit;
+
+    } catch (mysqli_sql_exception $e) {
+
+        if ($e->getCode() === 1062) {
+            $mensagemErro = "Já existe um trem com esse identificador. Escolha outro.";
         } else {
-            $mensagemErro = "Erro na preparação da consulta: " . $conn->error;
+            error_log($e->getMessage());
+            $mensagemErro = "Erro ao cadastrar o trem. Verifique os dados e tente novamente.";
         }
+
+        $stmt->close();
     }
+
+} else {
+    error_log($conn->error);
+    $mensagemErro = "Erro ao preparar a consulta de cadastro.";
 }
 
 ?>
