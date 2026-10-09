@@ -202,79 +202,7 @@ if (!$usuario) {
 
     <title>Editar usuário - Ferrorama</title>
 
-    <style>
 
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background: #f2f2f2;
-            padding: 30px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-        }
-
-        h1 {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 5px;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 11px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        button {
-            width: 100%;
-            margin-top: 25px;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            background: #111827;
-            color: white;
-            cursor: pointer;
-        }
-
-        .erro {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-        }
-
-        .sucesso {
-            background: #dcfce7;
-            color: #166534;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-        }
-
-        .voltar {
-            display: inline-block;
-            margin-top: 20px;
-            color: #333;
-            text-decoration: none;
-        }
-
-    </style>
 
 </head>
 
