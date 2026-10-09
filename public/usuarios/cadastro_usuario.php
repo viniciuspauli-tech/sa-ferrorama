@@ -18,8 +18,8 @@ $erro = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $email = trim($_POST['email'] ?? '');
-    $senha = $_POST['senha'] ?? '';
+    $email           = trim($_POST['email'] ?? '');
+    $senha           = $_POST['senha'] ?? '';
     $confirmar_senha = $_POST['confirmar_senha'] ?? '';
     $perfil = $_POST['perfil'] ?? 'usuario';
 
@@ -28,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erro = "Requisição inválida.";
 
     } elseif ($email === '' || $senha === '' || $confirmar_senha === '') {
-
         $erro = "Preencha todos os campos.";
 
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -43,9 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $erro = "As senhas não são iguais.";
 
-    } elseif ($perfil !== 'usuario' && $perfil !== 'administrador') {
-
-        $erro = "Perfil inválido.";
+    } elseif ($perfil !== 'usuario' && $perfil !== 'adm') {
+        $erro = "perfil inválido.";
 
     } else {
 
@@ -81,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Cadastra o usuário
                 $stmt = mysqli_prepare(
                     $conn,
-                    "INSERT INTO usuarios (email, senha, perfil) VALUES (?, ?, ?)"
+                    "INSERT INTO usuarios (nome, email, senha, perfil) VALUES (?, ?, ?, ?)"
                 );
 
                 if (!$stmt) {
@@ -89,24 +87,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $erro = "Erro ao preparar o cadastro.";
 
                 } else {
-
-                    mysqli_stmt_bind_param(
-                        $stmt,
-                        "sss",
-                        $email,
-                        $senha_hash,
-                        $perfil
-                    );
+                    mysqli_stmt_bind_param($stmt, "sss", $email, $senha_hash, $perfil);
 
                     if (mysqli_stmt_execute($stmt)) {
 
                         mysqli_stmt_close($stmt);
 
                         $_SESSION['msg'] = "Usuário cadastrado com sucesso!";
-
-                        header('Location: pagina_adm.php');
-                        exit;
-
+                        header('Location: adm.php');
+                        exit();
                     } else {
 
                         $erro = "Não foi possível cadastrar o usuário.";
@@ -158,6 +147,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             value="<?= htmlspecialchars($_SESSION['csrf']) ?>"
         >
 
+        <label for="nome">Nome</label>
+<input
+    type="text"
+    id="nome"
+    name="nome"
+    maxlength="100"
+    value="<?= htmlspecialchars($nome ?? '') ?>"
+    required
+>
         <label for="email">E-mail</label>
 
         <input
@@ -189,22 +187,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             required
         >
 
-        <label for="perfil">Perfil</label>
-
-        <select
-            id="perfil"
-            name="perfil"
-            required
-        >
-
-            <option value="usuario">
-                Usuário comum
-            </option>
-
-            <option value="administrador">
-                Administrador
-            </option>
-
+        <label for="perfil">Cargo</label>
+        <select id="perfil" name="perfil" required>
+            <option value=usuario">Usuário comum</option>
+            <option value="adm">Administrador</option>
         </select>
 
         <button type="submit">
