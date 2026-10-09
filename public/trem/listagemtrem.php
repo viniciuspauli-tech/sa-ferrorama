@@ -1,6 +1,7 @@
 <?php
 
-require_once "../../infra/connect.php";
+require_once __DIR__ . "/../../infra/auth.php";
+require_once __DIR__ . "/../../infra/connect.php";
 
 $busca = trim($_GET["busca"] ?? "");
 $statusFiltro = $_GET["status"] ?? "";
