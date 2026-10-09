@@ -1,6 +1,7 @@
 <?php
 
-require_once "../infra/connect.php";
+require_once __DIR__ . "/../infra/adm.php";
+require_once __DIR__ . "/../infra/connect.php";
 
 $mensagemErro = "";
 $mensagemSucesso = "";
