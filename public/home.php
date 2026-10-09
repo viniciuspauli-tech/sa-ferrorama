@@ -36,76 +36,7 @@ $eAdmin = ($_SESSION["usuario_perfil"] === "administrador");
 
     <title>Meu perfil - Ferrorama</title>
 
-    <style>
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background: #f2f2f2;
-            padding: 30px;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-        }
-
-        .botoes {
-            margin-bottom: 20px;
-        }
-
-        .botao {
-            display: inline-block;
-            padding: 10px 15px;
-            background: #111827;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            margin-right: 8px;
-        }
-
-        .botao:hover {
-            background: #374151;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-
-        th {
-            background: #f3f4f6;
-        }
-
-        .voltar {
-            display: inline-block;
-            margin-top: 20px;
-            margin-right: 15px;
-            color: #333;
-            text-decoration: none;
-        }
-
-    </style>
-
+    
 </head>
 
 <body>
