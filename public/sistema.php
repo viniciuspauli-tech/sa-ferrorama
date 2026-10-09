@@ -1,16 +1,17 @@
-
+```php
 <?php
 
-require_once "../infra/auth.php";
+require_once __DIR__ . "/../infra/auth.php";
+
+$ehAdministrador =
+    ($_SESSION["usuario_perfil"] ?? "") === "administrador";
 
 ?>
 
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -21,7 +22,6 @@ require_once "../infra/auth.php";
     <title>Ferrorama - Selecione uma categoria</title>
 
     <style>
-
         * {
             margin: 0;
             padding: 0;
@@ -35,10 +35,12 @@ require_once "../infra/auth.php";
 
         header {
             background: #0f172a;
-            height: 200px;
+            min-height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 30px;
+            text-align: center;
         }
 
         header h1 {
@@ -58,7 +60,8 @@ require_once "../infra/auth.php";
 
         .card-btn {
             width: 240px;
-            height: 95px;
+            min-height: 95px;
+            padding: 15px;
             border: 3px solid black;
             border-radius: 22px;
             background: white;
@@ -69,6 +72,7 @@ require_once "../infra/auth.php";
             display: flex;
             align-items: center;
             justify-content: center;
+            text-align: center;
             font-weight: 500;
             transition: background 0.2s;
         }
@@ -77,57 +81,71 @@ require_once "../infra/auth.php";
             background: #dcdcdc;
         }
 
-    </style>
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 30px;
+            }
 
+            .container {
+                padding: 40px 20px;
+                gap: 25px;
+            }
+
+            .card-btn {
+                width: 100%;
+                max-width: 320px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
     <header>
-
         <h1>Selecione uma categoria</h1>
-
     </header>
-
 
     <div class="container">
 
+        <!-- Disponível para todos os usuários autorizados -->
         <a
             class="card-btn"
             href="sensor.php"
         >
-            Trens e Sensor
+            Trens e Sensores
         </a>
 
-
+        <!-- Consulta de trens disponível para todos -->
         <a
             class="card-btn"
             href="trem/listagemtrem.php"
         >
-            Gerenciar Trens
+            Consultar Trens
         </a>
 
+        <?php if ($ehAdministrador): ?>
 
-        <a
-            class="card-btn"
-            href="rotas/rotas.php"
-        >
-            Gerenciar Rotas
-        </a>
+            <!-- Somente administrador -->
+            <a
+                class="card-btn"
+                href="rotas/rotas.php"
+            >
+                Gerenciar Rotas
+            </a>
 
+            <a
+                class="card-btn"
+                href="cadastro_item.php"
+            >
+                Cadastrar Sensor
+            </a>
 
-        <a
-            class="card-btn"
-            href="cadastro_item.php"
-        >
-            Cadastrar Sensor
-        </a>
-
-
-        <?php if (
-            isset($_SESSION["usuario_perfil"]) &&
-            $_SESSION["usuario_perfil"] === "administrador"
-        ): ?>
+            <a
+                class="card-btn"
+                href="trem/cadastrotrem.php"
+            >
+                Cadastrar Trem
+            </a>
 
             <a
                 class="card-btn"
@@ -137,7 +155,6 @@ require_once "../infra/auth.php";
             </a>
 
         <?php endif; ?>
-
 
         <a
             class="card-btn"
@@ -149,6 +166,5 @@ require_once "../infra/auth.php";
     </div>
 
 </body>
-
 </html>
 ```

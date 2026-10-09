@@ -1,21 +1,27 @@
-
+```php
 <?php
 
 require_once __DIR__ . "/../../infra/auth.php";
 require_once __DIR__ . "/../../infra/connect.php";
 
+// Verifica o perfil do usuário logado
 $ehAdministrador =
     ($_SESSION["usuario_perfil"] ?? "") === "administrador";
 
+// Filtros
 $busca = trim($_GET["busca"] ?? "");
 $statusFiltro = $_GET["status"] ?? "";
 
 $statusValidos = ["ativo", "inativo", "manutencao", "falha"];
 
-if ($statusFiltro !== "" && !in_array($statusFiltro, $statusValidos, true)) {
+if (
+    $statusFiltro !== "" &&
+    !in_array($statusFiltro, $statusValidos, true)
+) {
     $statusFiltro = "";
 }
 
+// Consulta dos trens
 $sql = "
     SELECT
         id,
@@ -42,7 +48,8 @@ if ($busca !== "") {
         )
     ";
 
-    $like = "%{$busca}%";
+    $like = "%" . $busca . "%";
+
     $tipos .= "sss";
     $params[] = $like;
     $params[] = $like;
@@ -51,6 +58,7 @@ if ($busca !== "") {
 
 if ($statusFiltro !== "") {
     $sql .= " AND status = ?";
+
     $tipos .= "s";
     $params[] = $statusFiltro;
 }
@@ -77,8 +85,10 @@ if (!$stmt->execute()) {
 
 $resultado = $stmt->get_result();
 $trens = $resultado->fetch_all(MYSQLI_ASSOC);
+
 $stmt->close();
 
+// Escapa textos exibidos na página
 function escapar($valor): string
 {
     return htmlspecialchars(
@@ -88,17 +98,22 @@ function escapar($valor): string
     );
 }
 
+// Define a cor do status
 function corStatusTrem($status): string
 {
     switch ($status) {
         case "ativo":
             return "success";
+
         case "inativo":
             return "secondary";
+
         case "manutencao":
             return "warning";
+
         case "falha":
             return "danger";
+
         default:
             return "secondary";
     }
@@ -110,7 +125,11 @@ function corStatusTrem($status): string
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Listagem de Trens - Ferrorama</title>
 
@@ -126,31 +145,45 @@ function corStatusTrem($status): string
 
     <!-- CABEÇALHO -->
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+
         <h1>Trens</h1>
 
         <div class="d-flex gap-2 flex-wrap">
 
-            <a href="../sistema.php" class="btn btn-primary">
+            <a
+                href="../sistema.php"
+                class="btn btn-primary"
+            >
                 Voltar ao Sistema
             </a>
 
-            <a href="../rotas/rotas.php" class="btn btn-secondary">
-                Rotas
-            </a>
-
             <?php if ($ehAdministrador): ?>
-                <a href="cadastrotrem.php" class="btn btn-primary">
+
+                <a
+                    href="../rotas/rotas.php"
+                    class="btn btn-secondary"
+                >
+                    Rotas
+                </a>
+
+                <a
+                    href="cadastrotrem.php"
+                    class="btn btn-primary"
+                >
                     Cadastrar trem
                 </a>
+
             <?php endif; ?>
 
         </div>
+
     </div>
 
     <!-- FILTROS -->
-    <form method="GET" class="row g-2 mb-4">
+    <form method="GET" action="listagemtrem.php" class="row g-2 mb-4">
 
         <div class="col-md-5">
+
             <input
                 type="text"
                 name="busca"
@@ -159,46 +192,76 @@ function corStatusTrem($status): string
                 maxlength="100"
                 value="<?= escapar($busca) ?>"
             >
+
         </div>
 
         <div class="col-md-3">
-            <select name="status" class="form-select">
-                <option value="">Todos os status</option>
 
-                <option value="ativo" <?= $statusFiltro === "ativo" ? "selected" : "" ?>>
+            <select name="status" class="form-select">
+
+                <option value="">
+                    Todos os status
+                </option>
+
+                <option
+                    value="ativo"
+                    <?= $statusFiltro === "ativo" ? "selected" : "" ?>
+                >
                     Ativo
                 </option>
 
-                <option value="inativo" <?= $statusFiltro === "inativo" ? "selected" : "" ?>>
+                <option
+                    value="inativo"
+                    <?= $statusFiltro === "inativo" ? "selected" : "" ?>
+                >
                     Inativo
                 </option>
 
-                <option value="manutencao" <?= $statusFiltro === "manutencao" ? "selected" : "" ?>>
+                <option
+                    value="manutencao"
+                    <?= $statusFiltro === "manutencao" ? "selected" : "" ?>
+                >
                     Manutenção
                 </option>
 
-                <option value="falha" <?= $statusFiltro === "falha" ? "selected" : "" ?>>
+                <option
+                    value="falha"
+                    <?= $statusFiltro === "falha" ? "selected" : "" ?>
+                >
                     Falha
                 </option>
+
             </select>
+
         </div>
 
         <div class="col-md-2">
-            <button type="submit" class="btn btn-dark w-100">
+
+            <button
+                type="submit"
+                class="btn btn-dark w-100"
+            >
                 Buscar
             </button>
+
         </div>
 
         <div class="col-md-2">
-            <a href="listagemtrem.php" class="btn btn-outline-secondary w-100">
+
+            <a
+                href="listagemtrem.php"
+                class="btn btn-outline-secondary w-100"
+            >
                 Limpar
             </a>
+
         </div>
 
     </form>
 
-    <!-- TABELA -->
+    <!-- TABELA DE TRENS -->
     <div class="card shadow-sm">
+
         <div class="card-body">
 
             <div class="table-responsive">
@@ -206,6 +269,7 @@ function corStatusTrem($status): string
                 <table class="table table-hover align-middle">
 
                     <thead class="table-dark">
+
                         <tr>
                             <th>ID</th>
                             <th>Identificador</th>
@@ -220,6 +284,7 @@ function corStatusTrem($status): string
                                 <th>Ações</th>
                             <?php endif; ?>
                         </tr>
+
                     </thead>
 
                     <tbody>
@@ -227,12 +292,14 @@ function corStatusTrem($status): string
                     <?php if (empty($trens)): ?>
 
                         <tr>
+
                             <td
                                 colspan="<?= $ehAdministrador ? 9 : 8 ?>"
-                                class="text-center"
+                                class="text-center py-4"
                             >
                                 Nenhum trem encontrado.
                             </td>
+
                         </tr>
 
                     <?php else: ?>
@@ -240,7 +307,10 @@ function corStatusTrem($status): string
                         <?php foreach ($trens as $trem): ?>
 
                             <tr>
-                                <td><?= (int) $trem["id"] ?></td>
+
+                                <td>
+                                    <?= (int) $trem["id"] ?>
+                                </td>
 
                                 <td>
                                     <strong>
@@ -248,12 +318,22 @@ function corStatusTrem($status): string
                                     </strong>
                                 </td>
 
-                                <td><?= escapar($trem["modelo"]) ?></td>
+                                <td>
+                                    <?= escapar($trem["modelo"]) ?>
+                                </td>
 
                                 <td>
-                                    <span class="badge bg-<?= escapar(corStatusTrem($trem["status"])) ?>">
-                                        <?= escapar(ucfirst($trem["status"])) ?>
+
+                                    <span class="badge bg-<?= escapar(
+                                        corStatusTrem($trem["status"])
+                                    ) ?>">
+
+                                        <?= escapar(
+                                            ucfirst($trem["status"])
+                                        ) ?>
+
                                     </span>
+
                                 </td>
 
                                 <td>
@@ -267,7 +347,8 @@ function corStatusTrem($status): string
 
                                 <td>
                                     <?= escapar(
-                                        $trem["localizacao_atual"] ?? "Não informado"
+                                        $trem["localizacao_atual"]
+                                        ?? "Não informado"
                                     ) ?>
                                 </td>
 
@@ -281,27 +362,37 @@ function corStatusTrem($status): string
                                 </td>
 
                                 <td>
+
                                     <?php if (!empty($trem["atualizado_em"])): ?>
+
                                         <?= escapar(
                                             date(
                                                 "d/m/Y H:i",
                                                 strtotime($trem["atualizado_em"])
                                             )
                                         ) ?>
+
                                     <?php else: ?>
+
                                         —
+
                                     <?php endif; ?>
+
                                 </td>
 
                                 <?php if ($ehAdministrador): ?>
+
                                     <td>
+
                                         <a
                                             href="editartrem.php?id=<?= (int) $trem["id"] ?>"
                                             class="btn btn-sm btn-outline-primary"
                                         >
                                             Editar
                                         </a>
+
                                     </td>
+
                                 <?php endif; ?>
 
                             </tr>
@@ -317,9 +408,11 @@ function corStatusTrem($status): string
             </div>
 
         </div>
+
     </div>
 
 </div>
 
 </body>
 </html>
+```
