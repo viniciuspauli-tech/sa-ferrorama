@@ -141,13 +141,6 @@ $ehAdministrador =
 
             <a
                 class="card-btn"
-                href="trem/cadastrotrem.php"
-            >
-                Cadastrar Trem
-            </a>
-
-            <a
-                class="card-btn"
                 href="usuarios/pagina_adm.php"
             >
                 Usuários
