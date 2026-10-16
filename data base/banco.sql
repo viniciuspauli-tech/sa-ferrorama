@@ -46,12 +46,21 @@ CREATE TABLE sensores (
 CREATE TABLE rotas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
+    descricao TEXT NOT NULL,
     origem VARCHAR(100) NOT NULL,
     destino VARCHAR(100) NOT NULL,
     distancia_km DECIMAL(8,2) NOT NULL,
+    trem_id INT NOT NULL,
     tempo_estimado VARCHAR(20) NOT NULL,
-    status ENUM('ativa', 'inativa', 'manutencao') NOT NULL DEFAULT 'ativa'
-) ENGINE=InnoDB;
+    status ENUM('ativa', 'inativa', 'manutencao')
+        NOT NULL DEFAULT 'ativa',
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_rotas_trem
+        FOREIGN KEY (trem_id)
+        REFERENCES trens(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
 
 -- RF13/RN5: leituras dos sensores (RESTRICT impede excluir sensor com dados)
 CREATE TABLE dados_sensor (
