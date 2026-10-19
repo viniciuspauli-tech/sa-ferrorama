@@ -240,3 +240,8 @@ th {
     color: #333;
     text-decoration: none;
 }
+.mensagem-erro {
+    color: #c0392b;
+    font-size: 0.85rem;
+    margin: 6px 0 0;
+}

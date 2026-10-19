@@ -3,60 +3,45 @@
 require_once "../../infra/adm.php";
 require_once "../../infra/connect.php";
 
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+header("Content-Type: application/json; charset=utf-8");
 
-    http_response_code(405);
-    die("Método não permitido.");
-
+function responder(bool $sucesso, string $mensagem, int $status = 200): void
+{
+    http_response_code($status);
+    echo json_encode([
+        "sucesso"  => $sucesso,
+        "mensagem" => $mensagem
+    ]);
+    exit;
 }
 
-$id = filter_input(
-    INPUT_POST,
-    "id",
-    FILTER_VALIDATE_INT
-);
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    responder(false, "Método não permitido.", 405);
+}
+
+$id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
 
 if (!$id) {
-
-    die("ID de usuário inválido.");
-
+    responder(false, "ID de usuário inválido.", 400);
 }
-
-/*
- * Impede o administrador de excluir
- * a própria conta por acidente.
- */
 
 if ($id == $_SESSION["usuario_id"]) {
-
-    die("Você não pode excluir sua própria conta.");
+    responder(false, "Você não pode excluir a própria conta.", 403);
 }
 
-$sql = "DELETE FROM usuarios WHERE id = ?";
-
+$sql  = "DELETE FROM usuarios WHERE id = ?";
 $stmt = mysqli_prepare($conn, $sql);
 
 if (!$stmt) {
-
-    die("Não foi possível preparar a exclusão.");
-
+    responder(false, "Não foi possível preparar a exclusão.", 500);
 }
 
-mysqli_stmt_bind_param(
-    $stmt,
-    "i",
-    $id
-);
+mysqli_stmt_bind_param($stmt, "i", $id);
 
 if (mysqli_stmt_execute($stmt)) {
-
-    header("Location: pagina_adm.php");
-    exit;
-
-} else {
-
-    die("Não foi possível excluir o usuário.");
-
+    mysqli_stmt_close($stmt);
+    responder(true, "Usuário excluído com sucesso.");
 }
 
 mysqli_stmt_close($stmt);
+responder(false, "Não foi possível excluir o usuário.", 500);

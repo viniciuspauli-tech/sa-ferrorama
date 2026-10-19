@@ -33,6 +33,14 @@ if (!$resultado) {
 
     <link rel="stylesheet" href="../../style/style.css">
 
+    <style>
+        .mensagem-erro {
+            color: #c0392b;
+            font-size: 0.85rem;
+            margin: 6px 0 0;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -55,9 +63,9 @@ if (!$resultado) {
 
         <div class="botoes">
 
-<a href="cadastro_usuario.php" class="botao">Cadastrar usuário</a>
-<a href="../home.php" class="botao">Meu perfil</a>
-<a href="../sistema.php" class="botao">Sistema</a>
+            <a href="cadastro_usuario.php" class="botao">Cadastrar usuário</a>
+            <a href="../home.php" class="botao">Meu perfil</a>
+            <a href="../sistema.php" class="botao">Sistema</a>
 
         </div>
 
@@ -120,7 +128,6 @@ if (!$resultado) {
                             method="POST"
                             action="excluir_usuario.php"
                             class="form-excluir"
-                            onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');"
                         >
                             <input
                                 type="hidden"
@@ -133,6 +140,7 @@ if (!$resultado) {
                             >
                                 Excluir
                             </button>
+                            <p class="mensagem-erro"></p>
                         </form>
 
                     </td>
@@ -154,6 +162,38 @@ if (!$resultado) {
     </table>
 
 </div>
+
+<script>
+    document.querySelectorAll(".form-excluir").forEach(form => {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const mensagem = form.querySelector(".mensagem-erro");
+            mensagem.textContent = "";
+
+            if (!confirm("Tem certeza que deseja excluir este usuário?")) {
+                return;
+            }
+
+            try {
+                const resposta = await fetch(form.action, {
+                    method: "POST",
+                    body: new FormData(form)
+                });
+
+                const dados = await resposta.json();
+
+                if (dados.sucesso) {
+                    form.closest("tr").remove();
+                } else {
+                    mensagem.textContent = dados.mensagem;
+                }
+            } catch (erro) {
+                mensagem.textContent = "Erro de comunicação com o servidor.";
+            }
+        });
+    });
+</script>
 
 </body>
 
