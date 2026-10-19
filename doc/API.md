@@ -197,15 +197,15 @@ Em resumo: o sistema web entrega a **página pronta**; a API entrega os **dados*
 ```php
 <?php
 $ch = curl_init('https://ferrorama.local/api/trens');
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // devolver o resultado como texto
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/json']);
 
-$resposta = curl_exec($ch);                      // faz a chamada
+$resposta = curl_exec($ch);                     
 $status   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 if ($status === 200) {
-    $trens = json_decode($resposta, true);       // JSON -> array
+    $trens = json_decode($resposta, true);    
     foreach ($trens as $trem) {
         echo $trem['nome'] . ' - ' . $trem['status'] . '<br>';
     }
@@ -222,14 +222,13 @@ A API em PHP lê o pedido, consulta o banco e **responde em JSON**:
 
 ```php
 <?php
-header('Content-Type: application/json; charset=utf-8'); // avisa que a resposta é JSON
-
+header('Content-Type: application/json; charset=utf-8'); 
 $pdo = new PDO('mysql:host=localhost;dbname=ferrorama;charset=utf8mb4', $usuario, $senha);
 
 $stmt = $pdo->query('SELECT id, nome, status FROM trens');
 $trens = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-echo json_encode($trens);                                  // devolve a lista
+echo json_encode($trens);                                  
 ```
 
 Dessa forma, qualquer sistema (site, app, sensor) consegue acessar os trens, **sem acesso direto ao banco**. A API também escolhe o que mostrar: por exemplo, nunca devolve senhas.
