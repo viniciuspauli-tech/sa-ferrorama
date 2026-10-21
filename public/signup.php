@@ -140,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <p>
                     Crie sua conta e descubra uma nova forma
-                    de acompanhar sua experiência na Ferrorama.
+                    de acompanhar sua experiência no Ferrorama.
                 </p>
             </div>
 

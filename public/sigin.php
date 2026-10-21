@@ -107,7 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <p>
                     Entre na sua conta e continue acompanhando
-                    sua experiência na Ferrorama.
+                    sua experiência no Ferrorama.
                 </p>
 
             </div>
