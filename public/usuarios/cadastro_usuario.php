@@ -15,10 +15,12 @@ if (empty($_SESSION['csrf'])) {
 }
 
 $erro = "";
-
+$nome = "";
+$email = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+    $nome            = trim($_POST['nome'] ?? '');
     $email           = trim($_POST['email'] ?? '');
     $senha           = $_POST['senha'] ?? '';
     $confirmar_senha = $_POST['confirmar_senha'] ?? '';
@@ -28,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $erro = "Requisição inválida.";
 
-    } elseif ($email === '' || $senha === '' || $confirmar_senha === '') {
+    } elseif ($nome === '' || $email === '' || $senha === '' || $confirmar_senha === '') {
         $erro = "Preencha todos os campos.";
 
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -43,8 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $erro = "As senhas não são iguais.";
 
-    } elseif ($perfil !== 'usuario' && $perfil !== 'adm') {
-        $erro = "perfil inválido.";
+    } elseif ($perfil !== 'usuario' && $perfil !== 'administrador') {
+
+        $erro = "Perfil inválido.";
 
     } else {
 
@@ -88,14 +91,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $erro = "Erro ao preparar o cadastro.";
 
                 } else {
-                    mysqli_stmt_bind_param($stmt, "sss", $email, $senha_hash, $perfil);
+                    mysqli_stmt_bind_param($stmt, "ssss", $nome, $email, $senha_hash, $perfil);
 
                     if (mysqli_stmt_execute($stmt)) {
 
                         mysqli_stmt_close($stmt);
 
                         $_SESSION['msg'] = "Usuário cadastrado com sucesso!";
-                        header('Location: adm.php');
+                        header('Location: pagina_adm.php');
                         exit();
                     } else {
 
@@ -190,8 +193,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <label for="perfil">Cargo</label>
         <select id="perfil" name="perfil" required>
-            <option value=usuario">Usuário comum</option>
-            <option value="adm">Administrador</option>
+            <option value="usuario">Usuário comum</option>
+            <option value="administrador">Administrador</option>
         </select>
 
         <button type="submit">
