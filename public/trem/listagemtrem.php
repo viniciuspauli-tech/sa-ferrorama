@@ -1,3 +1,4 @@
+
 <?php
 
 require_once __DIR__ . "/../../infra/auth.php";
@@ -258,6 +259,40 @@ function corStatusTrem($status): string
 
     </form>
 
+    <!-- MENSAGENS -->
+    <?php if (isset($_GET["sucesso"]) && $_GET["sucesso"] === "excluido"): ?>
+
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            Trem excluído com sucesso!
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Fechar"
+            ></button>
+        </div>
+
+    <?php elseif (isset($_GET["erro"]) && $_GET["erro"] === "dependencias"): ?>
+
+        <div class="alert alert-danger" role="alert">
+            Não foi possível excluir o trem porque existem registros relacionados a ele.
+        </div>
+
+    <?php elseif (isset($_GET["erro"]) && $_GET["erro"] === "nao_encontrado"): ?>
+
+        <div class="alert alert-warning" role="alert">
+            O trem não foi encontrado ou já foi excluído.
+        </div>
+
+    <?php elseif (isset($_GET["erro"]) && $_GET["erro"] === "id_invalido"): ?>
+
+        <div class="alert alert-warning" role="alert">
+            Identificador do trem inválido.
+        </div>
+
+    <?php endif; ?>
+
     <!-- TABELA DE TRENS -->
     <div class="card shadow-sm">
 
@@ -291,14 +326,12 @@ function corStatusTrem($status): string
                     <?php if (empty($trens)): ?>
 
                         <tr>
-
                             <td
                                 colspan="<?= $ehAdministrador ? 9 : 8 ?>"
                                 class="text-center py-4"
                             >
                                 Nenhum trem encontrado.
                             </td>
-
                         </tr>
 
                     <?php else: ?>
@@ -322,17 +355,11 @@ function corStatusTrem($status): string
                                 </td>
 
                                 <td>
-
                                     <span class="badge bg-<?= escapar(
                                         corStatusTrem($trem["status"])
                                     ) ?>">
-
-                                        <?= escapar(
-                                            ucfirst($trem["status"])
-                                        ) ?>
-
+                                        <?= escapar(ucfirst($trem["status"])) ?>
                                     </span>
-
                                 </td>
 
                                 <td>
@@ -361,7 +388,6 @@ function corStatusTrem($status): string
                                 </td>
 
                                 <td>
-
                                     <?php if (!empty($trem["atualizado_em"])): ?>
 
                                         <?= escapar(
@@ -376,20 +402,43 @@ function corStatusTrem($status): string
                                         —
 
                                     <?php endif; ?>
-
                                 </td>
 
                                 <?php if ($ehAdministrador): ?>
 
                                     <td>
+                                        <div class="d-flex gap-2">
 
-                                        <a
-                                            href="editartrem.php?id=<?= (int) $trem["id"] ?>"
-                                            class="btn btn-sm btn-outline-primary"
-                                        >
-                                            Editar
-                                        </a>
+                                            <a
+                                                href="editartrem.php?id=<?= (int) $trem["id"] ?>"
+                                                class="btn btn-sm btn-outline-primary"
+                                            >
+                                                Editar
+                                            </a>
 
+                                            <form
+                                                method="POST"
+                                                action="../trem_excluir.php"
+                                                onsubmit="return confirm('Tem certeza que deseja excluir este trem? Esta ação não pode ser desfeita.');"
+                                                class="m-0"
+                                            >
+
+                                                <input
+                                                    type="hidden"
+                                                    name="id"
+                                                    value="<?= (int) $trem["id"] ?>"
+                                                >
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                >
+                                                    Excluir
+                                                </button>
+
+                                            </form>
+
+                                        </div>
                                     </td>
 
                                 <?php endif; ?>
@@ -412,6 +461,7 @@ function corStatusTrem($status): string
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
-```

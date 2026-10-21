@@ -4,46 +4,69 @@
 require_once __DIR__ . "/../infra/adm.php";
 require_once __DIR__ . "/../infra/connect.php";
 
+// Aceita somente requisições POST
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: trens.php");
+    header("Location: trem/listagemtrem.php");
     exit;
 }
 
+// Valida o ID recebido
 $id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
 
 if (!$id || $id < 1) {
-    header("Location: trens.php");
+    header("Location: trem/listagemtrem.php?erro=id_invalido");
     exit;
 }
 
-$stmt = mysqli_prepare(
-    $conn,
-    "DELETE FROM trens WHERE id = ?"
-);
-
-mysqli_stmt_bind_param($stmt, "i", $id);
-
 try {
 
-    mysqli_stmt_execute($stmt);
+    // Prepara a exclusão com segurança
+    $stmt = $conn->prepare(
+        "DELETE FROM trens WHERE id = ?"
+    );
 
-    if (mysqli_stmt_affected_rows($stmt) === 0) {
-        mysqli_stmt_close($stmt);
-        header("Location: trens.php?erro=nao_encontrado");
+    if (!$stmt) {
+        throw new RuntimeException(
+            "Não foi possível preparar a exclusão."
+        );
+    }
+
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+
+    $excluido = $stmt->affected_rows > 0;
+
+    $stmt->close();
+
+    if (!$excluido) {
+        header(
+            "Location: trem/listagemtrem.php?erro=nao_encontrado"
+        );
         exit;
     }
 
-    mysqli_stmt_close($stmt);
-
-    header("Location: trens.php?sucesso=excluido");
+    header(
+        "Location: trem/listagemtrem.php?sucesso=excluido"
+    );
     exit;
 
 } catch (mysqli_sql_exception $e) {
 
-    mysqli_stmt_close($stmt);
+    if (isset($stmt) && $stmt instanceof mysqli_stmt) {
+        $stmt->close();
+    }
 
     error_log($e->getMessage());
 
-    header("Location: trens.php?erro=dependencias");
+    header(
+        "Location: trem/listagemtrem.php?erro=dependencias"
+    );
     exit;
+
+} catch (RuntimeException $e) {
+
+    error_log($e->getMessage());
+
+    http_response_code(500);
+    exit("Não foi possível excluir o trem.");
 }
