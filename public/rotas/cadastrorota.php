@@ -191,11 +191,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <label class="form-label">Trem</label>
                             <select name="trem_id" class="form-select" required>
                                 <option value="">Selecione um trem</option>
+                                
                                 <?php foreach ($trens as $trem): ?>
+                                    
                                     <option value="<?= (int)$trem["id"] ?>"
                                         <?= (int)$trem_id === (int)$trem["id"] ? "selected" : "" ?>>
-                                        <?= htmlspecialchars($trem["nome"]) ?>
-                                    </option>
+<?= htmlspecialchars($trem["modelo"]) ?>                                    </option>
                                 <?php endforeach; ?>
                             </select>
                             <?php if (empty($trens)): ?>
