@@ -1,3 +1,4 @@
+
 CREATE DATABASE IF NOT EXISTS ferrorama
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
@@ -9,7 +10,8 @@ CREATE TABLE usuarios (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,
-    perfil ENUM('usuario', 'administrador') NOT NULL DEFAULT 'usuario',
+    perfil ENUM('usuario', 'administrador')
+        NOT NULL DEFAULT 'usuario',
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -17,32 +19,28 @@ CREATE TABLE trens (
     id INT AUTO_INCREMENT PRIMARY KEY,
     identificador VARCHAR(50) NOT NULL UNIQUE,
     modelo VARCHAR(100) NOT NULL,
-    status ENUM('ativo', 'inativo', 'manutencao', 'falha') NOT NULL DEFAULT 'inativo',
+    status ENUM('ativo', 'inativo', 'manutencao', 'falha')
+        NOT NULL DEFAULT 'inativo',
     velocidade_atual DECIMAL(6,2) DEFAULT 0,
     localizacao_atual VARCHAR(150) DEFAULT NULL,
     consumo_energia DECIMAL(8,2) DEFAULT NULL,
     criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- Sensores independentes dos trens
 CREATE TABLE sensores (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     localizacao VARCHAR(150) NOT NULL,
     tipo_dado VARCHAR(100) NOT NULL,
-    trem_id INT NOT NULL,
 
-    -- RN4: mesmo nome + localização não se repete no mesmo trem
-    UNIQUE KEY uq_sensor_trem (nome, localizacao, trem_id),
-
-    CONSTRAINT fk_sensores_trem
-        FOREIGN KEY (trem_id)
-        REFERENCES trens(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
+    -- Impede duplicar o mesmo sensor na mesma localização
+    UNIQUE KEY uq_sensor_localizacao (nome, localizacao)
 ) ENGINE=InnoDB;
 
--- Tabela usada pelas telas de rotas (public/rotas)
+-- Rotas continuam associadas aos trens
 CREATE TABLE rotas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -55,14 +53,15 @@ CREATE TABLE rotas (
     status ENUM('ativa', 'inativa', 'manutencao')
         NOT NULL DEFAULT 'ativa',
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
     CONSTRAINT fk_rotas_trem
         FOREIGN KEY (trem_id)
         REFERENCES trens(id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE
-);
+) ENGINE=InnoDB;
 
--- RF13/RN5: leituras dos sensores (RESTRICT impede excluir sensor com dados)
+-- Leituras dos sensores
 CREATE TABLE dados_sensor (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sensor_id INT NOT NULL,
@@ -77,6 +76,7 @@ CREATE TABLE dados_sensor (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+-- Trens iniciais
 INSERT INTO trens (
     identificador,
     modelo,

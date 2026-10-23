@@ -5,7 +5,6 @@ require_once __DIR__ . "/../../infra/adm.php";
 require_once __DIR__ . "/../../infra/connect.php";
 
 $mensagemErro = "";
-$mensagemSucesso = "";
 
 $identificador = "";
 $modelo = "";
@@ -13,23 +12,6 @@ $status = "ativo";
 $velocidade = "0.00";
 $localizacao = "";
 $consumo = "0.00";
-$responsavelId = "";
-
-// Buscar usuários cadastrados
-$sqlUsuarios = "
-    SELECT id, nome, email
-    FROM usuarios
-    ORDER BY nome ASC
-";
-
-$resultadoUsuarios = $conn->query($sqlUsuarios);
-
-if (!$resultadoUsuarios) {
-    error_log($conn->error);
-    die("Não foi possível carregar os usuários.");
-}
-
-$usuarios = $resultadoUsuarios->fetch_all(MYSQLI_ASSOC);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
@@ -39,9 +21,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $velocidade = $_POST["velocidade_atual"] ?? "0";
     $localizacao = trim($_POST["localizacao_atual"] ?? "");
     $consumo = $_POST["consumo_energia"] ?? "0";
-    $responsavelId = trim($_POST["responsavel_id"] ?? "");
 
-    $statusValidos = ["ativo", "inativo", "manutencao", "falha"];
+    $statusValidos = [
+        "ativo",
+        "inativo",
+        "manutencao",
+        "falha"
+    ];
 
     if ($identificador === "" || $modelo === "") {
 
@@ -53,39 +39,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     } elseif (
         !is_numeric($velocidade) ||
-        (float) $velocidade < 0
+        (float) $velocidade < 0 ||
+        (float) $velocidade > 9999.99
     ) {
 
         $mensagemErro = "Informe uma velocidade válida.";
 
     } elseif (
         !is_numeric($consumo) ||
-        (float) $consumo < 0
+        (float) $consumo < 0 ||
+        (float) $consumo > 999999.99
     ) {
 
         $mensagemErro = "Informe um consumo de energia válido.";
 
     } elseif (
-        $responsavelId !== "" &&
-        (
-            !ctype_digit($responsavelId) ||
-            !in_array(
-                (int) $responsavelId,
-                array_column($usuarios, "id")
-            )
-        )
+        strlen($identificador) > 50 ||
+        strlen($modelo) > 100 ||
+        strlen($localizacao) > 150
     ) {
 
-        $mensagemErro = "Selecione um usuário responsável válido.";
+        $mensagemErro = "Um ou mais campos ultrapassam o tamanho permitido.";
 
     } else {
 
         $velocidade = (float) $velocidade;
         $consumo = (float) $consumo;
 
-        $responsavelIdBanco = (
-            $responsavelId === ""
-        ) ? null : (int) $responsavelId;
+        $localizacaoBanco = $localizacao === ""
+            ? null
+            : $localizacao;
 
         $sql = "
             INSERT INTO trens (
@@ -94,10 +77,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 status,
                 velocidade_atual,
                 localizacao_atual,
-                consumo_energia,
-                responsavel_id
+                consumo_energia
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?)
         ";
 
         $stmt = $conn->prepare($sql);
@@ -105,14 +87,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($stmt) {
 
             $stmt->bind_param(
-                "sssdsdi",
+                "sssdsd",
                 $identificador,
                 $modelo,
                 $status,
                 $velocidade,
-                $localizacao,
-                $consumo,
-                $responsavelIdBanco
+                $localizacaoBanco,
+                $consumo
             );
 
             try {
@@ -135,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     error_log($e->getMessage());
 
                     $mensagemErro =
-                        "Não foi possível cadastrar o trem. Tente novamente.";
+                        "Não foi possível cadastrar o trem. Verifique os dados e tente novamente.";
                 }
 
                 $stmt->close();
@@ -159,6 +140,7 @@ function escapar($valor): string
         "UTF-8"
     );
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -201,7 +183,7 @@ function escapar($valor): string
 
                 <div class="mb-3">
                     <label for="identificador" class="form-label">
-                        Identificador (Ex: TR-005)
+                        Identificador (Ex.: TR-005)
                     </label>
 
                     <input
@@ -216,7 +198,9 @@ function escapar($valor): string
                 </div>
 
                 <div class="mb-3">
-                    <label for="modelo" class="form-label">Modelo</label>
+                    <label for="modelo" class="form-label">
+                        Modelo
+                    </label>
 
                     <input
                         type="text"
@@ -230,7 +214,9 @@ function escapar($valor): string
                 </div>
 
                 <div class="mb-3">
-                    <label for="status" class="form-label">Status</label>
+                    <label for="status" class="form-label">
+                        Status
+                    </label>
 
                     <select
                         class="form-select"
@@ -238,19 +224,23 @@ function escapar($valor): string
                         name="status"
                         required
                     >
-                        <option value="ativo" <?= $status === "ativo" ? "selected" : "" ?>>
+                        <option value="ativo"
+                            <?= $status === "ativo" ? "selected" : "" ?>>
                             Ativo
                         </option>
 
-                        <option value="inativo" <?= $status === "inativo" ? "selected" : "" ?>>
+                        <option value="inativo"
+                            <?= $status === "inativo" ? "selected" : "" ?>>
                             Inativo
                         </option>
 
-                        <option value="manutencao" <?= $status === "manutencao" ? "selected" : "" ?>>
+                        <option value="manutencao"
+                            <?= $status === "manutencao" ? "selected" : "" ?>>
                             Manutenção
                         </option>
 
-                        <option value="falha" <?= $status === "falha" ? "selected" : "" ?>>
+                        <option value="falha"
+                            <?= $status === "falha" ? "selected" : "" ?>>
                             Falha
                         </option>
                     </select>
@@ -258,13 +248,14 @@ function escapar($valor): string
 
                 <div class="mb-3">
                     <label for="velocidade_atual" class="form-label">
-                        Velocidade Atual (km/h)
+                        Velocidade atual (km/h)
                     </label>
 
                     <input
                         type="number"
                         step="0.01"
                         min="0"
+                        max="9999.99"
                         class="form-control"
                         id="velocidade_atual"
                         name="velocidade_atual"
@@ -275,7 +266,7 @@ function escapar($valor): string
 
                 <div class="mb-3">
                     <label for="localizacao_atual" class="form-label">
-                        Localização Atual
+                        Localização atual
                     </label>
 
                     <input
@@ -284,56 +275,31 @@ function escapar($valor): string
                         id="localizacao_atual"
                         name="localizacao_atual"
                         maxlength="150"
-                        placeholder="Ex: KM 12 - Trecho Norte"
+                        placeholder="Ex.: KM 12 - Trecho Norte"
                         value="<?= escapar($localizacao) ?>"
                     >
                 </div>
 
                 <div class="mb-3">
                     <label for="consumo_energia" class="form-label">
-                        Consumo de Energia (kWh)
+                        Consumo de energia
                     </label>
 
                     <input
                         type="number"
                         step="0.01"
                         min="0"
+                        max="999999.99"
                         class="form-control"
                         id="consumo_energia"
                         name="consumo_energia"
                         value="<?= escapar($consumo) ?>"
                         required
                     >
-                </div>
 
-                <!-- Usuário responsável -->
-                <div class="mb-3">
-                    <label for="responsavel_id" class="form-label">
-                        Usuário responsável
-                    </label>
-
-                    <select
-                        class="form-select"
-                        id="responsavel_id"
-                        name="responsavel_id"
-                    >
-                        <option value="">
-                            Nenhum responsável
-                        </option>
-
-                        <?php foreach ($usuarios as $usuario): ?>
-                            <option
-                                value="<?= (int) $usuario["id"] ?>"
-                                <?= $responsavelId !== "" &&
-                                    (string) $responsavelId === (string) $usuario["id"]
-                                    ? "selected"
-                                    : "" ?>
-                            >
-                                <?= escapar($usuario["nome"]) ?>
-                                (<?= escapar($usuario["email"]) ?>)
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                    <div class="form-text">
+                        Informe o consumo de energia do trem.
+                    </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
@@ -346,7 +312,7 @@ function escapar($valor): string
                     </a>
 
                     <button type="submit" class="btn btn-primary">
-                        Salvar Trem
+                        Salvar trem
                     </button>
 
                 </div>
