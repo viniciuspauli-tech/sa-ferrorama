@@ -83,7 +83,6 @@ function escapar($valor) {
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3">Cadastrar Sensor</h1>
 
-        <a href="sensor.php" class="btn btn-secondary">Voltar</a>
     </div>
 
     <?php if ($mensagemErro !== ""): ?>
@@ -153,8 +152,8 @@ function escapar($valor) {
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="sensor.php" class="btn btn-outline-secondary">
-                        Cancelar
+                    <a href="sistema.php" class="btn btn-outline-secondary">
+                        Voltar
                     </a>
 
                     <button type="submit" class="btn btn-primary">
