@@ -5,6 +5,10 @@ CREATE DATABASE IF NOT EXISTS ferrorama
 
 USE ferrorama;
 
+-- =========================================
+-- TABELA DE USUÁRIOS
+-- =========================================
+
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -14,6 +18,10 @@ CREATE TABLE usuarios (
         NOT NULL DEFAULT 'usuario',
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
+
+-- =========================================
+-- TABELA DE TRENS
+-- =========================================
 
 CREATE TABLE trens (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -29,18 +37,25 @@ CREATE TABLE trens (
         ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- =========================================
+-- TABELA DE SENSORES
 -- Sensores independentes dos trens
+-- =========================================
+
 CREATE TABLE sensores (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     localizacao VARCHAR(150) NOT NULL,
     tipo_dado VARCHAR(100) NOT NULL,
 
-    -- Impede duplicar o mesmo sensor na mesma localização
     UNIQUE KEY uq_sensor_localizacao (nome, localizacao)
 ) ENGINE=InnoDB;
 
--- Rotas continuam associadas aos trens
+-- =========================================
+-- TABELA DE ROTAS
+-- As rotas continuam associadas aos trens
+-- =========================================
+
 CREATE TABLE rotas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -61,7 +76,11 @@ CREATE TABLE rotas (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- Leituras dos sensores
+-- =========================================
+-- TABELA DE LEITURAS DOS SENSORES
+-- O histórico impede excluir sensores com leituras
+-- =========================================
+
 CREATE TABLE dados_sensor (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sensor_id INT NOT NULL,
@@ -76,7 +95,10 @@ CREATE TABLE dados_sensor (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
--- Trens iniciais
+-- =========================================
+-- TRENS INICIAIS
+-- =========================================
+
 INSERT INTO trens (
     identificador,
     modelo,
@@ -118,3 +140,11 @@ VALUES
     'KM 34 - Trecho Leste',
     12.00
 );
+
+-- =========================================
+-- VERIFICAÇÃO DAS TABELAS
+-- =========================================
+
+SHOW CREATE TABLE sensores;
+SHOW CREATE TABLE dados_sensor;
+SHOW CREATE TABLE trens;
