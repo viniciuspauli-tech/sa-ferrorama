@@ -173,17 +173,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 $stmt = $conn->prepare($sql);
 
-                $stmt->bind_param(
-                    "sssd sdii",
-                    $identificador,
-                    $modelo,
-                    $status,
-                    $velocidade,
-                    $localizacao,
-                    $consumo,
-                    $responsavel,
-                    $id
-                );
+$stmt->bind_param(
+    "sssdsdii",
+    $identificador,
+    $modelo,
+    $status,
+    $velocidade,
+    $localizacao,
+    $consumo,
+    $responsavelId,
+    $id
+);
             }
 
             try {

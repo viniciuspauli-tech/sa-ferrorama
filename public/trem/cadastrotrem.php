@@ -13,6 +13,23 @@ $status = "ativo";
 $velocidade = "0.00";
 $localizacao = "";
 $consumo = "0.00";
+$responsavelId = "";
+
+// Buscar usuários cadastrados
+$sqlUsuarios = "
+    SELECT id, nome, email
+    FROM usuarios
+    ORDER BY nome ASC
+";
+
+$resultadoUsuarios = $conn->query($sqlUsuarios);
+
+if (!$resultadoUsuarios) {
+    error_log($conn->error);
+    die("Não foi possível carregar os usuários.");
+}
+
+$usuarios = $resultadoUsuarios->fetch_all(MYSQLI_ASSOC);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
@@ -22,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $velocidade = $_POST["velocidade_atual"] ?? "0";
     $localizacao = trim($_POST["localizacao_atual"] ?? "");
     $consumo = $_POST["consumo_energia"] ?? "0";
+    $responsavelId = trim($_POST["responsavel_id"] ?? "");
 
     $statusValidos = ["ativo", "inativo", "manutencao", "falha"];
 
@@ -47,10 +65,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $mensagemErro = "Informe um consumo de energia válido.";
 
+    } elseif (
+        $responsavelId !== "" &&
+        (
+            !ctype_digit($responsavelId) ||
+            !in_array(
+                (int) $responsavelId,
+                array_column($usuarios, "id")
+            )
+        )
+    ) {
+
+        $mensagemErro = "Selecione um usuário responsável válido.";
+
     } else {
 
         $velocidade = (float) $velocidade;
         $consumo = (float) $consumo;
+
+        $responsavelIdBanco = (
+            $responsavelId === ""
+        ) ? null : (int) $responsavelId;
 
         $sql = "
             INSERT INTO trens (
@@ -59,9 +94,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 status,
                 velocidade_atual,
                 localizacao_atual,
-                consumo_energia
+                consumo_energia,
+                responsavel_id
             )
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         ";
 
         $stmt = $conn->prepare($sql);
@@ -69,13 +105,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($stmt) {
 
             $stmt->bind_param(
-                "sssdsd",
+                "sssdsdi",
                 $identificador,
                 $modelo,
                 $status,
                 $velocidade,
                 $localizacao,
-                $consumo
+                $consumo,
+                $responsavelIdBanco
             );
 
             try {
@@ -89,9 +126,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             } catch (mysqli_sql_exception $e) {
 
                 if ($e->getCode() === 1062) {
+
                     $mensagemErro =
                         "Já existe um trem com esse identificador. Escolha outro.";
+
                 } else {
+
                     error_log($e->getMessage());
 
                     $mensagemErro =
@@ -192,7 +232,12 @@ function escapar($valor): string
                 <div class="mb-3">
                     <label for="status" class="form-label">Status</label>
 
-                    <select class="form-select" id="status" name="status" required>
+                    <select
+                        class="form-select"
+                        id="status"
+                        name="status"
+                        required
+                    >
                         <option value="ativo" <?= $status === "ativo" ? "selected" : "" ?>>
                             Ativo
                         </option>
@@ -259,6 +304,36 @@ function escapar($valor): string
                         value="<?= escapar($consumo) ?>"
                         required
                     >
+                </div>
+
+                <!-- Usuário responsável -->
+                <div class="mb-3">
+                    <label for="responsavel_id" class="form-label">
+                        Usuário responsável
+                    </label>
+
+                    <select
+                        class="form-select"
+                        id="responsavel_id"
+                        name="responsavel_id"
+                    >
+                        <option value="">
+                            Nenhum responsável
+                        </option>
+
+                        <?php foreach ($usuarios as $usuario): ?>
+                            <option
+                                value="<?= (int) $usuario["id"] ?>"
+                                <?= $responsavelId !== "" &&
+                                    (string) $responsavelId === (string) $usuario["id"]
+                                    ? "selected"
+                                    : "" ?>
+                            >
+                                <?= escapar($usuario["nome"]) ?>
+                                (<?= escapar($usuario["email"]) ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
