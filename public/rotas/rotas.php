@@ -16,6 +16,34 @@ $mensagens = [
 ];
 $msg = $mensagens[$_GET["msg"] ?? ""] ?? null;
 
+// Exclusão (POST vindo do botão Excluir desta mesma página, só administrador)
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["excluir_id"])) {
+
+    $idExcluir = filter_var($_POST["excluir_id"], FILTER_VALIDATE_INT);
+    $tokenOk = hash_equals($_SESSION["csrf"], $_POST["csrf"] ?? "");
+
+    if (!$tokenOk || !$idExcluir) {
+        header("Location: rotas.php?msg=erro");
+        exit;
+    }
+
+    try {
+        $stmtExcluir = $conn->prepare("DELETE FROM rotas WHERE id = ?");
+        $stmtExcluir->bind_param("i", $idExcluir);
+        $stmtExcluir->execute();
+
+        $excluiu = $stmtExcluir->affected_rows > 0;
+        $stmtExcluir->close();
+
+        header("Location: rotas.php?msg=" . ($excluiu ? "excluida" : "nao_encontrada"));
+    } catch (mysqli_sql_exception $e) {
+        error_log("Erro ao excluir rota: " . $e->getMessage());
+        header("Location: rotas.php?msg=erro");
+    }
+
+    exit;
+}
+
 $busca = trim($_GET["busca"] ?? "");
 $statusFiltro = $_GET["status"] ?? "";
 
@@ -212,11 +240,27 @@ function corStatusRota($status)
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="editrotas.php?id=<?= $rota['id'] ?>" class="btn btn-sm btn-outline-primary">
-                                        Editar
-                                
-                                    </a>
-                                    
+                                    <div class="d-flex gap-2">
+
+                                        <a href="editrotas.php?id=<?= (int) $rota["id"] ?>" class="btn btn-sm btn-outline-primary">
+                                            Editar
+                                        </a>
+
+                                        <form
+                                            method="POST"
+                                            action="rotas.php"
+                                            class="m-0"
+                                            onsubmit="return confirm('Excluir a rota &quot;<?= htmlspecialchars($rota["nome"], ENT_QUOTES) ?>&quot;? Esta ação não pode ser desfeita.');"
+                                        >
+                                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION["csrf"]) ?>">
+                                            <input type="hidden" name="excluir_id" value="<?= (int) $rota["id"] ?>">
+
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                Excluir
+                                            </button>
+                                        </form>
+
+                                    </div>
                                 </td>
 
 
