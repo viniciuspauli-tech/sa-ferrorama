@@ -212,27 +212,11 @@ function corStatusRota($status)
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="d-flex gap-2">
-
-                                        <a href="editrotas.php?id=<?= (int) $rota["id"] ?>" class="btn btn-sm btn-outline-primary">
-                                            Editar
-                                        </a>
-
-                                        <form
-                                            method="POST"
-                                            action="excluirrota.php"
-                                            class="m-0"
-                                            onsubmit="return confirm('Excluir a rota &quot;<?= htmlspecialchars($rota["nome"], ENT_QUOTES) ?>&quot;? Esta ação não pode ser desfeita.');"
-                                        >
-                                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION["csrf"]) ?>">
-                                            <input type="hidden" name="id" value="<?= (int) $rota["id"] ?>">
-
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                Excluir
-                                            </button>
-                                        </form>
-
-                                    </div>
+                                    <a href="editrotas.php?id=<?= $rota['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                        Editar
+                                
+                                    </a>
+                                    
                                 </td>
 
 

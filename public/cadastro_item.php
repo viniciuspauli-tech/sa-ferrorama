@@ -39,17 +39,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 header("Location: sensor.php?sucesso=cadastrado");
                 exit;
             } catch (mysqli_sql_exception $e) {
-                error_log($e->getMessage());
+    error_log($e->getMessage());
 
-                if ($e->getCode() === 1062) {
-                    $mensagemErro =
-                        "Já existe um sensor com esse nome nessa localização.";
-                } else {
-                    $mensagemErro = "Erro ao cadastrar o sensor.";
-                }
-
-                $stmt->close();
-            }
+    if ($e->getCode() === 1062) {
+        $mensagemErro = "Já existe um sensor com esse nome nessa localização.";
+    } else {
+        $mensagemErro = "Erro ao cadastrar o sensor. [DEBUG " . $e->getCode() . "]: " . $e->getMessage();
+    }
+    $stmt->close();
+}
         } else {
             error_log($conn->error);
             $mensagemErro = "Não foi possível preparar o cadastro.";
