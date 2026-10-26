@@ -3,6 +3,19 @@
 require_once __DIR__ . "/../../infra/adm.php";
 require_once __DIR__ . "/../../infra/connect.php";
 
+// Token CSRF usado pelo botão Excluir (validado em excluirrota.php)
+if (empty($_SESSION["csrf"])) {
+    $_SESSION["csrf"] = bin2hex(random_bytes(32));
+}
+
+// Mensagens vindas de excluirrota.php (?msg=...)
+$mensagens = [
+    "excluida"       => ["success", "Rota excluída com sucesso."],
+    "nao_encontrada" => ["warning", "Rota não encontrada ou já excluída."],
+    "erro"           => ["danger",  "Não foi possível excluir a rota."],
+];
+$msg = $mensagens[$_GET["msg"] ?? ""] ?? null;
+
 $busca = trim($_GET["busca"] ?? "");
 $statusFiltro = $_GET["status"] ?? "";
 
@@ -148,6 +161,17 @@ function corStatusRota($status)
         </div>
     </form>
 
+    <!-- MENSAGENS -->
+    <?php if ($msg): ?>
+        <div class="alert alert-<?= $msg[0] ?>">
+            <?= $msg[1] ?>
+        </div>
+    <?php elseif (!empty($_GET["sucesso"])): ?>
+        <div class="alert alert-success">
+            <?= htmlspecialchars($_GET["sucesso"]) ?>
+        </div>
+    <?php endif; ?>
+
     <!-- TABELA -->
     <div class="card shadow-sm">
         <div class="card-body">
@@ -188,11 +212,36 @@ function corStatusRota($status)
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="editrotas.php?id=<?= $rota['id'] ?>" class="btn btn-sm btn-outline-primary">
-                                        Editar
-                                    </a>
+                                    <div class="d-flex gap-2">
+
+                                        <a href="editrotas.php?id=<?= (int) $rota["id"] ?>" class="btn btn-sm btn-outline-primary">
+                                            Editar
+                                        </a>
+
+                                        <form
+                                            method="POST"
+                                            action="excluirrota.php"
+                                            class="m-0"
+                                            onsubmit="return confirm('Excluir a rota &quot;<?= htmlspecialchars($rota["nome"], ENT_QUOTES) ?>&quot;? Esta ação não pode ser desfeita.');"
+                                        >
+                                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION["csrf"]) ?>">
+                                            <input type="hidden" name="id" value="<?= (int) $rota["id"] ?>">
+
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                Excluir
+                                            </button>
+                                        </form>
+
+                                    </div>
                                 </td>
+
+
+
                             </tr>
+
+
+
+                            
                         <?php endforeach; ?>
                     <?php endif; ?>
 
