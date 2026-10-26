@@ -190,9 +190,18 @@ function corStatusRota($status)
                                 <td>
                                     <a href="editrotas.php?id=<?= $rota['id'] ?>" class="btn btn-sm btn-outline-primary">
                                         Editar
+                                
                                     </a>
+                                    
                                 </td>
+
+
+
                             </tr>
+
+
+
+                            
                         <?php endforeach; ?>
                     <?php endif; ?>
 
