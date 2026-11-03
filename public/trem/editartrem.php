@@ -302,6 +302,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 ?>
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -311,26 +312,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <title>Editar Trem - Ferrorama</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap"
         rel="stylesheet"
     >
 
     <style>
         :root {
-            --azul: #0d6efd;
-            --azul-hover: #0b5ed7;
-            --azul-escuro: #172554;
-            --fundo: #f5f6f8;
-            --texto: #111827;
-            --cinza: #6b7280;
-            --borda: #d9dee7;
-            --branco: #ffffff;
+            --navy: #0d1b2a;
+            --navy-light: #172a42;
+            --primary: #3324d9;
+            --primary-light: #eeedff;
+            --background: #f1f3f8;
+            --surface: #ffffff;
+            --text: #111c30;
+            --muted: #728098;
+            --border: #e0e6f0;
+            --green: #16875a;
+            --red: #d9364b;
+            --shadow: 0 4px 16px rgba(16, 32, 58, 0.045);
         }
 
         * {
@@ -340,265 +343,424 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         body {
             margin: 0;
             min-height: 100vh;
-            background: var(--fundo);
-            color: var(--texto);
-            font-family: "Roboto", Arial, sans-serif;
+            font-family: "Roboto", sans-serif;
+            background: var(--background);
+            color: var(--text);
+            font-size: 14px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Cabeçalho */
-
-        .pagina {
-            width: calc(100% - 40px);
-            max-width: 1296px;
-            margin: 0 auto;
-            padding: 32px 0 50px;
+        a {
+            text-decoration: none;
         }
 
-        .cabecalho {
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        /* Cabeçalho superior */
+
+        .navbar {
+            background: var(--navy);
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .navbar-inner {
+            width: min(1400px, calc(100% - 64px));
+            min-height: 76px;
+            margin: auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 20px;
-            margin-bottom: 26px;
         }
 
-        .cabecalho h1 {
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            background: white;
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+        }
+
+        .train-svg {
+            width: 26px;
+            height: 26px;
+            display: block;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+
+        .brand-subtitle {
+            margin-top: 3px;
+            font-size: 11px;
+            color: #b9c8e5;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #e1e8f6;
+            font-size: 12px;
+        }
+
+        .user-icon {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: #1a2e47;
+            font-size: 17px;
+        }
+
+        /* Destaque */
+
+        .hero {
+            background:
+                radial-gradient(
+                    circle at 85% 15%,
+                    rgba(92, 75, 230, .22),
+                    transparent 35%
+                ),
+                linear-gradient(115deg, #0d1b2a, #172443);
+            color: white;
+            padding: 32px 0;
+        }
+
+        .hero-inner {
+            width: min(1400px, calc(100% - 64px));
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 12px;
+            color: #bcb5ff;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 20px;
+            height: 2px;
+            background: #8f83ff;
+            border-radius: 5px;
+        }
+
+        .hero h1 {
             margin: 0;
-            color: var(--azul-escuro);
-            font-size: 34px;
-            font-weight: 700;
-            letter-spacing: -0.7px;
+            font-size: clamp(27px, 3vw, 36px);
+            font-weight: 800;
+            letter-spacing: -1px;
         }
 
-        .subtitulo {
-            margin: 7px 0 0;
-            color: var(--cinza);
-            font-size: 14px;
+        .hero h1 span {
+            color: #a99dff;
+        }
+
+        .hero p {
+            margin: 10px 0 0;
+            color: #c5d0e2;
+            line-height: 1.7;
         }
 
         /* Botões */
 
-        .botao {
+        .btn {
+            min-height: 40px;
+            padding: 0 16px;
+            border-radius: 9px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-height: 40px;
-            padding: 9px 16px;
+            gap: 7px;
             border: 1px solid transparent;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
             cursor: pointer;
-            transition: background-color 0.2s, border-color 0.2s;
+            transition: background .2s, transform .2s,
+                border-color .2s;
+            white-space: nowrap;
         }
 
-        .botao-azul {
-            color: var(--branco);
-            background: var(--azul);
-            border-color: var(--azul);
+        .btn:hover {
+            transform: translateY(-1px);
         }
 
-        .botao-azul:hover {
-            color: var(--branco);
-            background: var(--azul-hover);
-            border-color: var(--azul-hover);
+        .btn-primary {
+            color: white;
+            background: var(--primary);
+            border-color: var(--primary);
         }
 
-        .botao-secundario {
-            color: #374151;
-            background: var(--branco);
-            border-color: #9ca3af;
+        .btn-primary:hover {
+            color: white;
+            background: #281ab7;
+            border-color: #281ab7;
         }
 
-        .botao-secundario:hover {
-            color: var(--azul-escuro);
-            background: #f1f5f9;
-            border-color: #6b7280;
+        .btn-hero {
+            color: white;
+            border-color: rgba(255,255,255,.25);
+            background: rgba(255,255,255,.07);
         }
 
-        /* Cartão principal */
-
-        .cartao {
-            overflow: hidden;
-            background: var(--branco);
-            border: 1px solid #d7d7d7;
-            border-radius: 7px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+        .btn-hero:hover {
+            color: white;
+            background: rgba(255,255,255,.14);
         }
 
-        .cartao-faixa {
-            height: 6px;
-            background: var(--azul);
+        .btn-outline {
+            color: #56647b;
+            background: white;
+            border-color: #d5dce8;
         }
 
-        .cartao-conteudo {
-            padding: 28px 30px;
+        .btn-outline:hover {
+            color: var(--text);
+            background: #f7f8fc;
+            border-color: #aab5c8;
         }
 
-        .cartao-cabecalho {
+        /* Conteúdo */
+
+        .main {
+            width: min(1100px, calc(100% - 64px));
+            margin: 30px auto 55px;
+        }
+
+        .section-heading {
+            margin-bottom: 19px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -.4px;
+        }
+
+        .section-heading p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* Cartão do formulário */
+
+        .form-card {
+            padding: 25px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+        }
+
+        .form-header {
             display: flex;
             align-items: center;
             gap: 13px;
             margin-bottom: 25px;
             padding-bottom: 20px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--border);
         }
 
-        .icone-secao {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .form-icon {
+            width: 46px;
+            height: 46px;
             flex-shrink: 0;
-            width: 44px;
-            height: 44px;
-            color: var(--azul);
-            background: #edf4ff;
-            border: 1px solid #d8e7ff;
-            border-radius: 7px;
-            font-size: 22px;
-            font-weight: 700;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            color: var(--primary);
+            background: var(--primary-light);
         }
 
-        .cartao-cabecalho h2 {
+        .form-icon svg {
+            width: 25px;
+            height: 25px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .form-header h3 {
             margin: 0;
-            color: var(--azul-escuro);
-            font-size: 19px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: 800;
         }
 
-        .cartao-cabecalho p {
+        .form-header p {
             margin: 5px 0 0;
-            color: var(--cinza);
-            font-size: 13px;
+            color: var(--muted);
+            font-size: 12px;
         }
 
         /* Campos */
 
-        .formulario-grid {
+        .form-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            column-gap: 24px;
-            row-gap: 21px;
+            gap: 21px 22px;
         }
 
-        .campo {
+        .field {
             min-width: 0;
         }
 
-        .campo-completo {
+        .field-full {
             grid-column: 1 / -1;
         }
 
-        .campo label {
+        .field label {
             display: block;
             margin-bottom: 8px;
-            color: #1f2937;
-            font-size: 14px;
-            font-weight: 600;
+            color: #354258;
+            font-size: 13px;
+            font-weight: 700;
         }
 
-        .campo input,
-        .campo select {
-            display: block;
+        .control {
             width: 100%;
-            min-height: 43px;
-            padding: 10px 12px;
-            color: var(--texto);
-            background: var(--branco);
-            border: 1px solid var(--borda);
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 14px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .campo input::placeholder {
-            color: #9ca3af;
-        }
-
-        .campo input:focus,
-        .campo select:focus {
+            height: 43px;
+            padding: 0 13px;
+            color: var(--text);
+            background: white;
+            border: 1px solid #dce2ec;
+            border-radius: 9px;
             outline: none;
-            border-color: var(--azul);
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12);
+            transition: border-color .2s, box-shadow .2s;
         }
 
-        .ajuda {
+        .control::placeholder {
+            color: #9aa5b7;
+        }
+
+        .control:focus {
+            border-color: #8275ff;
+            box-shadow: 0 0 0 3px rgba(83,65,220,.1);
+        }
+
+        .help-text {
             display: block;
             margin-top: 7px;
-            color: var(--cinza);
+            color: var(--muted);
             font-size: 12px;
+            line-height: 1.5;
         }
 
-        /* Mensagens */
+        /* Mensagem de erro */
 
-        .alerta {
+        .alert {
+            padding: 14px 17px;
             margin-bottom: 20px;
-            padding: 13px 16px;
             border: 1px solid transparent;
-            border-radius: 6px;
-            font-size: 14px;
+            border-radius: 10px;
+            line-height: 1.5;
         }
 
-        .alerta-erro {
-            color: #842029;
-            background: #f8d7da;
-            border-color: #f1aeb5;
+        .alert-danger {
+            background: #fff0f1;
+            color: #a92939;
+            border-color: #ffd5da;
         }
 
         /* Ações */
 
-        .acoes {
+        .form-actions {
             display: flex;
+            align-items: center;
             justify-content: flex-end;
             flex-wrap: wrap;
             gap: 10px;
-            margin-top: 29px;
+            margin-top: 28px;
             padding-top: 21px;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer {
+            padding: 22px 0 0;
+            text-align: center;
+            color: #8b96a9;
+            font-size: 11px;
         }
 
         /* Responsividade */
 
-        @media (max-width: 650px) {
-            .pagina {
-                width: calc(100% - 28px);
-                padding-top: 24px;
+        @media (max-width: 700px) {
+            .navbar-inner,
+            .hero-inner {
+                width: calc(100% - 32px);
             }
 
-            .cabecalho {
+            .main {
+                width: calc(100% - 32px);
+                margin-top: 22px;
+            }
+
+            .hero-inner {
                 align-items: flex-start;
+                flex-direction: column;
             }
 
-            .cabecalho h1 {
-                font-size: 27px;
+            .form-card {
+                padding: 19px;
             }
 
-            .subtitulo {
-                line-height: 1.5;
-            }
-
-            .cartao-conteudo {
-                padding: 22px 18px;
-            }
-
-            .formulario-grid {
+            .form-grid {
                 grid-template-columns: 1fr;
-                row-gap: 18px;
+                gap: 18px;
             }
 
-            .campo-completo {
+            .field-full {
                 grid-column: auto;
             }
         }
 
         @media (max-width: 400px) {
-            .cabecalho {
-                flex-direction: column;
+            .user-area {
+                font-size: 0;
             }
 
-            .acoes .botao {
+            .user-icon {
+                font-size: 17px;
+            }
+
+            .form-actions .btn {
                 flex: 1;
             }
         }
@@ -607,222 +769,299 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <body>
 
-<div class="pagina">
+<!-- Barra superior -->
+<header class="navbar">
+    <div class="navbar-inner">
 
-    <header class="cabecalho">
+        <a href="../sistema.php" class="brand">
+
+            <div class="brand-icon">
+                <svg class="train-svg" viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <rect x="5" y="3" width="14" height="15" rx="4"/>
+                    <path d="M8 7h8M8 12h8M8 18l-2 3M16 18l2 3M5 15h14"/>
+                    <circle cx="9" cy="15" r="0.5"/>
+                    <circle cx="15" cy="15" r="0.5"/>
+                </svg>
+            </div>
+
+            <div>
+                <div class="brand-name">Ferrorama</div>
+                <div class="brand-subtitle">Sistema ferroviário</div>
+            </div>
+
+        </a>
+
+        <div class="user-area">
+            <div class="user-icon">♙</div>
+            <span>Área do usuário Administrador</span>
+        </div>
+
+    </div>
+</header>
+
+<!-- Cabeçalho da página -->
+<section class="hero">
+    <div class="hero-inner">
+
         <div>
-            <h1>Editar Trem</h1>
-            <p class="subtitulo">
-                Atualize as informações e os dados operacionais do trem.
+            <div class="eyebrow">Gestão ferroviária</div>
+
+            <h1>
+                Editar <span>trem.</span>
+            </h1>
+
+            <p>
+                Atualize as informações cadastrais e operacionais
+                do veículo ferroviário.
             </p>
         </div>
 
-        <a href="listagemtrem.php" class="botao botao-azul">
-            Voltar ao sistema
-        </a>
-    </header>
+        <div>
+            <a href="listagemtrem.php" class="btn btn-hero">
+                ← Voltar à frota
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<main class="main">
+
+    <div class="section-heading">
+        <h2>Informações do trem</h2>
+        <p>
+            Edite os dados cadastrais e operacionais abaixo.
+        </p>
+    </div>
 
     <?php if ($mensagemErro !== ""): ?>
-        <div class="alerta alerta-erro" role="alert">
+        <div class="alert alert-danger" role="alert">
             <?= escapar($mensagemErro) ?>
         </div>
     <?php endif; ?>
 
-    <main class="cartao">
+    <section class="form-card">
 
-        <div class="cartao-faixa"></div>
+        <div class="form-header">
 
-        <div class="cartao-conteudo">
-
-            <div class="cartao-cabecalho">
-                <div class="icone-secao" aria-hidden="true">T</div>
-
-                <div>
-                    <h2>Informações do trem</h2>
-                    <p>
-                        Edite os dados cadastrais e operacionais abaixo.
-                    </p>
-                </div>
+            <div class="form-icon">
+                <svg viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <rect x="5" y="3" width="14" height="15" rx="4"/>
+                    <path d="M8 7h8M8 12h8M8 18l-2 3M16 18l2 3M5 15h14"/>
+                    <circle cx="9" cy="15" r="0.5"/>
+                    <circle cx="15" cy="15" r="0.5"/>
+                </svg>
             </div>
 
-            <form
-                method="POST"
-                action="editartrem.php?id=<?= (int) $id ?>"
-            >
-
-                <div class="formulario-grid">
-
-                    <div class="campo">
-                        <label for="identificador">
-                            Identificador
-                        </label>
-
-                        <input
-                            type="text"
-                            id="identificador"
-                            name="identificador"
-                            maxlength="50"
-                            value="<?= escapar($identificador) ?>"
-                            placeholder="Ex.: TR-001"
-                            required
-                        >
-                    </div>
-
-                    <div class="campo">
-                        <label for="modelo">Modelo</label>
-
-                        <input
-                            type="text"
-                            id="modelo"
-                            name="modelo"
-                            maxlength="100"
-                            value="<?= escapar($modelo) ?>"
-                            placeholder="Ex.: Expresso 4000"
-                            required
-                        >
-                    </div>
-
-                    <div class="campo">
-                        <label for="status">
-                            Status operacional
-                        </label>
-
-                        <select id="status" name="status" required>
-                            <option
-                                value="ativo"
-                                <?= $status === "ativo" ? "selected" : "" ?>
-                            >
-                                Ativo
-                            </option>
-
-                            <option
-                                value="inativo"
-                                <?= $status === "inativo" ? "selected" : "" ?>
-                            >
-                                Inativo
-                            </option>
-
-                            <option
-                                value="manutencao"
-                                <?= $status === "manutencao" ? "selected" : "" ?>
-                            >
-                                Manutenção
-                            </option>
-
-                            <option
-                                value="falha"
-                                <?= $status === "falha" ? "selected" : "" ?>
-                            >
-                                Falha
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="campo">
-                        <label for="velocidade_atual">
-                            Velocidade atual (km/h)
-                        </label>
-
-                        <input
-                            type="number"
-                            id="velocidade_atual"
-                            name="velocidade_atual"
-                            step="0.01"
-                            min="0"
-                            max="9999.99"
-                            value="<?= escapar($velocidade) ?>"
-                            required
-                        >
-                    </div>
-
-                    <div class="campo">
-                        <label for="localizacao_atual">
-                            Localização atual
-                        </label>
-
-                        <input
-                            type="text"
-                            id="localizacao_atual"
-                            name="localizacao_atual"
-                            maxlength="150"
-                            value="<?= escapar($localizacao) ?>"
-                            placeholder="Ex.: KM 12 - Trecho Norte"
-                        >
-                    </div>
-
-                    <div class="campo">
-                        <label for="consumo_energia">
-                            Consumo de energia (kWh)
-                        </label>
-
-                        <input
-                            type="number"
-                            id="consumo_energia"
-                            name="consumo_energia"
-                            step="0.01"
-                            min="0"
-                            max="999999.99"
-                            value="<?= escapar($consumo) ?>"
-                            required
-                        >
-
-                        <small class="ajuda">
-                            Consumo de energia registrado para este trem.
-                        </small>
-                    </div>
-
-                    <?php if ($temResponsavel): ?>
-                        <div class="campo campo-completo">
-                            <label for="responsavel_id">
-                                Usuário responsável
-                            </label>
-
-                            <select
-                                id="responsavel_id"
-                                name="responsavel_id"
-                            >
-                                <option value="">
-                                    Nenhum responsável
-                                </option>
-
-                                <?php foreach ($usuarios as $usuario): ?>
-                                    <option
-                                        value="<?= (int) $usuario["id"] ?>"
-                                        <?= (string) $responsavelId ===
-                                            (string) $usuario["id"]
-                                            ? "selected"
-                                            : "" ?>
-                                    >
-                                        <?= escapar($usuario["nome"]) ?>
-                                        (<?= escapar($usuario["email"]) ?>)
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    <?php endif; ?>
-
-                </div>
-
-                <div class="acoes">
-                    <a
-                        href="listagemtrem.php"
-                        class="botao botao-secundario"
-                    >
-                        Voltar
-                    </a>
-
-                    <button type="submit" class="botao botao-azul">
-                        Salvar alterações
-                    </button>
-                </div>
-
-            </form>
+            <div>
+                <h3>Dados cadastrais e operacionais</h3>
+                <p>
+                    Confira os campos e salve as alterações realizadas.
+                </p>
+            </div>
 
         </div>
 
-    </main>
+        <form
+            method="POST"
+            action="editartrem.php?id=<?= (int) $id ?>"
+        >
 
-</div>
+            <div class="form-grid">
+
+                <div class="field">
+                    <label for="identificador">
+                        Identificador
+                    </label>
+
+                    <input
+                        type="text"
+                        id="identificador"
+                        name="identificador"
+                        class="control"
+                        maxlength="50"
+                        value="<?= escapar($identificador) ?>"
+                        placeholder="Ex.: TR-001"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="modelo">Modelo</label>
+
+                    <input
+                        type="text"
+                        id="modelo"
+                        name="modelo"
+                        class="control"
+                        maxlength="100"
+                        value="<?= escapar($modelo) ?>"
+                        placeholder="Ex.: Expresso 4000"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="status">
+                        Status operacional
+                    </label>
+
+                    <select
+                        id="status"
+                        name="status"
+                        class="control"
+                        required
+                    >
+                        <option value="ativo"
+                            <?= $status === "ativo" ? "selected" : "" ?>>
+                            Ativo
+                        </option>
+
+                        <option value="inativo"
+                            <?= $status === "inativo" ? "selected" : "" ?>>
+                            Inativo
+                        </option>
+
+                        <option value="manutencao"
+                            <?= $status === "manutencao" ? "selected" : "" ?>>
+                            Manutenção
+                        </option>
+
+                        <option value="falha"
+                            <?= $status === "falha" ? "selected" : "" ?>>
+                            Falha
+                        </option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="velocidade_atual">
+                        Velocidade atual (km/h)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="velocidade_atual"
+                        name="velocidade_atual"
+                        class="control"
+                        step="0.01"
+                        min="0"
+                        max="9999.99"
+                        value="<?= escapar($velocidade) ?>"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="localizacao_atual">
+                        Localização atual
+                    </label>
+
+                    <input
+                        type="text"
+                        id="localizacao_atual"
+                        name="localizacao_atual"
+                        class="control"
+                        maxlength="150"
+                        value="<?= escapar($localizacao) ?>"
+                        placeholder="Ex.: KM 12 - Trecho Norte"
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="consumo_energia">
+                        Consumo de energia (kWh)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="consumo_energia"
+                        name="consumo_energia"
+                        class="control"
+                        step="0.01"
+                        min="0"
+                        max="999999.99"
+                        value="<?= escapar($consumo) ?>"
+                        required
+                    >
+
+                    <small class="help-text">
+                        Consumo de energia registrado para este trem.
+                    </small>
+                </div>
+
+                <?php if ($temResponsavel): ?>
+
+                    <div class="field field-full">
+                        <label for="responsavel_id">
+                            Usuário responsável
+                        </label>
+
+                        <select
+                            id="responsavel_id"
+                            name="responsavel_id"
+                            class="control"
+                        >
+
+                            <option value="">
+                                Nenhum responsável
+                            </option>
+
+                            <?php foreach ($usuarios as $usuario): ?>
+
+                                <option
+                                    value="<?= (int) $usuario["id"] ?>"
+                                    <?= (string) $responsavelId ===
+                                        (string) $usuario["id"]
+                                        ? "selected"
+                                        : "" ?>
+                                >
+                                    <?= escapar($usuario["nome"]) ?>
+                                    (<?= escapar($usuario["email"]) ?>)
+                                </option>
+
+                            <?php endforeach; ?>
+
+                        </select>
+
+                        <small class="help-text">
+                            Selecione o usuário responsável pelo trem.
+                        </small>
+                    </div>
+
+                <?php endif; ?>
+
+            </div>
+
+            <div class="form-actions">
+
+                <a
+                    href="listagemtrem.php"
+                    class="btn btn-outline"
+                >
+                    Voltar
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    ✓ Salvar alterações
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+    <footer class="footer">
+        Ferrorama · Sistema de gerenciamento ferroviário
+    </footer>
+
+</main>
 
 </body>
 </html>

@@ -85,6 +85,8 @@ $iniciais = strtoupper(
             text-decoration: none;
         }
 
+        /* CABEÇALHO */
+
         .topbar {
             background: var(--navy);
             color: white;
@@ -110,15 +112,19 @@ $iniciais = strtoupper(
         }
 
         .brand-icon {
-            width: 42px;
-            height: 42px;
-            display: grid;
-            place-items: center;
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 13px;
             background: white;
-            color: #3322c7;
-            font-size: 23px;
-            font-weight: 800;
+            color: #0d009c;
+        }
+
+        .brand-icon svg {
+            width: 26px;
+            height: 26px;
         }
 
         .brand-name {
@@ -150,6 +156,8 @@ $iniciais = strtoupper(
             border-radius: 50%;
             font-size: 17px;
         }
+
+        /* BOAS-VINDAS */
 
         .hero {
             padding: 45px 24px 48px;
@@ -205,6 +213,8 @@ $iniciais = strtoupper(
             line-height: 1.8;
         }
 
+        /* CONTEÚDO */
+
         .main {
             max-width: 1000px;
             margin: 0 auto;
@@ -226,6 +236,8 @@ $iniciais = strtoupper(
             font-size: 13px;
             line-height: 1.6;
         }
+
+        /* CARTÃO DE PERFIL */
 
         .profile-card {
             display: grid;
@@ -326,6 +338,8 @@ $iniciais = strtoupper(
             font-size: 17px;
         }
 
+        /* BOTÕES */
+
         .actions {
             margin-top: 5px;
             display: flex;
@@ -384,12 +398,16 @@ $iniciais = strtoupper(
             background: #fff4f5;
         }
 
+        /* RODAPÉ */
+
         .footer {
             padding-top: 24px;
             color: #8a96aa;
             text-align: center;
             font-size: 11px;
         }
+
+        /* RESPONSIVIDADE */
 
         @media (max-width: 650px) {
             .topbar-inner {
@@ -440,45 +458,87 @@ $iniciais = strtoupper(
 <body>
 
 <header class="topbar">
+
     <div class="topbar-inner">
+
         <a href="sistema.php" class="brand">
-            <div class="brand-icon">🚆</div>
+
+            <div class="brand-icon">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+
+                    <rect x="5" y="3" width="14" height="15" rx="4"></rect>
+                    <path d="M8 7h8M8 12h8M8 18l-2 3M16 18l2 3M5 15h14"></path>
+                    <circle cx="9" cy="15" r="1"></circle>
+                    <circle cx="15" cy="15" r="1"></circle>
+
+                </svg>
+
+            </div>
+
             <div>
                 <div class="brand-name">Ferrorama</div>
                 <div class="brand-subtitle">Sistema ferroviário</div>
             </div>
+
         </a>
 
         <div class="top-user">
+
             <div class="top-user-icon">♙</div>
-            <span>Área do usuário <?= $eAdmin ? "Administrador" : "Usuário" ?></span>
+
+            <span>
+                Área do usuário
+                <?= $eAdmin ? "Administrador" : "Usuário" ?>
+            </span>
+
         </div>
+
     </div>
+
 </header>
 
 <section class="hero">
+
     <div class="hero-inner">
+
         <div class="eyebrow">Minha conta</div>
 
-        <h1>Bem-vindo, <span><?= $nome ?></span></h1>
+        <h1>
+            Bem-vindo, <span><?= $nome ?></span>
+        </h1>
 
         <p>
             Consulte as informações da sua conta e acesse as funcionalidades
             do sistema Ferrorama de forma simples e segura.
         </p>
+
     </div>
+
 </section>
 
 <main class="main">
 
     <div class="section-heading">
+
         <h2>Meu perfil</h2>
-        <p>Confira seus dados de acesso e escolha para onde deseja ir.</p>
+
+        <p>
+            Confira seus dados de acesso e escolha para onde deseja ir.
+        </p>
+
     </div>
 
     <section class="profile-card">
 
         <div class="profile-side">
+
             <div class="avatar">
                 <?= htmlspecialchars($iniciais, ENT_QUOTES, "UTF-8") ?>
             </div>
@@ -489,6 +549,7 @@ $iniciais = strtoupper(
                 <span>●</span>
                 <?= htmlspecialchars($cargo, ENT_QUOTES, "UTF-8") ?>
             </div>
+
         </div>
 
         <div class="profile-content">
@@ -503,30 +564,36 @@ $iniciais = strtoupper(
 
             <div class="info-value">
                 <span class="info-icon">✉</span>
-                <span><?= $email !== "" ? $email : "E-mail não disponível" ?></span>
+                <span>
+                    <?= $email !== "" ? $email : "E-mail não disponível" ?>
+                </span>
             </div>
 
             <div class="info-label">Nível de acesso</div>
 
             <div class="info-value">
                 <span class="info-icon">♙</span>
-                <span><?= htmlspecialchars($cargo, ENT_QUOTES, "UTF-8") ?></span>
+                <span>
+                    <?= htmlspecialchars($cargo, ENT_QUOTES, "UTF-8") ?>
+                </span>
             </div>
 
             <div class="actions">
 
                 <?php if ($eAdmin): ?>
+
                     <a href="usuarios/pagina_adm.php" class="button button-primary">
                         Voltar
                     </a>
-                <?php endif; ?>
 
+                <?php endif; ?>
 
                 <a href="logout.php" class="button button-danger">
                     ↪ Sair da conta
                 </a>
 
             </div>
+
         </div>
 
     </section>
