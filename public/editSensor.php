@@ -1,175 +1,217 @@
-<?php
-session_start();
 
-// ---- Controle de acesso: só admin edita sensores ----
-if (!isset($_SESSION['usuario_id']) || ($_SESSION['cargo'] ?? '') !== 'adm') {
-    header('Location: login.php');
-    exit;
+<?php
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
 }
 
-require_once 'conexao.php'; // deve definir $pdo (PDO com ERRMODE_EXCEPTION)
+require_once __DIR__ . "/../infra/auth.php";
+require_once __DIR__ . "/../infra/connect.php";
 
-// ---- Token CSRF ----
-if (empty($_SESSION['csrf'])) {
-    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+if (($_SESSION["usuario_perfil"] ?? "") !== "administrador") {
+    http_response_code(403);
+    exit("Acesso permitido apenas para administradores.");
+}
+
+if (empty($_SESSION["csrf"])) {
+    $_SESSION["csrf"] = bin2hex(random_bytes(32));
+}
+
+function escapar($valor): string
+{
+    return htmlspecialchars((string) $valor, ENT_QUOTES, "UTF-8");
+}
+
+$id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+}
+
+if (!$id || $id < 1) {
+    http_response_code(400);
+    exit("ID do sensor inválido.");
 }
 
 $erros = [];
-$sucesso = false;
 
-// ---- ID do sensor ----
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT)
-   ?: filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+$stmt = $conn->prepare(
+    "SELECT id, nome, localizacao, tipo_dado FROM sensores WHERE id = ?"
+);
+$stmt->bind_param("i", $id);
+$stmt->execute();
 
-if (!$id) {
-    http_response_code(400);
-    exit('Sensor inválido.');
-}
-
-$tiposPermitidos  = ['temperatura', 'velocidade', 'presenca', 'vibracao', 'posicao'];
-$statusPermitidos = ['ativo', 'inativo', 'manutencao'];
-
-// ---- Salvar (POST) ----
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!hash_equals($_SESSION['csrf'], $_POST['csrf'] ?? '')) {
-        http_response_code(403);
-        exit('Requisição inválida.');
-    }
-
-    $nome        = trim($_POST['nome'] ?? '');
-    $tipo        = $_POST['tipo'] ?? '';
-    $localizacao = trim($_POST['localizacao'] ?? '');
-    $status      = $_POST['status'] ?? '';
-
-    if ($nome === '' || mb_strlen($nome) > 100)               $erros[] = 'Informe o nome (até 100 caracteres).';
-    if (!in_array($tipo, $tiposPermitidos, true))             $erros[] = 'Tipo de sensor inválido.';
-    if ($localizacao === '' || mb_strlen($localizacao) > 150) $erros[] = 'Informe a localização (até 150 caracteres).';
-    if (!in_array($status, $statusPermitidos, true))          $erros[] = 'Status inválido.';
-
-    if (!$erros) {
-        try {
-            $stmt = $pdo->prepare(
-                'UPDATE sensores
-                    SET nome = :nome, tipo = :tipo,
-                        localizacao = :localizacao, status = :status
-                  WHERE id = :id'
-            );
-            $stmt->execute([
-                ':nome'        => $nome,
-                ':tipo'        => $tipo,
-                ':localizacao' => $localizacao,
-                ':status'      => $status,
-                ':id'          => $id,
-            ]);
-            $sucesso = true;
-        } catch (PDOException $e) {
-            error_log('Erro ao editar sensor: ' . $e->getMessage());
-            $erros[] = 'Não foi possível salvar. Tente novamente.';
-        }
-    }
-}
-
-// ---- Carregar sensor ----
-try {
-    $stmt = $pdo->prepare('SELECT id, nome, tipo, localizacao, status FROM sensores WHERE id = :id');
-    $stmt->execute([':id' => $id]);
-    $sensor = $stmt->fetch(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    error_log('Erro ao buscar sensor: ' . $e->getMessage());
-    http_response_code(500);
-    exit('Erro interno.');
-}
+$sensor = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
 if (!$sensor) {
     http_response_code(404);
-    exit('Sensor não encontrado.');
+    exit("Sensor não encontrado.");
 }
 
-// Se houve erro de validação, mantém o que o usuário digitou
-if ($erros && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $sensor['nome']        = $nome;
-    $sensor['tipo']        = $tipo;
-    $sensor['localizacao'] = $localizacao;
-    $sensor['status']      = $status;
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (!hash_equals($_SESSION["csrf"], $_POST["csrf"] ?? "")) {
+        http_response_code(403);
+        exit("Requisição inválida. Atualize a página e tente novamente.");
+    }
+
+    $nome = trim($_POST["nome"] ?? "");
+    $localizacao = trim($_POST["localizacao"] ?? "");
+    $tipoDado = trim($_POST["tipo_dado"] ?? "");
+
+    if ($nome === "" || mb_strlen($nome) > 100) {
+        $erros[] = "Informe um nome de até 100 caracteres.";
+    }
+
+    if ($localizacao === "" || mb_strlen($localizacao) > 150) {
+        $erros[] = "Informe uma localização de até 150 caracteres.";
+    }
+
+    if ($tipoDado === "" || mb_strlen($tipoDado) > 100) {
+        $erros[] = "Informe o tipo de dado, com até 100 caracteres.";
+    }
+
+    if (empty($erros)) {
+        $stmt = $conn->prepare(
+            "UPDATE sensores
+             SET nome = ?, localizacao = ?, tipo_dado = ?
+             WHERE id = ?"
+        );
+
+        if (!$stmt) {
+            error_log($conn->error);
+            http_response_code(500);
+            exit("Não foi possível preparar a atualização.");
+        }
+
+        $stmt->bind_param("sssi", $nome, $localizacao, $tipoDado, $id);
+
+        if ($stmt->execute()) {
+            $stmt->close();
+            header("Location: listar_sensores.php?sucesso=editado");
+            exit;
+        }
+
+        error_log($stmt->error);
+        $erros[] = "Não foi possível atualizar o sensor.";
+        $stmt->close();
+    }
+
+    $sensor["nome"] = $nome;
+    $sensor["localizacao"] = $localizacao;
+    $sensor["tipo_dado"] = $tipoDado;
 }
-
-function e(string $v): string { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
-
-$rotulos = [
-    'temperatura' => 'Temperatura', 'velocidade' => 'Velocidade', 'presenca' => 'Presença',
-    'vibracao' => 'Vibração', 'posicao' => 'Posição',
-    'ativo' => 'Ativo', 'inativo' => 'Inativo', 'manutencao' => 'Manutenção',
-];
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Editar Sensor - Ferrorama</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar sensor - Ferrorama</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f1f3f8;
+            color: #111c30;
+        }
+
+        .card {
+            max-width: 650px;
+            margin: 20px auto;
+            padding: 28px;
+            background: white;
+            border: 1px solid #e0e6f0;
+            border-radius: 12px;
+        }
+
+        label {
+            display: block;
+            margin: 18px 0 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d5dce8;
+            border-radius: 7px;
+        }
+
+        button, .botao {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 16px;
+            border: 0;
+            border-radius: 7px;
+            background: #3324d9;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .voltar { background: #e8edf5; color: #172a42; }
+
+        .erro {
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 7px;
+            background: #ffe8eb;
+            color: #a51e32;
+        }
+    </style>
 </head>
-<body class="bg-light">
-<div class="container py-5" style="max-width: 600px;">
-    <h1 class="h3 mb-4">Editar Sensor #<?= (int)$sensor['id'] ?></h1>
 
-    <?php if ($sucesso): ?>
-        <div class="alert alert-success">Sensor atualizado com sucesso!</div>
-    <?php endif; ?>
+<body>
+<section class="card">
+    <h1>Editar sensor</h1>
+    <p>Altere os dados do sensor instalado nos trilhos.</p>
 
-    <?php if ($erros): ?>
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                <?php foreach ($erros as $erro): ?>
-                    <li><?= e($erro) ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
+    <?php foreach ($erros as $erro): ?>
+        <div class="erro"><?= escapar($erro) ?></div>
+    <?php endforeach; ?>
 
-    <form method="post" class="card card-body shadow-sm">
-        <input type="hidden" name="csrf" value="<?= e($_SESSION['csrf']) ?>">
-        <input type="hidden" name="id" value="<?= (int)$sensor['id'] ?>">
+    <form method="POST" action="editSensor.php">
+        <input type="hidden" name="id" value="<?= (int) $sensor["id"] ?>">
+        <input type="hidden" name="csrf" value="<?= escapar($_SESSION["csrf"]) ?>">
 
-        <div class="mb-3">
-            <label for="nome" class="form-label">Nome</label>
-            <input type="text" id="nome" name="nome" class="form-control" maxlength="100"
-                   value="<?= e($sensor['nome']) ?>" required>
-        </div>
+        <label for="nome">Nome do sensor</label>
+        <input
+            id="nome"
+            name="nome"
+            maxlength="100"
+            required
+            value="<?= escapar($sensor["nome"]) ?>"
+        >
 
-        <div class="mb-3">
-            <label for="tipo" class="form-label">Tipo</label>
-            <select id="tipo" name="tipo" class="form-select" required>
-                <?php foreach ($tiposPermitidos as $t): ?>
-                    <option value="<?= e($t) ?>" <?= $sensor['tipo'] === $t ? 'selected' : '' ?>>
-                        <?= e($rotulos[$t]) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+        <label for="localizacao">Localização nos trilhos</label>
+        <input
+            id="localizacao"
+            name="localizacao"
+            maxlength="150"
+            required
+            placeholder="Ex.: KM 12"
+            value="<?= escapar($sensor["localizacao"]) ?>"
+        >
 
-        <div class="mb-3">
-            <label for="localizacao" class="form-label">Localização</label>
-            <input type="text" id="localizacao" name="localizacao" class="form-control" maxlength="150"
-                   value="<?= e($sensor['localizacao']) ?>" required>
-        </div>
+        <label for="tipo_dado">Tipo de dado</label>
+        <input
+            id="tipo_dado"
+            name="tipo_dado"
+            maxlength="100"
+            required
+            placeholder="Ex.: temperatura, velocidade, vibração"
+            value="<?= escapar($sensor["tipo_dado"]) ?>"
+        >
 
-        <div class="mb-4">
-            <label for="status" class="form-label">Status</label>
-            <select id="status" name="status" class="form-select" required>
-                <?php foreach ($statusPermitidos as $s): ?>
-                    <option value="<?= e($s) ?>" <?= $sensor['status'] === $s ? 'selected' : '' ?>>
-                        <?= e($rotulos[$s]) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary">Salvar alterações</button>
-            <a href="listar_sensores.php" class="btn btn-outline-secondary">Voltar</a>
-        </div>
+        <button type="submit">Salvar alterações</button>
+        <a href="listar_sensores.php" class="botao voltar">Cancelar</a>
     </form>
-</div>
+</section>
 </body>
 </html>
