@@ -88,7 +88,7 @@ $trens = $resultado->fetch_all(MYSQLI_ASSOC);
 
 $stmt->close();
 
-// Proteção de textos exibidos na página
+// Proteção de textos exibidos
 function escapar($valor): string
 {
     return htmlspecialchars(
@@ -160,10 +160,7 @@ foreach ($trens as $trem) {
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Trens - Ferrorama</title>
 
@@ -215,6 +212,19 @@ foreach ($trens as $trem) {
             font: inherit;
         }
 
+        /* Ícone do trem */
+
+        .train-svg {
+            width: 26px;
+            height: 26px;
+            display: block;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
         /* Barra superior */
 
         .navbar {
@@ -248,8 +258,6 @@ foreach ($trens as $trem) {
             color: var(--primary);
             display: grid;
             place-items: center;
-            font-size: 22px;
-            font-weight: 800;
         }
 
         .brand-name {
@@ -380,6 +388,7 @@ foreach ($trens as $trem) {
         }
 
         .btn-primary:hover {
+            color: white;
             background: #281ab7;
             border-color: #281ab7;
         }
@@ -391,6 +400,7 @@ foreach ($trens as $trem) {
         }
 
         .btn-dark:hover {
+            color: white;
             background: var(--navy-light);
         }
 
@@ -401,6 +411,7 @@ foreach ($trens as $trem) {
         }
 
         .btn-hero:hover {
+            color: white;
             background: rgba(255, 255, 255, 0.14);
         }
 
@@ -411,6 +422,7 @@ foreach ($trens as $trem) {
         }
 
         .btn-outline:hover {
+            color: var(--text);
             background: #f7f8fc;
             border-color: #aab5c8;
         }
@@ -426,6 +438,7 @@ foreach ($trens as $trem) {
         }
 
         .btn-edit:hover {
+            color: var(--primary);
             background: #eae8ff;
         }
 
@@ -440,6 +453,7 @@ foreach ($trens as $trem) {
         }
 
         .btn-delete:hover {
+            color: var(--red);
             background: #ffe8eb;
         }
 
@@ -882,6 +896,11 @@ foreach ($trens as $trem) {
                 font-size: 17px;
             }
 
+            .stat-icon .train-svg {
+                width: 23px;
+                height: 23px;
+            }
+
             .stat-value {
                 font-size: 22px;
             }
@@ -933,12 +952,22 @@ foreach ($trens as $trem) {
     <div class="navbar-inner">
 
         <a href="../sistema.php" class="brand">
-            <div class="brand-icon">🚆</div>
+
+            <div class="brand-icon">
+                <svg class="train-svg" viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <rect x="5" y="3" width="14" height="15" rx="4"/>
+                    <path d="M8 7h8M8 12h8M8 18l-2 3M16 18l2 3M5 15h14"/>
+                    <circle cx="9" cy="15" r="0.5"/>
+                    <circle cx="15" cy="15" r="0.5"/>
+                </svg>
+            </div>
 
             <div>
                 <div class="brand-name">Ferrorama</div>
                 <div class="brand-subtitle">Sistema ferroviário</div>
             </div>
+
         </a>
 
         <div class="user-area">
@@ -1015,6 +1044,15 @@ foreach ($trens as $trem) {
         </div>
 
     <?php elseif (
+        isset($_GET["sucesso"]) &&
+        $_GET["sucesso"] === "editado"
+    ): ?>
+
+        <div class="alert alert-success">
+            ✓ Trem atualizado com sucesso!
+        </div>
+
+    <?php elseif (
         isset($_GET["erro"]) &&
         $_GET["erro"] === "dependencias"
     ): ?>
@@ -1046,6 +1084,7 @@ foreach ($trens as $trem) {
 
     <!-- Título da seção -->
     <div class="section-heading">
+
         <div>
             <h2>Visão geral da frota</h2>
             <p>Resumo dos trens que correspondem à sua consulta.</p>
@@ -1055,45 +1094,62 @@ foreach ($trens as $trem) {
             <?= $totalTrens ?>
             <?= $totalTrens === 1 ? "trem encontrado" : "trens encontrados" ?>
         </div>
+
     </div>
 
     <!-- Indicadores -->
     <section class="stats">
 
         <div class="stat-card">
-            <div class="stat-icon purple">🚆</div>
+
+            <div class="stat-icon purple">
+                <svg class="train-svg" viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <rect x="5" y="3" width="14" height="15" rx="4"/>
+                    <path d="M8 7h8M8 12h8M8 18l-2 3M16 18l2 3M5 15h14"/>
+                    <circle cx="9" cy="15" r="0.5"/>
+                    <circle cx="15" cy="15" r="0.5"/>
+                </svg>
+            </div>
 
             <div>
                 <div class="stat-label">Total de trens</div>
                 <div class="stat-value"><?= $totalTrens ?></div>
             </div>
+
         </div>
 
         <div class="stat-card">
+
             <div class="stat-icon green">✓</div>
 
             <div>
                 <div class="stat-label">Em operação</div>
                 <div class="stat-value"><?= $totalAtivos ?></div>
             </div>
+
         </div>
 
         <div class="stat-card">
+
             <div class="stat-icon orange">⚙</div>
 
             <div>
                 <div class="stat-label">Em manutenção</div>
                 <div class="stat-value"><?= $totalManutencao ?></div>
             </div>
+
         </div>
 
         <div class="stat-card">
+
             <div class="stat-icon red">!</div>
 
             <div>
                 <div class="stat-label">Com falha</div>
                 <div class="stat-value"><?= $totalFalhas ?></div>
             </div>
+
         </div>
 
     </section>
@@ -1110,6 +1166,7 @@ foreach ($trens as $trem) {
         >
 
             <div class="field">
+
                 <label for="busca">Pesquisar</label>
 
                 <input
@@ -1121,9 +1178,11 @@ foreach ($trens as $trem) {
                     maxlength="100"
                     value="<?= escapar($busca) ?>"
                 >
+
             </div>
 
             <div class="field">
+
                 <label for="status">Status do trem</label>
 
                 <select
@@ -1131,6 +1190,7 @@ foreach ($trens as $trem) {
                     name="status"
                     class="control"
                 >
+
                     <option value="">Todos os status</option>
 
                     <option
@@ -1160,7 +1220,9 @@ foreach ($trens as $trem) {
                     >
                         Falha
                     </option>
+
                 </select>
+
             </div>
 
             <button type="submit" class="btn btn-dark filter-button">
@@ -1182,6 +1244,7 @@ foreach ($trens as $trem) {
     <section class="table-card">
 
         <div class="table-header">
+
             <div>
                 <h3>Trens cadastrados</h3>
 
@@ -1193,6 +1256,7 @@ foreach ($trens as $trem) {
             <div class="results-count">
                 <?= $totalTrens ?> registros
             </div>
+
         </div>
 
         <div class="table-wrap">
@@ -1225,6 +1289,7 @@ foreach ($trens as $trem) {
                             colspan="<?= $ehAdministrador ? 9 : 8 ?>"
                             class="empty-state"
                         >
+
                             <div class="empty-icon">⌕</div>
 
                             <strong>Nenhum trem encontrado</strong>
@@ -1233,6 +1298,7 @@ foreach ($trens as $trem) {
                                 Tente alterar os filtros ou limpar a pesquisa
                                 para visualizar os outros trens.
                             </p>
+
                         </td>
                     </tr>
 
@@ -1257,6 +1323,7 @@ foreach ($trens as $trem) {
                             </td>
 
                             <td>
+
                                 <span class="status <?= escapar(
                                     corStatusTrem($trem["status"])
                                 ) ?>">
@@ -1264,15 +1331,18 @@ foreach ($trens as $trem) {
                                         nomeStatusTrem($trem["status"])
                                     ) ?>
                                 </span>
+
                             </td>
 
                             <td class="numeric">
+
                                 <?= number_format(
                                     (float) $trem["velocidade_atual"],
                                     2,
                                     ",",
                                     "."
                                 ) ?> km/h
+
                             </td>
 
                             <td
@@ -1281,21 +1351,26 @@ foreach ($trens as $trem) {
                                     $trem["localizacao_atual"] ?? "Não informado"
                                 ) ?>"
                             >
+
                                 <?= escapar(
                                     $trem["localizacao_atual"] ?? "Não informado"
                                 ) ?>
+
                             </td>
 
                             <td class="numeric">
+
                                 <?= number_format(
                                     (float) $trem["consumo_energia"],
                                     2,
                                     ",",
                                     "."
                                 ) ?> kWh
+
                             </td>
 
                             <td class="numeric">
+
                                 <?php if (!empty($trem["atualizado_em"])): ?>
 
                                     <?= escapar(
@@ -1310,11 +1385,13 @@ foreach ($trens as $trem) {
                                     —
 
                                 <?php endif; ?>
+
                             </td>
 
                             <?php if ($ehAdministrador): ?>
 
                                 <td>
+
                                     <div class="actions">
 
                                         <a
@@ -1347,6 +1424,7 @@ foreach ($trens as $trem) {
                                         </form>
 
                                     </div>
+
                                 </td>
 
                             <?php endif; ?>
@@ -1373,7 +1451,9 @@ foreach ($trens as $trem) {
 
 <script>
     document.querySelectorAll(".delete-form").forEach(form => {
+
         form.addEventListener("submit", event => {
+
             event.preventDefault();
 
             const confirmado = confirm(
@@ -1384,7 +1464,9 @@ foreach ($trens as $trem) {
             if (confirmado) {
                 form.submit();
             }
+
         });
+
     });
 </script>
 
