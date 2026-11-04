@@ -490,17 +490,23 @@ $ehAdministrador =
             </a>
         </article>
 
-        <article class="tile">
-            <div class="symbol">⌁</div>
-            <h3>Rotas</h3>
-            <p>
-                Organize e acompanhe os trajetos ferroviários.
-            </p>
-            <a href="rotas/rotas.php">
-                Acessar rotas →
-            </a>
-        </article>
+       <?php if ($ehAdministrador): ?>
 
+<article class="tile">
+    <div class="symbol">⌁</div>
+
+    <h3>Rotas</h3>
+
+    <p>
+        Organize e acompanhe os trajetos ferroviários.
+    </p>
+
+    <a href="rotas/rotas.php">
+        Acessar rotas →
+    </a>
+</article>
+
+<?php endif; ?>
         <article class="tile">
             <div class="symbol">◎</div>
             <h3>Meu perfil</h3>
