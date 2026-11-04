@@ -1,4 +1,4 @@
-
+```sql
 CREATE DATABASE IF NOT EXISTS ferrorama
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
@@ -39,7 +39,6 @@ CREATE TABLE trens (
 
 -- =========================================
 -- TABELA DE SENSORES
--- Sensores independentes dos trens
 -- =========================================
 
 CREATE TABLE sensores (
@@ -53,7 +52,7 @@ CREATE TABLE sensores (
 
 -- =========================================
 -- TABELA DE ROTAS
--- As rotas continuam associadas aos trens
+-- Agora possui usuario_id
 -- =========================================
 
 CREATE TABLE rotas (
@@ -63,22 +62,34 @@ CREATE TABLE rotas (
     origem VARCHAR(100) NOT NULL,
     destino VARCHAR(100) NOT NULL,
     distancia_km DECIMAL(8,2) NOT NULL,
+
     trem_id INT NOT NULL,
+    usuario_id INT NULL,
+
     tempo_estimado VARCHAR(20) NOT NULL,
+
     status ENUM('ativa', 'inativa', 'manutencao')
         NOT NULL DEFAULT 'ativa',
+
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_rotas_usuario (usuario_id),
 
     CONSTRAINT fk_rotas_trem
         FOREIGN KEY (trem_id)
         REFERENCES trens(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_rotas_usuario
+        FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- =========================================
 -- TABELA DE LEITURAS DOS SENSORES
--- O histórico impede excluir sensores com leituras
 -- =========================================
 
 CREATE TABLE dados_sensor (
@@ -142,9 +153,12 @@ VALUES
 );
 
 -- =========================================
--- VERIFICAÇÃO DAS TABELAS
+-- VERIFICACAO DAS TABELAS
 -- =========================================
 
+SHOW CREATE TABLE usuarios;
+SHOW CREATE TABLE rotas;
 SHOW CREATE TABLE sensores;
 SHOW CREATE TABLE dados_sensor;
 SHOW CREATE TABLE trens;
+```
