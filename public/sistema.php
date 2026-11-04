@@ -346,6 +346,11 @@ $ehAdministrador =
 
 <body>
 
+
+
+
+
+
 <header class="topbar">
 
     <a class="brand" href="sistema.php">
