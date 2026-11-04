@@ -1,11 +1,17 @@
-<?php
 
+<?php
 require_once __DIR__ . "/../infra/auth.php";
+
+$nomeUsuario = htmlspecialchars(
+    $_SESSION["usuario_nome"] ?? "Usuário",
+    ENT_QUOTES,
+    "UTF-8"
+);
 
 $ehAdministrador =
     ($_SESSION["usuario_perfil"] ?? "") === "administrador";
-
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -13,480 +19,326 @@ $ehAdministrador =
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Ferrorama | Painel de Controle</title>
+    <title>Ferrorama | Painel</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
 
     <style>
-        :root {
-            --primary: #0d009c;
-            --primary-light: #4038a0;
-            --primary-hover: #080078;
-            --navy: #0c1929;
-            --navy-light: #14263b;
-            --background: #f3f5f9;
-            --white: #ffffff;
-            --text: #142033;
-            --muted: #778397;
-            --border: #e1e6ef;
-            --danger: #c62828;
-        }
-
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background: var(--background);
-            color: var(--text);
-            min-height: 100vh;
+            font-family: Inter, Arial, sans-serif;
+            background: #f3f5fa;
+            color: #17243a;
         }
 
         a {
+            text-decoration: none;
             color: inherit;
         }
 
-        /* CABEÇALHO */
-
         .topbar {
-            min-height: 76px;
-            padding: 0 7%;
-            background: var(--navy);
+            background: #0b1728;
+            color: white;
+            padding: 20px max(24px, calc((100% - 1160px) / 2));
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            gap: 24px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            align-items: center;
+            gap: 20px;
         }
 
         .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .brand-icon {
-            width: 43px;
-            height: 43px;
-            border-radius: 13px;
-            background: var(--white);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .brand-icon svg {
-            width: 26px;
-            height: 26px;
-        }
-
-        .brand-name {
-            color: var(--white);
             font-size: 21px;
             font-weight: 800;
-            letter-spacing: -0.5px;
         }
 
-        .brand-subtitle {
-            display: block;
-            color: #aebbd0;
-            font-size: 12px;
-            font-weight: 400;
-            margin-top: 4px;
+        .brand span {
+            color: #a99fff;
         }
 
-        .user-area {
+        .top-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: #dce4ef;
-            font-size: 14px;
+            gap: 16px;
+            font-size: 13px;
+            flex-wrap: wrap;
         }
 
-        .user-icon {
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: var(--navy-light);
-            color: #ffffff;
+        .logout {
+            border: 1px solid #53627a;
+            padding: 9px 13px;
+            border-radius: 9px;
         }
-
-        .user-icon svg {
-            width: 21px;
-            height: 21px;
-        }
-
-        .role-label {
-            color: #b6c4d8;
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        /* BOAS-VINDAS */
 
         .hero {
             background:
-                radial-gradient(
-                    circle at 85% 15%,
-                    rgba(64, 56, 160, 0.35),
-                    transparent 32%
-                ),
-                linear-gradient(120deg, var(--navy), #172743);
-            padding: 58px 7% 64px;
-            position: relative;
-            overflow: hidden;
+                radial-gradient(circle at 82% 20%, #5144a855, transparent 35%),
+                linear-gradient(115deg, #0b1728, #14243b);
+            color: white;
+            padding: 48px 24px 58px;
         }
 
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
+        .hero-inner,
+        .main {
+            max-width: 1160px;
+            margin: auto;
         }
 
         .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #c7c5ff;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.8px;
-            margin-bottom: 18px;
-        }
-
-        .eyebrow::before {
-            content: "";
-            width: 22px;
-            height: 2px;
-            background: #827bff;
-            border-radius: 5px;
-        }
-
-        .hero h1 {
-            color: var(--white);
-            font-size: clamp(30px, 4vw, 43px);
-            font-weight: 700;
-            letter-spacing: -1.2px;
-            line-height: 1.2;
+            color: #bcb5ff;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.6px;
             margin-bottom: 14px;
         }
 
-        .hero h1 span {
-            color: #aaa5ff;
+        .hero h1 {
+            font-size: clamp(28px, 4vw, 40px);
+            margin-bottom: 12px;
         }
 
         .hero p {
-            max-width: 540px;
-            color: #bdc9da;
-            font-size: 16px;
+            max-width: 650px;
+            color: #c7d2e2;
             line-height: 1.7;
+            font-size: 14px;
         }
 
-        /* CONTEÚDO PRINCIPAL */
-
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 38px 24px 60px;
+        .main {
+            padding: 30px 24px 60px;
         }
 
-        .section-heading {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        /* CLIMA */
+
+        .weather {
+            display: grid;
+            grid-template-columns: 1.2fr 2fr;
             gap: 20px;
-            margin-bottom: 23px;
+            background: white;
+            border: 1px solid #e4e9f1;
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 28px;
         }
 
-        .section-heading h2 {
-            font-size: 21px;
-            font-weight: 700;
-            letter-spacing: -0.4px;
+        .weather-main {
+            background: linear-gradient(135deg, #171b48, #343078);
+            border-radius: 14px;
+            padding: 22px;
+            color: white;
+        }
+
+        .weather-main small {
+            color: #c6c3ff;
+        }
+
+        .temperature {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 12px 0 3px;
+        }
+
+        .weather-main p {
+            color: #d6d7f0;
+            font-size: 13px;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            align-content: center;
+        }
+
+        .metric {
+            padding: 16px;
+            border: 1px solid #e4e9f1;
+            border-radius: 12px;
+        }
+
+        .metric span {
+            display: block;
+            color: #718096;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .metric strong {
+            font-size: 15px;
+        }
+
+        .weather-footer {
+            grid-column: 1 / -1;
+            color: #718096;
+            font-size: 11px;
+        }
+
+        /* FUNCIONALIDADES */
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .tile {
+            background: white;
+            border: 1px solid #e4e9f1;
+            border-radius: 15px;
+            padding: 21px;
+            transition: .2s;
+        }
+
+        .tile:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px #17243a0d;
+        }
+
+        .symbol {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #efedff;
+            color: #6554e8;
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .tile h3 {
+            font-size: 15px;
             margin-bottom: 7px;
         }
 
-        .section-heading p {
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .section-count {
-            flex-shrink: 0;
-            padding: 8px 12px;
-            background: #e9e8ff;
-            color: var(--primary);
-            border-radius: 9px;
+        .tile p {
             font-size: 12px;
-            font-weight: 700;
-        }
-
-        /* CARDS */
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 20px;
-        }
-
-        .menu-card {
-            --accent: var(--primary);
-
-            min-width: 0;
-            min-height: 205px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            padding: 25px;
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 17px;
-            text-decoration: none;
-            overflow: hidden;
-            box-shadow: 0 4px 16px rgba(18, 32, 56, 0.025);
-            transition:
-                transform 0.22s ease,
-                box-shadow 0.22s ease,
-                border-color 0.22s ease;
-        }
-
-        .menu-card::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--accent);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.22s ease;
-        }
-
-        .menu-card:hover {
-            transform: translateY(-5px);
-            border-color: #c9c5ff;
-            box-shadow: 0 14px 32px rgba(23, 25, 75, 0.09);
-        }
-
-        .menu-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .menu-card:focus-visible,
-        .logout-link:focus-visible {
-            outline: 3px solid #827bff;
-            outline-offset: 4px;
-        }
-
-        .card-top {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 21px;
-        }
-
-        .card-icon {
-            width: 49px;
-            height: 49px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 14px;
-            background: #eeedff;
-            color: var(--accent);
-        }
-
-        .card-icon svg {
-            width: 25px;
-            height: 25px;
-        }
-
-        .card-arrow {
-            color: #a1aabd;
-            font-size: 23px;
-            line-height: 1;
-            transition: color 0.2s, transform 0.2s;
-        }
-
-        .menu-card:hover .card-arrow {
-            color: var(--accent);
-            transform: translate(3px, -3px);
-        }
-
-        .menu-card h3 {
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 9px;
-            letter-spacing: -0.2px;
-        }
-
-        .menu-card p {
-            color: var(--muted);
-            font-size: 13px;
+            color: #718096;
             line-height: 1.6;
+            margin-bottom: 15px;
         }
 
-        .card-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            margin-top: auto;
-            padding-top: 20px;
-            color: var(--accent);
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .card-action span {
-            transition: transform 0.2s;
-        }
-
-        .menu-card:hover .card-action span {
-            transform: translateX(4px);
-        }
-
-        /* SAIR */
-
-        .logout-card {
-            --accent: var(--danger);
-        }
-
-        .logout-card .card-icon {
-            background: #fff0f0;
-        }
-
-        .logout-card:hover {
-            border-color: #f3cccc;
-        }
-
-        .logout-link {
-            text-decoration: none;
-        }
-
-        /* RODAPÉ */
-
-        .footer {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px 24px 28px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            color: var(--muted);
+        .tile a {
             font-size: 12px;
-        }
-
-        .footer strong {
-            color: #526078;
             font-weight: 700;
+            color: #6554e8;
         }
 
-        /* RESPONSIVIDADE */
+        /* CONSULTA CEP */
 
-        @media (max-width: 900px) {
-            .topbar {
-                padding: 0 5%;
-            }
-
-            .hero {
-                padding: 48px 5% 52px;
-            }
-
-            .card-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
+        .cep-card {
+            background: white;
+            border: 1px solid #e4e9f1;
+            border-radius: 16px;
+            padding: 24px;
         }
 
-        @media (max-width: 560px) {
-            .topbar {
-                min-height: 68px;
-                padding: 0 20px;
-            }
+        .cep-card > p {
+            font-size: 13px;
+            color: #718096;
+            margin: 6px 0 18px;
+        }
 
-            .brand-name {
-                font-size: 19px;
-            }
+        .cep-form {
+            display: grid;
+            grid-template-columns: 220px auto;
+            gap: 10px;
+            max-width: 500px;
+        }
 
-            .brand-subtitle {
-                font-size: 11px;
-            }
+        .cep-form input,
+        .address-grid input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d9e0eb;
+            border-radius: 9px;
+            font: inherit;
+            font-size: 13px;
+        }
 
-            .user-area {
-                gap: 0;
-            }
+        .cep-form button {
+            border: 0;
+            border-radius: 9px;
+            background: #6554e8;
+            color: white;
+            font-weight: 700;
+            padding: 0 18px;
+            cursor: pointer;
+        }
 
-            .user-info {
-                display: none;
-            }
+        .address-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 14px;
+        }
 
-            .hero {
-                padding: 42px 22px 46px;
-            }
+        .address-grid input {
+            background: #f8f9fc;
+        }
 
-            .hero h1 {
-                font-size: 32px;
-            }
+        .message {
+            font-size: 12px;
+            margin-top: 12px;
+            min-height: 18px;
+        }
 
-            .hero p {
-                font-size: 14px;
-            }
+        .error {
+            color: #b42332;
+        }
 
-            .main-content {
-                padding: 30px 18px 42px;
-            }
+        .success {
+            color: #167447;
+        }
 
-            .section-heading {
-                align-items: flex-start;
-            }
+        footer {
+            text-align: center;
+            color: #8490a3;
+            font-size: 11px;
+            padding: 22px;
+        }
 
-            .section-heading h2 {
-                font-size: 19px;
-            }
-
-            .section-count {
-                font-size: 11px;
-            }
-
-            .card-grid {
+        @media(max-width: 760px) {
+            .weather {
                 grid-template-columns: 1fr;
-                gap: 14px;
             }
 
-            .menu-card {
-                min-height: 185px;
-                padding: 22px;
+            .grid {
+                grid-template-columns: 1fr 1fr;
             }
 
-            .footer {
-                padding: 20px;
+            .address-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .cep-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
                 flex-direction: column;
                 align-items: flex-start;
-                line-height: 1.6;
             }
-        }
 
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
+            .address-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -494,225 +346,391 @@ $ehAdministrador =
 
 <body>
 
-    <header class="topbar">
-        <a class="brand" href="sistema.php" aria-label="Ferrorama - página inicial">
-            <span class="brand-icon">
-                <svg viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="1.8"
-                     stroke-linecap="round" stroke-linejoin="round"
-                     aria-hidden="true">
-                    <rect x="5" y="3" width="14" height="15" rx="4"></rect>
-                    <path d="M8 7h8M8 12h8M8 18l-2 3M16 18l2 3M5 15h14"></path>
-                    <circle cx="9" cy="15" r="1"></circle>
-                    <circle cx="15" cy="15" r="1"></circle>
-                </svg>
-            </span>
+<header class="topbar">
 
-            <span>
-                <span class="brand-name">Ferrorama</span>
-                <span class="brand-subtitle">Sistema ferroviário</span>
-            </span>
+    <a class="brand" href="sistema.php">
+        FERRO<span>RAMA</span>
+    </a>
+
+    <div class="top-actions">
+
+        <span>Olá, <?= $nomeUsuario ?></span>
+
+        <a href="home.php">Meu perfil</a>
+
+        <?php if ($ehAdministrador): ?>
+            <a href="usuarios/pagina_adm.php">
+                Administração
+            </a>
+        <?php endif; ?>
+
+        <a class="logout" href="logout.php">
+            Sair
         </a>
 
-        <div class="user-area">
-            <span class="user-icon">
-                <svg viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="1.7"
-                     stroke-linecap="round" stroke-linejoin="round"
-                     aria-hidden="true">
-                    <circle cx="12" cy="8" r="4"></circle>
-                    <path d="M4 21a8 8 0 0 1 16 0"></path>
-                </svg>
-            </span>
+    </div>
 
-            <span class="user-info">
-                <span>Área do usuário</span>
-                <span class="role-label">
-                    <?= $ehAdministrador ? "Administrador" : "Usuário" ?>
-                </span>
-            </span>
-        </div>
-    </header>
+</header>
 
-    <section class="hero">
-        <div class="hero-content">
-            <div class="eyebrow">Painel de controle</div>
+<section class="hero">
 
-            <h1>
-                Bem-vindo ao <span>Ferrorama.</span>
-            </h1>
+    <div class="hero-inner">
 
-            <p>
-                Gerencie os recursos ferroviários, consulte informações
-                e acompanhe as funcionalidades do sistema em um só lugar.
-            </p>
-        </div>
-    </section>
+        <div class="eyebrow">PAINEL OPERACIONAL</div>
 
-    <main class="main-content">
+        <h1>Bem-vindo ao Ferrorama</h1>
 
-        <div class="section-heading">
-            <div>
-                <h2>O que você deseja acessar?</h2>
-                <p>Selecione uma das opções disponíveis abaixo.</p>
+        <p>
+            Acompanhe informações ferroviárias, gerencie sensores
+            e consulte dados importantes para apoiar uma operação
+            mais segura e eficiente.
+        </p>
+
+    </div>
+
+</section>
+
+<main class="main">
+
+    <!-- CLIMA -->
+
+    <h2 class="section-title">
+        Condições meteorológicas
+    </h2>
+
+    <section class="weather">
+
+        <div class="weather-main">
+
+            <small id="weather-location">
+                Consultando localização...
+            </small>
+
+            <div class="temperature" id="temperature">
+                --°C
             </div>
 
-            <span class="section-count">
-                <?= $ehAdministrador ? "6 opções" : "3 opções" ?>
-            </span>
-        </div>
-
-        <div class="card-grid">
-
-            <!-- Disponível para todos os usuários autorizados -->
-            <a class="menu-card" href="sensor.php">
-                <div class="card-top">
-                    <span class="card-icon">
-                        <svg viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="1.8"
-                             stroke-linecap="round" stroke-linejoin="round"
-                             aria-hidden="true">
-                            <rect x="4" y="3" width="16" height="13" rx="3"></rect>
-                            <path d="M7 7h10M7 11h10M8 16l-3 5M16 16l3 5M4 13h16"></path>
-                            <circle cx="8" cy="13" r="1"></circle>
-                            <circle cx="16" cy="13" r="1"></circle>
-                        </svg>
-                    </span>
-                    <span class="card-arrow" aria-hidden="true">↗</span>
-                </div>
-
-                <h3>Trens e Sensores</h3>
-                <p>Acesse a área de trens e sensores do sistema ferroviário.</p>
-
-                <span class="card-action">
-                    Acessar funcionalidade <span>→</span>
-                </span>
-            </a>
-
-            <!-- Consulta de trens disponível para todos -->
-            <a class="menu-card" href="trem/listagemtrem.php">
-                <div class="card-top">
-                    <span class="card-icon">
-                        <svg viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="1.8"
-                             stroke-linecap="round" stroke-linejoin="round"
-                             aria-hidden="true">
-                            <circle cx="10.5" cy="10.5" r="6.5"></circle>
-                            <path d="m16 16 4.5 4.5M7.5 8.5h6M7.5 11.5h6"></path>
-                        </svg>
-                    </span>
-                    <span class="card-arrow" aria-hidden="true">↗</span>
-                </div>
-
-                <h3>Consultar Trens</h3>
-                <p>Consulte os trens cadastrados e visualize suas informações.</p>
-
-                <span class="card-action">
-                    Acessar funcionalidade <span>→</span>
-                </span>
-            </a>
-
-            <?php if ($ehAdministrador): ?>
-
-                <!-- Somente administrador -->
-                <a class="menu-card" href="rotas/rotas.php">
-                    <div class="card-top">
-                        <span class="card-icon">
-                            <svg viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="1.8"
-                                 stroke-linecap="round" stroke-linejoin="round"
-                                 aria-hidden="true">
-                                <circle cx="6" cy="18" r="3"></circle>
-                                <circle cx="18" cy="6" r="3"></circle>
-                                <path d="M8.5 16.5 15.5 7.5M13 6h2M6 13v2"></path>
-                            </svg>
-                        </span>
-                        <span class="card-arrow" aria-hidden="true">↗</span>
-                    </div>
-
-                    <h3>Gerenciar Rotas</h3>
-                    <p>Gerencie os trajetos e as informações das rotas ferroviárias.</p>
-
-                    <span class="card-action">
-                        Acessar funcionalidade <span>→</span>
-                    </span>
-                </a>
-
-                <a class="menu-card" href="cadastro_item.php">
-                    <div class="card-top">
-                        <span class="card-icon">
-                            <svg viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="1.8"
-                                 stroke-linecap="round" stroke-linejoin="round"
-                                 aria-hidden="true">
-                                <circle cx="12" cy="12" r="8"></circle>
-                                <path d="M12 8v8M8 12h8"></path>
-                            </svg>
-                        </span>
-                        <span class="card-arrow" aria-hidden="true">↗</span>
-                    </div>
-
-                    <h3>Cadastrar Sensor</h3>
-                    <p>Cadastre novos sensores para ampliar o monitoramento ferroviário.</p>
-
-                    <span class="card-action">
-                        Acessar funcionalidade <span>→</span>
-                    </span>
-                </a>
-
-                <a class="menu-card" href="usuarios/pagina_adm.php">
-                    <div class="card-top">
-                        <span class="card-icon">
-                            <svg viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="1.8"
-                                 stroke-linecap="round" stroke-linejoin="round"
-                                 aria-hidden="true">
-                                <circle cx="9" cy="8" r="3.5"></circle>
-                                <path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 5.5a3.5 3.5 0 0 1 0 6.5M18 14a5.5 5.5 0 0 1 3.5 5"></path>
-                            </svg>
-                        </span>
-                        <span class="card-arrow" aria-hidden="true">↗</span>
-                    </div>
-
-                    <h3>Usuários</h3>
-                    <p>Gerencie os usuários e os acessos ao sistema.</p>
-
-                    <span class="card-action">
-                        Acessar funcionalidade <span>→</span>
-                    </span>
-                </a>
-
-            <?php endif; ?>
-
-            <a class="menu-card logout-card" href="logout.php">
-                <div class="card-top">
-                    <span class="card-icon">
-                        <svg viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="1.8"
-                             stroke-linecap="round" stroke-linejoin="round"
-                             aria-hidden="true">
-                            <path d="M10 17l5-5-5-5M15 12H3"></path>
-                            <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"></path>
-                        </svg>
-                    </span>
-                    <span class="card-arrow" aria-hidden="true">↗</span>
-                </div>
-
-                <h3>Sair do sistema</h3>
-                <p>Encerre sua sessão de acesso ao Ferrorama.</p>
-
-                <span class="card-action">
-                    Encerrar sessão <span>→</span>
-                </span>
-            </a>
+            <p id="condition">
+                Carregando condições atuais
+            </p>
 
         </div>
-    </main>
 
-    <footer class="footer">
-        <span><strong>Ferrorama</strong> · Sistema de gerenciamento ferroviário</span>
-        <span>Painel de controle</span>
-    </footer>
+        <div class="weather-details">
+
+            <div class="metric">
+                <span>SENSAÇÃO TÉRMICA</span>
+                <strong id="feels">--</strong>
+            </div>
+
+            <div class="metric">
+                <span>UMIDADE</span>
+                <strong id="humidity">--</strong>
+            </div>
+
+            <div class="metric">
+                <span>VENTO</span>
+                <strong id="wind">--</strong>
+            </div>
+
+            <div class="metric">
+                <span>PRECIPITAÇÃO</span>
+                <strong id="rain">--</strong>
+            </div>
+
+        </div>
+
+        <div class="weather-footer" id="weather-updated">
+            Os dados são consultados pela API Open-Meteo.
+        </div>
+
+    </section>
+
+    <!-- FUNCIONALIDADES -->
+
+    <h2 class="section-title">
+        Funcionalidades do sistema
+    </h2>
+
+    <section class="grid">
+
+        <article class="tile">
+            <div class="symbol">◈</div>
+            <h3>Sensores</h3>
+            <p>
+                Cadastre, edite e consulte os sensores utilizados
+                no monitoramento ferroviário.
+            </p>
+            <a href="cadastro_item.php">
+                Acessar sensores →
+            </a>
+        </article>
+
+        <article class="tile">
+            <div class="symbol">▰</div>
+            <h3>Trens</h3>
+            <p>
+                Gerencie os trens cadastrados e consulte
+                suas informações.
+            </p>
+            <a href="trens.php">
+                Acessar trens →
+            </a>
+        </article>
+
+        <article class="tile">
+            <div class="symbol">⌁</div>
+            <h3>Rotas</h3>
+            <p>
+                Organize e acompanhe os trajetos ferroviários.
+            </p>
+            <a href="rotas/rotas.php">
+                Acessar rotas →
+            </a>
+        </article>
+
+        <article class="tile">
+            <div class="symbol">◎</div>
+            <h3>Meu perfil</h3>
+            <p>
+                Consulte as informações da sua conta.
+            </p>
+            <a href="home.php">
+                Visualizar perfil →
+            </a>
+        </article>
+
+        <?php if ($ehAdministrador): ?>
+
+        <article class="tile">
+            <div class="symbol">♙</div>
+            <h3>Usuários</h3>
+            <p>
+                Gerencie as contas e permissões de acesso.
+            </p>
+            <a href="usuarios/pagina_adm.php">
+                Administrar usuários →
+            </a>
+        </article>
+
+        <?php endif; ?>
+
+    </section>
+
+    <!-- CEP -->
+
+    <section class="cep-card">
+
+        <h2 class="section-title">
+            Consulta de endereço por CEP
+        </h2>
+
+        <p>
+            Informe um CEP brasileiro para consultar
+            o endereço automaticamente pelo ViaCEP.
+        </p>
+
+        <form class="cep-form" id="cep-form">
+
+            <input
+                id="cep"
+                name="cep"
+                inputmode="numeric"
+                maxlength="9"
+                placeholder="Ex.: 89201-000"
+                required
+            >
+
+            <button type="submit">
+                Consultar CEP
+            </button>
+
+        </form>
+
+        <div class="message" id="cep-message"></div>
+
+        <div class="address-grid">
+
+            <input id="logradouro" placeholder="Logradouro" readonly>
+
+            <input id="bairro" placeholder="Bairro" readonly>
+
+            <input id="cidade" placeholder="Cidade" readonly>
+
+            <input id="uf" placeholder="UF" readonly>
+
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    Ferrorama · Sistema de monitoramento ferroviário
+</footer>
+
+<script>
+
+// ===================================
+// CONSULTA DE CLIMA
+// ===================================
+
+async function carregarClima() {
+
+    const mensagem =
+        document.getElementById("weather-updated");
+
+    try {
+
+        const resposta = await fetch("api/clima.php", {
+            cache: "no-store"
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+            throw new Error(
+                dados.erro || "Erro ao consultar o clima."
+            );
+        }
+
+        document.getElementById("weather-location")
+            .textContent = dados.localizacao;
+
+        document.getElementById("temperature")
+            .textContent =
+            Number(dados.temperatura).toFixed(1) + "°C";
+
+        document.getElementById("condition")
+            .textContent = dados.condicao;
+
+        document.getElementById("feels")
+            .textContent =
+            Number(dados.sensacao).toFixed(1) + "°C";
+
+        document.getElementById("humidity")
+            .textContent = dados.umidade + "%";
+
+        document.getElementById("wind")
+            .textContent = dados.vento + " km/h";
+
+        document.getElementById("rain")
+            .textContent = dados.precipitacao + " mm";
+
+        const hora = dados.atualizado_em
+            ? new Date(dados.atualizado_em)
+                .toLocaleString("pt-BR")
+            : new Date().toLocaleString("pt-BR");
+
+        mensagem.textContent =
+            "Última atualização: " + hora +
+            " | Fonte: Open-Meteo";
+
+    } catch (erro) {
+
+        mensagem.textContent = erro.message;
+
+        document.getElementById("condition")
+            .textContent = "Clima indisponível";
+
+    }
+}
+
+carregarClima();
+
+
+// ===================================
+// MÁSCARA DO CEP
+// ===================================
+
+document.getElementById("cep")
+    .addEventListener("input", function() {
+
+        let valor = this.value.replace(/\D/g, "").slice(0, 8);
+
+        if (valor.length > 5) {
+            valor =
+                valor.substring(0, 5) +
+                "-" +
+                valor.substring(5);
+        }
+
+        this.value = valor;
+
+    });
+
+
+// ===================================
+// CONSULTA DE CEP
+// ===================================
+
+document.getElementById("cep-form")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const cep = document.getElementById("cep")
+            .value.replace(/\D/g, "");
+
+        const mensagem =
+            document.getElementById("cep-message");
+
+        mensagem.className = "message";
+        mensagem.textContent = "Consultando ViaCEP...";
+
+        const campos = [
+            "logradouro",
+            "bairro",
+            "cidade",
+            "uf"
+        ];
+
+        campos.forEach(function(campo) {
+            document.getElementById(campo).value = "";
+        });
+
+        try {
+
+            const resposta = await fetch(
+                "api/cep.php?cep=" + encodeURIComponent(cep)
+            );
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(
+                    dados.erro || "Erro na consulta."
+                );
+            }
+
+            document.getElementById("logradouro").value =
+                dados.logradouro;
+
+            document.getElementById("bairro").value =
+                dados.bairro;
+
+            document.getElementById("cidade").value =
+                dados.cidade;
+
+            document.getElementById("uf").value =
+                dados.uf;
+
+            mensagem.className = "message success";
+
+            mensagem.textContent =
+                "Endereço encontrado com sucesso!";
+
+        } catch (erro) {
+
+            mensagem.className = "message error";
+
+            mensagem.textContent = erro.message;
+
+        }
+
+    });
+
+</script>
 
 </body>
 </html>
