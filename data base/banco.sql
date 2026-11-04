@@ -23,6 +23,7 @@ CREATE TABLE usuarios (
 -- TABELA DE TRENS
 -- =========================================
 
+
 CREATE TABLE trens (
     id INT AUTO_INCREMENT PRIMARY KEY,
     identificador VARCHAR(50) NOT NULL UNIQUE,
