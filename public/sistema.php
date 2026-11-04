@@ -459,17 +459,24 @@ $ehAdministrador =
 
     <section class="grid">
 
-        <article class="tile">
-            <div class="symbol">◈</div>
-            <h3>Sensores</h3>
-            <p>
-                Cadastre, edite e consulte os sensores utilizados
-                no monitoramento ferroviário.
-            </p>
-            <a href="cadastro_item.php">
-                Acessar sensores →
-            </a>
-        </article>
+   <?php if ($ehAdministrador): ?>
+
+<article class="tile">
+    <div class="symbol">◈</div>
+
+    <h3>Sensores</h3>
+
+    <p>
+        Cadastre, edite e consulte os sensores utilizados
+        no monitoramento ferroviário.
+    </p>
+
+    <a href="cadastro_item.php">
+        Acessar sensores →
+    </a>
+</article>
+
+<?php endif; ?>
 
         <article class="tile">
             <div class="symbol">▰</div>
