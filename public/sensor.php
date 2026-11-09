@@ -1,41 +1,51 @@
 
 <?php
 
-require_once "../infra/auth.php";
-require_once "../infra/connect.php";
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+require_once __DIR__ . "/../infra/auth.php";
+require_once __DIR__ . "/../infra/connect.php";
 
 // ==========================================
 // BUSCAR TRENS
 // ==========================================
 
-$sqlTrens = "SELECT id, identificador, modelo, status,
-                    velocidade_atual, localizacao_atual
-             FROM trens
-             ORDER BY identificador";
+$sqlTrens = "
+    SELECT id, identificador, modelo, status,
+           velocidade_atual, localizacao_atual
+    FROM trens
+    ORDER BY identificador
+";
 
-$resultadoTrens = mysqli_query($conn, $sqlTrens);
+$resultadoTrens = $conn->query($sqlTrens);
 
 if (!$resultadoTrens) {
-    die("Erro ao buscar trens.");
+    error_log($conn->error);
+    exit("Erro ao buscar trens.");
 }
 
-$trens = mysqli_fetch_all($resultadoTrens, MYSQLI_ASSOC);
+$trens = $resultadoTrens->fetch_all(MYSQLI_ASSOC);
 
 // ==========================================
 // BUSCAR SENSORES
 // ==========================================
 
-$sqlSensores = "SELECT id, nome, localizacao, tipo_dado
-                FROM sensores
-                ORDER BY localizacao, nome";
+$sqlSensores = "
+    SELECT id, nome, localizacao, tipo_dado
+    FROM sensores
+    ORDER BY localizacao, nome
+";
 
-$resultadoSensores = mysqli_query($conn, $sqlSensores);
+$resultadoSensores = $conn->query($sqlSensores);
 
 if (!$resultadoSensores) {
-    die("Erro ao buscar sensores.");
+    error_log($conn->error);
+    exit("Erro ao buscar sensores.");
 }
 
-$sensores = mysqli_fetch_all($resultadoSensores, MYSQLI_ASSOC);
+$sensores = $resultadoSensores->fetch_all(MYSQLI_ASSOC);
 
 // ==========================================
 // IDENTIFICAR QUILÔMETROS
@@ -48,7 +58,7 @@ foreach ($sensores as $sensor) {
     $localizacao = (string)($sensor["localizacao"] ?? "");
 
     if (preg_match(
-        '/(?:KM|QUILOMETRO|QUILÔMETRO)\s*(\d+(?:[.,]\d+)?)/iu',
+        '/(?:KM|QUILOMETRO|QUILÔMETRO)\s*[-:]?\s*(\d+(?:[.,]\d+)?)/iu',
         $localizacao,
         $resultado
     )) {
@@ -62,7 +72,7 @@ $maiorKm = count($quilometros) > 0 ? max($quilometros) : 0;
 // FUNÇÕES AUXILIARES
 // ==========================================
 
-function e($valor) {
+function e($valor): string {
     return htmlspecialchars(
         (string)($valor ?? ""),
         ENT_QUOTES,
@@ -70,7 +80,7 @@ function e($valor) {
     );
 }
 
-function textoStatus($status) {
+function textoStatus($status): string {
 
     $statusMap = [
         "ativo" => "Em operação",
@@ -82,10 +92,10 @@ function textoStatus($status) {
     return $statusMap[$status] ?? "Não informado";
 }
 
-function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
+function posicaoSensor($localizacao, $indice, $total, $maiorKm): float {
 
     if (preg_match(
-        '/(?:KM|QUILOMETRO|QUILÔMETRO)\s*(\d+(?:[.,]\d+)?)/iu',
+        '/(?:KM|QUILOMETRO|QUILÔMETRO)\s*[-:]?\s*(\d+(?:[.,]\d+)?)/iu',
         (string)$localizacao,
         $resultado
     )) {
@@ -118,20 +128,21 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
 
         :root {
-            --primary: #0d009c;
-            --primary-light: #4038a0;
+            --primary: #3324d9;
+            --primary-light: #6655f5;
             --navy: #0c1929;
             --navy-light: #14263b;
-            --background: #f3f5f9;
+            --background: #f1f3f9;
             --white: #ffffff;
             --text: #142033;
             --muted: #778397;
-            --border: #e1e6ef;
+            --border: #e0e6f0;
         }
 
         * {
@@ -147,9 +158,11 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             min-height: 100vh;
         }
 
-        /* ==================================
-           CABEÇALHO - IGUAL AO SISTEMA.PHP
-        ================================== */
+        a {
+            text-decoration: none;
+        }
+
+        /* CABEÇALHO PADRONIZADO */
 
         .topbar {
             min-height: 76px;
@@ -178,6 +191,7 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .brand-icon svg {
@@ -186,6 +200,7 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
         }
 
         .brand-name {
+            display: block;
             color: var(--white);
             font-size: 21px;
             font-weight: 800;
@@ -202,7 +217,6 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
 
         .voltar {
             color: #dce4ef;
-            text-decoration: none;
             font-size: 13px;
             font-weight: 600;
             padding: 11px 17px;
@@ -216,25 +230,24 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             color: white;
         }
 
-        /* ==================================
-           CONTEÚDO PRINCIPAL
-        ================================== */
+        /* HERO */
 
-        .principal {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 42px 24px 60px;
+        .hero {
+            background: linear-gradient(115deg, #0c1929, #242d64);
+            color: white;
+            padding: 40px 7%;
         }
 
-        .titulo-pagina {
-            margin-bottom: 32px;
+        .hero-conteudo {
+            max-width: 1200px;
+            margin: auto;
         }
 
         .subtitulo {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            color: var(--primary-light);
+            color: #a9a2ff;
             font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
@@ -250,23 +263,26 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             border-radius: 5px;
         }
 
-        .titulo-pagina h1 {
+        .hero h1 {
             font-size: 32px;
             font-weight: 800;
             letter-spacing: -0.8px;
             margin-bottom: 10px;
-            color: var(--navy);
         }
 
-        .titulo-pagina p {
-            color: var(--muted);
+        .hero p {
+            color: #c5d0e2;
             font-size: 14px;
             line-height: 1.7;
         }
 
-        /* ==================================
-           SEÇÕES
-        ================================== */
+        /* CONTEÚDO PRINCIPAL */
+
+        .principal {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 38px 24px 50px;
+        }
 
         .secao {
             margin-bottom: 35px;
@@ -284,7 +300,7 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             width: 4px;
             height: 24px;
             border-radius: 5px;
-            background: #6655f5;
+            background: var(--primary-light);
         }
 
         .secao-titulo h2 {
@@ -293,9 +309,7 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             color: var(--navy);
         }
 
-        /* ==================================
-           CARDS DOS TRENS
-        ================================== */
+        /* CARDS */
 
         .grade {
             display: grid;
@@ -303,7 +317,8 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             gap: 18px;
         }
 
-        .card {
+        .card,
+        .sensor-card {
             background: var(--white);
             border: 1px solid var(--border);
             border-radius: 15px;
@@ -313,12 +328,14 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             min-width: 0;
         }
 
-        .card:hover {
+        .card:hover,
+        .sensor-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(18,32,56,0.08);
         }
 
-        .card h3 {
+        .card h3,
+        .sensor-card h3 {
             font-size: 17px;
             font-weight: 800;
             color: var(--navy);
@@ -326,7 +343,8 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             overflow-wrap: anywhere;
         }
 
-        .card p {
+        .card p,
+        .sensor-card p {
             font-size: 13px;
             color: #475569;
             margin-bottom: 11px;
@@ -334,18 +352,18 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             overflow-wrap: anywhere;
         }
 
-        .card p:last-child {
+        .card p:last-child,
+        .sensor-card p:last-child {
             margin-bottom: 0;
         }
 
-        .card strong {
+        .card strong,
+        .sensor-card strong {
             color: var(--text);
             font-weight: 700;
         }
 
-        /* ==================================
-           STATUS
-        ================================== */
+        /* STATUS */
 
         .status {
             font-weight: 700;
@@ -367,46 +385,7 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             color: #dc2626;
         }
 
-        /* ==================================
-           SENSORES
-        ================================== */
-
-        .sensor-card {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 22px;
-            box-shadow: 0 4px 16px rgba(18,32,56,0.035);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .sensor-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(18,32,56,0.08);
-        }
-
-        .sensor-card h3 {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 13px;
-            color: var(--navy);
-        }
-
-        .sensor-card p {
-            color: #475569;
-            font-size: 13px;
-            margin-top: 9px;
-            line-height: 1.5;
-            overflow-wrap: anywhere;
-        }
-
-        .sensor-card strong {
-            color: var(--text);
-        }
-
-        /* ==================================
-           MAPA DO TRILHO
-        ================================== */
+        /* MAPA FERROVIÁRIO */
 
         .mapa-container {
             background: var(--white);
@@ -473,9 +452,7 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             line-height: 1.6;
         }
 
-        /* ==================================
-           ESTADO VAZIO
-        ================================== */
+        /* ESTADO VAZIO */
 
         .vazio {
             background: var(--white);
@@ -487,9 +464,7 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             text-align: center;
         }
 
-        /* ==================================
-           RODAPÉ
-        ================================== */
+        /* RODAPÉ */
 
         .rodape {
             max-width: 1200px;
@@ -509,9 +484,7 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
             font-weight: 700;
         }
 
-        /* ==================================
-           RESPONSIVIDADE
-        ================================== */
+        /* RESPONSIVIDADE */
 
         @media (max-width: 1000px) {
             .grade {
@@ -539,12 +512,16 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
                 padding: 10px 12px;
             }
 
-            .principal {
-                padding: 30px 18px 42px;
+            .hero {
+                padding: 32px 20px;
             }
 
-            .titulo-pagina h1 {
+            .hero h1 {
                 font-size: 25px;
+            }
+
+            .principal {
+                padding: 30px 18px 42px;
             }
 
             .grade {
@@ -588,227 +565,241 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm) {
 
 <body>
 
-<!-- ==================================
-     CABEÇALHO - MESMO ÍCONE DO SISTEMA.PHP
-================================== -->
+    <!-- CABEÇALHO -->
 
-<header class="topbar">
+    <header class="topbar">
 
-    <a class="brand" href="sistema.php" aria-label="Ferrorama - página inicial">
+        <a class="brand" href="sistema.php" aria-label="Ferrorama - página inicial">
 
-        <span class="brand-icon">
+            <span class="brand-icon">
 
-            <svg viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="1.8"
-                 stroke-linecap="round" stroke-linejoin="round"
-                 aria-hidden="true">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
 
-                <rect x="5" y="3" width="14" height="15" rx="4"></rect>
-                <path d="M8 7h8M8 12h8M8 18l-2 3M16 18l2 3M5 15h14"></path>
-                <circle cx="9" cy="15" r="1"></circle>
-                <circle cx="15" cy="15" r="1"></circle>
+                    <rect x="5" y="3" width="14" height="15" rx="4"></rect>
 
-            </svg>
+                    <path d="M8 7h8M8 12h8M8 18l-2 3M16 18l2 3M5 15h14"></path>
 
-        </span>
+                    <circle cx="9" cy="15" r="1"></circle>
+                    <circle cx="15" cy="15" r="1"></circle>
 
-        <span>
-            <span class="brand-name">Ferrorama</span>
-            <span class="brand-subtitle">Sistema ferroviário</span>
-        </span>
+                </svg>
 
-    </a>
+            </span>
 
-    <a href="sistema.php" class="voltar">
-        Voltar ao sistema
-    </a>
+            <span>
+                <span class="brand-name">Ferrorama</span>
+                <span class="brand-subtitle">Sistema ferroviário</span>
+            </span>
 
-</header>
+        </a>
 
-<!-- ==================================
-     CONTEÚDO PRINCIPAL
-================================== -->
+        <a href="sistema.php" class="voltar">
+            Voltar ao sistema
+        </a>
 
-<main class="principal">
+    </header>
 
-    <div class="titulo-pagina">
+    <!-- HERO -->
 
-        <div class="subtitulo">
-            PAINEL DE CONTROLE
-        </div>
+    <section class="hero">
 
-        <h1>Monitoramento Ferroviário.</h1>
+        <div class="hero-conteudo">
 
-        <p>
-            Acompanhe os trens cadastrados, consulte os sensores
-            instalados e visualize suas posições ao longo da ferrovia.
-        </p>
-
-    </div>
-
-    <!-- TRENS -->
-
-    <section class="secao">
-
-        <div class="secao-titulo">
-            <h2>Trens monitorados</h2>
-        </div>
-
-        <?php if (count($trens) > 0): ?>
-
-            <div class="grade">
-
-                <?php foreach ($trens as $trem): ?>
-
-                    <article class="card">
-
-                        <h3><?= e($trem["identificador"]) ?></h3>
-
-                        <p>
-                            <strong>Modelo:</strong>
-                            <?= e($trem["modelo"]) ?>
-                        </p>
-
-                        <p>
-                            <strong>Status:</strong>
-
-                            <span class="status <?= e($trem["status"]) ?>">
-                                <?= e(textoStatus($trem["status"])) ?>
-                            </span>
-                        </p>
-
-                        <p>
-                            <strong>Velocidade:</strong>
-                            <?= e($trem["velocidade_atual"]) ?> km/h
-                        </p>
-
-                        <p>
-                            <strong>Localização atual:</strong>
-                            <?= e($trem["localizacao_atual"] ?: "Não informada") ?>
-                        </p>
-
-                    </article>
-
-                <?php endforeach; ?>
-
+            <div class="subtitulo">
+                PAINEL DE CONTROLE
             </div>
 
-        <?php else: ?>
+            <h1>Monitoramento Ferroviário.</h1>
 
-            <div class="vazio">
-                Nenhum trem cadastrado no sistema.
-            </div>
+            <p>
+                Acompanhe os trens cadastrados, consulte os sensores
+                instalados e visualize suas posições ao longo da ferrovia.
+            </p>
 
-        <?php endif; ?>
+        </div>
 
     </section>
 
-    <!-- SENSORES -->
+    <!-- CONTEÚDO PRINCIPAL -->
 
-    <section class="secao">
+    <main class="principal">
 
-        <div class="secao-titulo">
-            <h2>Sensores instalados no trilho</h2>
-        </div>
+        <!-- TRENS -->
 
-        <?php if (count($sensores) > 0): ?>
+        <section class="secao">
 
-            <div class="grade">
-
-                <?php foreach ($sensores as $sensor): ?>
-
-                    <article class="sensor-card">
-
-                        <h3><?= e($sensor["nome"]) ?></h3>
-
-                        <p>
-                            <strong>Localização:</strong>
-                            <?= e($sensor["localizacao"]) ?>
-                        </p>
-
-                        <p>
-                            <strong>Tipo de dado:</strong>
-                            <?= e($sensor["tipo_dado"]) ?>
-                        </p>
-
-                    </article>
-
-                <?php endforeach; ?>
-
+            <div class="secao-titulo">
+                <h2>Trens monitorados</h2>
             </div>
 
-            <!-- POSIÇÃO DOS SENSORES -->
+            <?php if (count($trens) > 0): ?>
 
-            <div class="secao" style="margin-top: 35px;">
+                <div class="grade">
 
-                <div class="secao-titulo">
-                    <h2>Posição dos sensores no trilho</h2>
+                    <?php foreach ($trens as $trem): ?>
+
+                        <article class="card">
+
+                            <h3><?= e($trem["identificador"]) ?></h3>
+
+                            <p>
+                                <strong>Modelo:</strong>
+                                <?= e($trem["modelo"]) ?>
+                            </p>
+
+                            <p>
+                                <strong>Status:</strong>
+
+                                <span class="status <?= e($trem["status"]) ?>">
+                                    <?= e(textoStatus($trem["status"])) ?>
+                                </span>
+                            </p>
+
+                            <p>
+                                <strong>Velocidade:</strong>
+                                <?= e($trem["velocidade_atual"]) ?> km/h
+                            </p>
+
+                            <p>
+                                <strong>Localização atual:</strong>
+                                <?= e($trem["localizacao_atual"] ?: "Não informada") ?>
+                            </p>
+
+                        </article>
+
+                    <?php endforeach; ?>
+
                 </div>
 
-                <div class="mapa-container">
+            <?php else: ?>
 
-                    <div class="mapa">
+                <div class="vazio">
+                    Nenhum trem cadastrado no sistema.
+                </div>
 
-                        <div class="trilho"></div>
+            <?php endif; ?>
 
-                        <?php foreach ($sensores as $indice => $sensor): ?>
+        </section>
 
-                            <?php
+        <!-- SENSORES -->
 
-                            $posicao = posicaoSensor(
-                                $sensor["localizacao"],
-                                $indice,
-                                count($sensores),
-                                $maiorKm
-                            );
+        <section class="secao">
 
-                            ?>
+            <div class="secao-titulo">
+                <h2>Sensores instalados no trilho</h2>
+            </div>
 
-                            <div
-                                class="sensor-ponto"
-                                style="left: <?= e($posicao) ?>%;"
-                                title="<?= e($sensor["nome"] . " - " . $sensor["localizacao"]) ?>"
-                            >
+            <?php if (count($sensores) > 0): ?>
 
-                                <div class="sensor-bolinha"></div>
+                <div class="grade">
 
-                                <div class="sensor-legenda">
-                                    <?= e($sensor["localizacao"]) ?>
+                    <?php foreach ($sensores as $sensor): ?>
+
+                        <article class="sensor-card">
+
+                            <h3><?= e($sensor["nome"]) ?></h3>
+
+                            <p>
+                                <strong>Localização:</strong>
+                                <?= e($sensor["localizacao"]) ?>
+                            </p>
+
+                            <p>
+                                <strong>Tipo de dado:</strong>
+                                <?= e($sensor["tipo_dado"]) ?>
+                            </p>
+
+                        </article>
+
+                    <?php endforeach; ?>
+
+                </div>
+
+                <!-- POSIÇÃO DOS SENSORES -->
+
+                <section class="secao" style="margin-top: 35px;">
+
+                    <div class="secao-titulo">
+                        <h2>Posição dos sensores no trilho</h2>
+                    </div>
+
+                    <div class="mapa-container">
+
+                        <div class="mapa">
+
+                            <div class="trilho"></div>
+
+                            <?php foreach ($sensores as $indice => $sensor): ?>
+
+                                <?php
+
+                                $posicao = posicaoSensor(
+                                    $sensor["localizacao"],
+                                    $indice,
+                                    count($sensores),
+                                    $maiorKm
+                                );
+
+                                ?>
+
+                                <div
+                                    class="sensor-ponto"
+                                    style="left: <?= e($posicao) ?>%;"
+                                    title="<?= e($sensor["nome"] . " - " . $sensor["localizacao"]) ?>"
+                                >
+
+                                    <div class="sensor-bolinha"></div>
+
+                                    <div class="sensor-legenda">
+                                        <?= e($sensor["localizacao"]) ?>
+                                    </div>
+
                                 </div>
 
-                            </div>
+                            <?php endforeach; ?>
 
-                        <?php endforeach; ?>
+                        </div>
+
+                        <p class="nota">
+                            O desenho representa ilustrativamente o trilho ferroviário.
+                            Sensores com localização em quilômetros são posicionados
+                            proporcionalmente no esquema. Outras localizações aparecem
+                            em posições aproximadas, não em coordenadas reais.
+                        </p>
 
                     </div>
 
-                    <p class="nota">
-                        O desenho representa ilustrativamente o trilho ferroviário.
-                        Sensores com localização em quilômetros são posicionados
-                        proporcionalmente no esquema. Outras localizações aparecem
-                        em posições aproximadas, não em coordenadas reais.
-                    </p>
+                </section>
 
+            <?php else: ?>
+
+                <div class="vazio">
+                    Nenhum sensor cadastrado no sistema.
                 </div>
 
-            </div>
+            <?php endif; ?>
 
-        <?php else: ?>
+        </section>
 
-            <div class="vazio">
-                Nenhum sensor cadastrado no sistema.
-            </div>
+    </main>
 
-        <?php endif; ?>
+    <!-- RODAPÉ -->
 
-    </section>
+    <footer class="rodape">
 
-</main>
+        <span>
+            <strong>Ferrorama</strong> · Sistema de gerenciamento ferroviário
+        </span>
 
-<footer class="rodape">
-    <span><strong>Ferrorama</strong> · Sistema de gerenciamento ferroviário</span>
-    <span>Monitoramento ferroviário</span>
-</footer>
+        <span>Monitoramento ferroviário</span>
+
+    </footer>
 
 </body>
 </html>

@@ -580,13 +580,11 @@ $iniciais = strtoupper(
 
             <div class="actions">
 
-                <?php if ($eAdmin): ?>
 
                     <a href="sistema.php" class="button button-primary">
                         Voltar
                     </a>
 
-                <?php endif; ?>
 
                 <a href="logout.php" class="button button-danger">
                     ↪ Sair da conta
