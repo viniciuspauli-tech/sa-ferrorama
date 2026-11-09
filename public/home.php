@@ -582,7 +582,7 @@ $iniciais = strtoupper(
 
                 <?php if ($eAdmin): ?>
 
-                    <a href="usuarios/pagina_adm.php" class="button button-primary">
+                    <a href="sistema.php" class="button button-primary">
                         Voltar
                     </a>
 
