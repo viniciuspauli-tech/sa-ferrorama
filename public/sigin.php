@@ -216,10 +216,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             </form>
 
-            <div class="auth-footer">
-                <span>Ainda não possui uma conta?</span>
-                <a href="signup.php">Criar conta</a>
-            </div>
+         
 
         </section>
 
