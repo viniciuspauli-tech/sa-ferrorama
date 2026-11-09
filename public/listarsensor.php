@@ -1,4 +1,3 @@
-
 <?php
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -10,14 +9,8 @@ require_once __DIR__ . "/../infra/connect.php";
 $ehAdministrador =
     ($_SESSION["usuario_perfil"] ?? "") === "administrador";
 
-if (!$ehAdministrador) {
-    http_response_code(403);
-    exit("Acesso permitido apenas para administradores.");
-}
-
-if (empty($_SESSION["csrf"])) {
-    $_SESSION["csrf"] = bin2hex(random_bytes(32));
-}
+// Tela somente de consulta: todos os usuários logados podem visualizar.
+// Cadastro, edição e exclusão de sensores ficam em cadastro_item.php (administrador).
 
 function escapar($valor): string
 {
@@ -211,29 +204,21 @@ $totalSensores = count($sensores);
 
 <body>
 <header class="navbar">
-    <a href="../sistema.php">🚆 Ferrorama</a>
+    <a href="sistema.php">🚆 Ferrorama</a>
 </header>
 
 <section class="hero">
-    <h1>Gerenciamento de sensores</h1>
-    <p>Consulte, pesquise, edite e exclua os sensores instalados nos trilhos.</p>
-    <a class="botao secundario" href="sensor.php">Voltar ao monitoramento</a>
+    <h1>Sensores</h1>
+    <p>Consulte e pesquise os sensores instalados nos trilhos.</p>
+    <a class="botao secundario" href="sistema.php">← Voltar ao painel</a>
+    <a class="botao secundario" href="sensor.php">Monitoramento</a>
+
+    <?php if ($ehAdministrador): ?>
+        <a class="botao secundario" href="cadastro_item.php">Gerenciar sensores</a>
+    <?php endif; ?>
 </section>
 
 <main>
-    <?php if (($_GET["sucesso"] ?? "") === "editado"): ?>
-        <div class="mensagem">Sensor atualizado com sucesso!</div>
-    <?php elseif (($_GET["sucesso"] ?? "") === "excluido"): ?>
-        <div class="mensagem">Sensor excluído com sucesso!</div>
-    <?php elseif (($_GET["erro"] ?? "") === "dependencias"): ?>
-        <div class="mensagem">
-            Não foi possível excluir este sensor porque existem leituras
-            vinculadas a ele. Preserve o histórico de dados.
-        </div>
-    <?php elseif (($_GET["erro"] ?? "") === "nao_encontrado"): ?>
-        <div class="mensagem">Sensor não encontrado ou já excluído.</div>
-    <?php endif; ?>
-
     <section class="card">
         <div class="topo">
             <div>
@@ -242,7 +227,7 @@ $totalSensores = count($sensores);
             </div>
         </div>
 
-        <form method="GET" action="listar_sensores.php" class="filtros">
+        <form method="GET" action="listarsensor.php" class="filtros">
             <input
                 type="text"
                 name="busca"
@@ -252,7 +237,7 @@ $totalSensores = count($sensores);
             >
 
             <button type="submit" class="botao primario">Pesquisar</button>
-            <a href="listar_sensores.php" class="botao secundario">Limpar</a>
+            <a href="listarsensor.php" class="botao secundario">Limpar</a>
         </form>
 
         <div class="tabela-wrap">
@@ -263,14 +248,13 @@ $totalSensores = count($sensores);
                         <th>Nome</th>
                         <th>Localização</th>
                         <th>Tipo de dado</th>
-                        <th>Ações</th>
                     </tr>
                 </thead>
 
                 <tbody>
                 <?php if (empty($sensores)): ?>
                     <tr>
-                        <td colspan="5" class="vazio">
+                        <td colspan="4" class="vazio">
                             Nenhum sensor encontrado.
                         </td>
                     </tr>
@@ -281,36 +265,6 @@ $totalSensores = count($sensores);
                             <td><?= escapar($sensor["nome"]) ?></td>
                             <td><?= escapar($sensor["localizacao"]) ?></td>
                             <td><?= escapar($sensor["tipo_dado"]) ?></td>
-                            <td>
-                                <div class="acoes">
-                                    <a
-                                        class="botao editar"
-                                        href="editSensor.php?id=<?= (int) $sensor["id"] ?>"
-                                    >Editar</a>
-
-                                    <form
-                                        method="POST"
-                                        action="excluirsensor.php"
-                                        class="form-excluir"
-                                    >
-                                        <input
-                                            type="hidden"
-                                            name="id"
-                                            value="<?= (int) $sensor["id"] ?>"
-                                        >
-
-                                        <input
-                                            type="hidden"
-                                            name="csrf"
-                                            value="<?= escapar($_SESSION["csrf"]) ?>"
-                                        >
-
-                                        <button type="submit" class="botao excluir">
-                                            Excluir
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -322,14 +276,5 @@ $totalSensores = count($sensores);
     <footer>Ferrorama · Sistema de gerenciamento ferroviário</footer>
 </main>
 
-<script>
-document.querySelectorAll(".form-excluir").forEach(form => {
-    form.addEventListener("submit", event => {
-        if (!confirm("Tem certeza que deseja excluir este sensor?")) {
-            event.preventDefault();
-        }
-    });
-});
-</script>
 </body>
 </html>

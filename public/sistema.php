@@ -1,4 +1,3 @@
-
 <?php
 require_once __DIR__ . "/../infra/auth.php";
 
@@ -459,54 +458,50 @@ $ehAdministrador =
 
     <section class="grid">
 
-   <?php if ($ehAdministrador): ?>
+           <article class="tile">
+            <div class="symbol">◈</div>
 
-<article class="tile">
-    <div class="symbol">◈</div>
+            <h3>Sensores</h3>
 
-    <h3>Sensores</h3>
+            <p>
+                <?= $ehAdministrador
+                    ? "Cadastre, edite e consulte os sensores utilizados no monitoramento ferroviário."
+                    : "Consulte os sensores instalados nos trilhos e o que cada um monitora." ?>
+            </p>
 
-    <p>
-        Cadastre, edite e consulte os sensores utilizados
-        no monitoramento ferroviário.
-    </p>
-
-    <a href="cadastro_item.php">
-        Acessar sensores →
-    </a>
-</article>
-
-<?php endif; ?>
+            <a href="<?= $ehAdministrador ? "cadastro_item.php" : "listarsensor.php" ?>">
+                <?= $ehAdministrador ? "Acessar sensores →" : "Visualizar sensores →" ?>
+            </a>
+        </article>
 
         <article class="tile">
             <div class="symbol">▰</div>
             <h3>Trens</h3>
             <p>
-                Gerencie os trens cadastrados e consulte
-                suas informações.
+                <?= $ehAdministrador
+                    ? "Gerencie os trens cadastrados e consulte suas informações."
+                    : "Consulte os trens cadastrados e suas informações." ?>
             </p>
             <a href="trem/listagemtrem.php">
-                Acessar trens →
+                <?= $ehAdministrador ? "Acessar trens →" : "Visualizar trens →" ?>
             </a>
         </article>
 
-       <?php if ($ehAdministrador): ?>
+               <article class="tile">
+            <div class="symbol">⌁</div>
 
-<article class="tile">
-    <div class="symbol">⌁</div>
+            <h3>Rotas</h3>
 
-    <h3>Rotas</h3>
+            <p>
+                <?= $ehAdministrador
+                    ? "Organize e acompanhe os trajetos ferroviários."
+                    : "Consulte os trajetos ferroviários cadastrados." ?>
+            </p>
 
-    <p>
-        Organize e acompanhe os trajetos ferroviários.
-    </p>
-
-    <a href="rotas/rotas.php">
-        Acessar rotas →
-    </a>
-</article>
-
-<?php endif; ?>
+            <a href="rotas/rotas.php">
+                <?= $ehAdministrador ? "Acessar rotas →" : "Visualizar rotas →" ?>
+            </a>
+        </article>
         <article class="tile">
             <div class="symbol">◎</div>
             <h3>Meu perfil</h3>

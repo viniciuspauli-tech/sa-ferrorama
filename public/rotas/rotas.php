@@ -1,7 +1,10 @@
-
 <?php
 
-require_once __DIR__ . "/../../infra/adm.php";
+require_once __DIR__ . "/../../infra/auth.php"; // exige login (todos os perfis)
+
+// Só o administrador cadastra, edita e exclui; o usuário comum apenas consulta
+$ehAdministrador =
+    ($_SESSION["usuario_perfil"] ?? "") === "administrador";
 require_once __DIR__ . "/../../infra/connect.php";
 
 // TOKEN CSRF
@@ -20,6 +23,11 @@ $msg = $mensagens[$_GET["msg"] ?? ""] ?? null;
 
 // EXCLUSÃO
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["excluir_id"])) {
+
+    if (!$ehAdministrador) {
+        http_response_code(403);
+        exit("Acesso negado. Apenas administradores podem excluir rotas.");
+    }
 
     $idExcluir = filter_var($_POST["excluir_id"], FILTER_VALIDATE_INT);
     $tokenOk = hash_equals($_SESSION["csrf"], $_POST["csrf"] ?? "");
@@ -805,7 +813,7 @@ function corStatusRota($status)
 
             </div>
 
-            Área administrativa
+            <?= $ehAdministrador ? "Área administrativa" : "Área do usuário" ?>
 
         </div>
 
@@ -818,15 +826,16 @@ function corStatusRota($status)
 
     <div class="hero-inner">
 
-        <div class="eyebrow">Painel de controle</div>
+        <div class="eyebrow"><?= $ehAdministrador ? "Painel de controle" : "Consulta" ?></div>
 
         <h1>
-            Gerenciar <span style="color:#a99cff;">Rotas.</span>
+            <?= $ehAdministrador ? "Gerenciar" : "Consultar" ?> <span style="color:#a99cff;">Rotas.</span>
         </h1>
 
         <p>
-            Gerencie os trajetos ferroviários, consulte as rotas cadastradas
-            e acompanhe as informações de origem, destino e distância.
+            <?= $ehAdministrador
+                ? "Gerencie os trajetos ferroviários, consulte as rotas cadastradas e acompanhe as informações de origem, destino e distância."
+                : "Consulte as rotas cadastradas e acompanhe as informações de origem, destino e distância." ?>
         </p>
 
     </div>
@@ -841,10 +850,12 @@ function corStatusRota($status)
 
         <div>
 
-            <h2>Gerenciamento de rotas</h2>
+            <h2><?= $ehAdministrador ? "Gerenciamento de rotas" : "Rotas ferroviárias" ?></h2>
 
             <p>
-                Consulte, pesquise e gerencie os trajetos ferroviários.
+                <?= $ehAdministrador
+                    ? "Consulte, pesquise e gerencie os trajetos ferroviários."
+                    : "Consulte e pesquise os trajetos ferroviários." ?>
             </p>
 
         </div>
@@ -859,9 +870,13 @@ function corStatusRota($status)
                 Trens
             </a>
 
-            <a href="cadastrorota.php" class="button button-primary">
-                + Cadastrar rota
-            </a>
+            <?php if ($ehAdministrador): ?>
+
+                <a href="cadastrorota.php" class="button button-primary">
+                    + Cadastrar rota
+                </a>
+
+            <?php endif; ?>
 
         </div>
 
@@ -942,7 +957,9 @@ function corStatusRota($status)
                 <h3>Rotas cadastradas</h3>
 
                 <p>
-                    Consulte as informações e gerencie suas rotas.
+                    <?= $ehAdministrador
+                        ? "Consulte as informações e gerencie suas rotas."
+                        : "Consulte as informações das rotas." ?>
                 </p>
 
             </div>
@@ -978,7 +995,9 @@ function corStatusRota($status)
                         <th>Distância</th>
                         <th>Tempo</th>
                         <th>Status</th>
-                        <th>Ações</th>
+                        <?php if ($ehAdministrador): ?>
+                            <th>Ações</th>
+                        <?php endif; ?>
                     </tr>
 
                 </thead>
@@ -989,7 +1008,7 @@ function corStatusRota($status)
 
                         <tr>
 
-                            <td colspan="8">
+                            <td colspan="<?= $ehAdministrador ? 8 : 7 ?>">
 
                                 <div class="empty-state">
 
@@ -1068,6 +1087,8 @@ function corStatusRota($status)
 
                                 </td>
 
+                                <?php if ($ehAdministrador): ?>
+
                                 <td>
 
                                     <div class="actions">
@@ -1109,6 +1130,8 @@ function corStatusRota($status)
                                     </div>
 
                                 </td>
+
+                                <?php endif; ?>
 
                             </tr>
 
