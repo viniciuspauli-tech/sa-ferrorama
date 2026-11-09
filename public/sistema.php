@@ -485,7 +485,7 @@ $ehAdministrador =
                 Gerencie os trens cadastrados e consulte
                 suas informações.
             </p>
-            <a href="trens.php">
+            <a href="trem/listagemtrem.php">
                 Acessar trens →
             </a>
         </article>
