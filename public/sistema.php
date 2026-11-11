@@ -234,73 +234,6 @@ $ehAdministrador =
             color: #6554e8;
         }
 
-        /* CONSULTA CEP */
-
-        .cep-card {
-            background: white;
-            border: 1px solid #e4e9f1;
-            border-radius: 16px;
-            padding: 24px;
-        }
-
-        .cep-card > p {
-            font-size: 13px;
-            color: #718096;
-            margin: 6px 0 18px;
-        }
-
-        .cep-form {
-            display: grid;
-            grid-template-columns: 220px auto;
-            gap: 10px;
-            max-width: 500px;
-        }
-
-        .cep-form input,
-        .address-grid input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d9e0eb;
-            border-radius: 9px;
-            font: inherit;
-            font-size: 13px;
-        }
-
-        .cep-form button {
-            border: 0;
-            border-radius: 9px;
-            background: #6554e8;
-            color: white;
-            font-weight: 700;
-            padding: 0 18px;
-            cursor: pointer;
-        }
-
-        .address-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 10px;
-            margin-top: 14px;
-        }
-
-        .address-grid input {
-            background: #f8f9fc;
-        }
-
-        .message {
-            font-size: 12px;
-            margin-top: 12px;
-            min-height: 18px;
-        }
-
-        .error {
-            color: #b42332;
-        }
-
-        .success {
-            color: #167447;
-        }
-
         footer {
             text-align: center;
             color: #8490a3;
@@ -317,13 +250,6 @@ $ehAdministrador =
                 grid-template-columns: 1fr 1fr;
             }
 
-            .address-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .cep-form {
-                grid-template-columns: 1fr;
-            }
         }
 
         @media(max-width: 480px) {
@@ -334,10 +260,6 @@ $ehAdministrador =
             .topbar {
                 flex-direction: column;
                 align-items: flex-start;
-            }
-
-            .address-grid {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -530,52 +452,6 @@ $ehAdministrador =
 
     </section>
 
-    <!-- CEP -->
-
-    <section class="cep-card">
-
-        <h2 class="section-title">
-            Consulta de endereço por CEP
-        </h2>
-
-        <p>
-            Informe um CEP brasileiro para consultar
-            o endereço automaticamente pelo ViaCEP.
-        </p>
-
-        <form class="cep-form" id="cep-form">
-
-            <input
-                id="cep"
-                name="cep"
-                inputmode="numeric"
-                maxlength="9"
-                placeholder="Ex.: 89201-000"
-                required
-            >
-
-            <button type="submit">
-                Consultar CEP
-            </button>
-
-        </form>
-
-        <div class="message" id="cep-message"></div>
-
-        <div class="address-grid">
-
-            <input id="logradouro" placeholder="Logradouro" readonly>
-
-            <input id="bairro" placeholder="Bairro" readonly>
-
-            <input id="cidade" placeholder="Cidade" readonly>
-
-            <input id="uf" placeholder="UF" readonly>
-
-        </div>
-
-    </section>
-
 </main>
 
 <footer>
@@ -651,97 +527,6 @@ async function carregarClima() {
 
 carregarClima();
 
-
-// ===================================
-// MÁSCARA DO CEP
-// ===================================
-
-document.getElementById("cep")
-    .addEventListener("input", function() {
-
-        let valor = this.value.replace(/\D/g, "").slice(0, 8);
-
-        if (valor.length > 5) {
-            valor =
-                valor.substring(0, 5) +
-                "-" +
-                valor.substring(5);
-        }
-
-        this.value = valor;
-
-    });
-
-
-// ===================================
-// CONSULTA DE CEP
-// ===================================
-
-document.getElementById("cep-form")
-    .addEventListener("submit", async function(event) {
-
-        event.preventDefault();
-
-        const cep = document.getElementById("cep")
-            .value.replace(/\D/g, "");
-
-        const mensagem =
-            document.getElementById("cep-message");
-
-        mensagem.className = "message";
-        mensagem.textContent = "Consultando ViaCEP...";
-
-        const campos = [
-            "logradouro",
-            "bairro",
-            "cidade",
-            "uf"
-        ];
-
-        campos.forEach(function(campo) {
-            document.getElementById(campo).value = "";
-        });
-
-        try {
-
-            const resposta = await fetch(
-                "api/cep.php?cep=" + encodeURIComponent(cep)
-            );
-
-            const dados = await resposta.json();
-
-            if (!resposta.ok) {
-                throw new Error(
-                    dados.erro || "Erro na consulta."
-                );
-            }
-
-            document.getElementById("logradouro").value =
-                dados.logradouro;
-
-            document.getElementById("bairro").value =
-                dados.bairro;
-
-            document.getElementById("cidade").value =
-                dados.cidade;
-
-            document.getElementById("uf").value =
-                dados.uf;
-
-            mensagem.className = "message success";
-
-            mensagem.textContent =
-                "Endereço encontrado com sucesso!";
-
-        } catch (erro) {
-
-            mensagem.className = "message error";
-
-            mensagem.textContent = erro.message;
-
-        }
-
-    });
 
 </script>
 
