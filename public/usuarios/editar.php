@@ -1,8 +1,58 @@
-
 <?php
 
 require_once "../../infra/adm.php";
 require_once "../../infra/connect.php";
+
+// ---------------------------------------------------------
+// Funções de CPF
+// ---------------------------------------------------------
+
+function limparCpf($cpf): string
+{
+    return preg_replace('/\D/', '', (string) $cpf);
+}
+
+function validarCpf($cpf): bool
+{
+    $cpf = limparCpf($cpf);
+
+    if (strlen($cpf) !== 11 || preg_match('/^(\d)\1{10}$/', $cpf)) {
+        return false;
+    }
+
+    for ($t = 9; $t < 11; $t++) {
+        $soma = 0;
+
+        for ($i = 0; $i < $t; $i++) {
+            $soma += (int) $cpf[$i] * (($t + 1) - $i);
+        }
+
+        if ((int) $cpf[$t] !== ((10 * $soma) % 11) % 10) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// CPF já usado por outro usuário?
+function cpfEmUso($conn, $cpf, $idAtual): bool
+{
+    $stmt = mysqli_prepare(
+        $conn,
+        "SELECT id FROM usuarios WHERE cpf = ? AND id != ?"
+    );
+
+    mysqli_stmt_bind_param($stmt, "si", $cpf, $idAtual);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_store_result($stmt);
+
+    $existe = mysqli_stmt_num_rows($stmt) > 0;
+
+    mysqli_stmt_close($stmt);
+
+    return $existe;
+}
 
 $erro = "";
 $sucesso = "";
@@ -15,6 +65,12 @@ if (!$id) {
 
 $nome = "";
 $email = "";
+$cpf = "";
+$cep = "";
+$logradouro = "";
+$bairro = "";
+$cidade = "";
+$uf = "";
 $perfil = "usuario";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -23,6 +79,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $nome = trim($_POST["nome"] ?? "");
     $email = trim($_POST["email"] ?? "");
+    $cpf = limparCpf($_POST["cpf"] ?? "");
+    $cep = preg_replace('/\D/', '', $_POST["cep"] ?? "");
+    $logradouro = trim($_POST["logradouro"] ?? "");
+    $bairro = trim($_POST["bairro"] ?? "");
+    $cidade = trim($_POST["cidade"] ?? "");
+    $uf = strtoupper(trim($_POST["uf"] ?? ""));
     $senha = $_POST["senha"] ?? "";
     $perfil = $_POST["perfil"] ?? "";
 
@@ -52,6 +114,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         $erro = "Você não pode remover seu próprio perfil de administrador.";
 
+    } elseif ($cpf !== "" && !validarCpf($cpf)) {
+
+        $erro = "Digite um CPF válido.";
+
+    } elseif ($cpf !== "" && cpfEmUso($conn, $cpf, $id)) {
+
+        $erro = "Este CPF já está cadastrado em outro usuário.";
+
+    } elseif ($cep !== "" && strlen($cep) !== 8) {
+
+        $erro = "Informe um CEP válido com 8 números.";
+
+    } elseif (
+        $cep !== "" &&
+        ($cidade === "" || !preg_match('/^[A-Z]{2}$/', $uf))
+    ) {
+
+        $erro = "Consulte o CEP para preencher o endereço.";
+
     } elseif ($senha !== "" && strlen($senha) < 8) {
 
         $erro = "A senha deve possuir pelo menos 8 caracteres.";
@@ -75,40 +156,64 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         } else {
 
+            // CPF vazio vira NULL (a coluna é única)
+            $cpfDb = $cpf === "" ? null : $cpf;
+
+            // CEP vazio limpa o endereço
+            if ($cep === "") {
+                $logradouro = $bairro = $cidade = $uf = "";
+            }
+
             if ($senha !== "") {
 
                 $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
                 $sql = "UPDATE usuarios
-                        SET nome = ?, email = ?, senha = ?, perfil = ?
+                        SET nome = ?, email = ?, senha = ?, perfil = ?,
+                            cpf = ?, cep = ?, logradouro = ?,
+                            bairro = ?, cidade = ?, uf = ?
                         WHERE id = ?";
 
                 $stmt = mysqli_prepare($conn, $sql);
 
                 mysqli_stmt_bind_param(
                     $stmt,
-                    "ssssi",
+                    "ssssssssssi",
                     $nome,
                     $email,
                     $senhaHash,
                     $perfil,
+                    $cpfDb,
+                    $cep,
+                    $logradouro,
+                    $bairro,
+                    $cidade,
+                    $uf,
                     $id
                 );
 
             } else {
 
                 $sql = "UPDATE usuarios
-                        SET nome = ?, email = ?, perfil = ?
+                        SET nome = ?, email = ?, perfil = ?,
+                            cpf = ?, cep = ?, logradouro = ?,
+                            bairro = ?, cidade = ?, uf = ?
                         WHERE id = ?";
 
                 $stmt = mysqli_prepare($conn, $sql);
 
                 mysqli_stmt_bind_param(
                     $stmt,
-                    "sssi",
+                    "sssssssssi",
                     $nome,
                     $email,
                     $perfil,
+                    $cpfDb,
+                    $cep,
+                    $logradouro,
+                    $bairro,
+                    $cidade,
+                    $uf,
                     $id
                 );
             }
@@ -128,7 +233,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-$sql = "SELECT id, nome, email, perfil
+$sql = "SELECT id, nome, email, perfil,
+               cpf, cep, logradouro, bairro, cidade, uf
         FROM usuarios
         WHERE id = ?";
 
@@ -150,6 +256,12 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST" || $sucesso !== "") {
     $nome = $usuario["nome"];
     $email = $usuario["email"];
     $perfil = $usuario["perfil"];
+    $cpf = $usuario["cpf"] ?? "";
+    $cep = $usuario["cep"] ?? "";
+    $logradouro = $usuario["logradouro"] ?? "";
+    $bairro = $usuario["bairro"] ?? "";
+    $cidade = $usuario["cidade"] ?? "";
+    $uf = $usuario["uf"] ?? "";
 }
 
 function escapar($valor): string
@@ -755,6 +867,89 @@ function escapar($valor): string
                     </div>
 
                     <div class="field field-full">
+                        <label for="cpf">CPF</label>
+
+                        <input
+                            type="text"
+                            id="cpf"
+                            name="cpf"
+                            value="<?= escapar($cpf) ?>"
+                            maxlength="14"
+                            placeholder="000.000.000-00"
+                            inputmode="numeric"
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="cep">CEP</label>
+
+                        <input
+                            type="text"
+                            id="cep"
+                            name="cep"
+                            value="<?= escapar($cep) ?>"
+                            maxlength="9"
+                            placeholder="Ex.: 89201-000"
+                            inputmode="numeric"
+                            autocomplete="postal-code"
+                        >
+
+                        <small id="cep-message">
+                            O endereço é preenchido automaticamente.
+                        </small>
+                    </div>
+
+                    <div class="field">
+                        <label for="logradouro">Logradouro</label>
+
+                        <input
+                            type="text"
+                            id="logradouro"
+                            name="logradouro"
+                            value="<?= escapar($logradouro) ?>"
+                            readonly
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="bairro">Bairro</label>
+
+                        <input
+                            type="text"
+                            id="bairro"
+                            name="bairro"
+                            value="<?= escapar($bairro) ?>"
+                            readonly
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="cidade">Cidade</label>
+
+                        <input
+                            type="text"
+                            id="cidade"
+                            name="cidade"
+                            value="<?= escapar($cidade) ?>"
+                            readonly
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="uf">Estado (UF)</label>
+
+                        <input
+                            type="text"
+                            id="uf"
+                            name="uf"
+                            value="<?= escapar($uf) ?>"
+                            maxlength="2"
+                            readonly
+                        >
+                    </div>
+
+                    <div class="field field-full">
                         <label for="senha">Nova senha</label>
 
                         <input
@@ -831,6 +1026,108 @@ function escapar($valor): string
     </footer>
 
 </main>
+
+<script>
+    // CPF: máscara e validação pela API
+    (function () {
+        const campo = document.getElementById("cpf");
+
+        function mascara() {
+            let v = campo.value.replace(/\D/g, "").slice(0, 11);
+            v = v.replace(/(\d{3})(\d)/, "$1.$2")
+                 .replace(/(\d{3})(\d)/, "$1.$2")
+                 .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            campo.value = v;
+        }
+
+        mascara();
+
+        campo.addEventListener("input", function () {
+            mascara();
+            campo.setCustomValidity("");
+        });
+
+        campo.addEventListener("blur", function () {
+            const cpf = campo.value.replace(/\D/g, "");
+            if (cpf.length === 0) return;
+
+            fetch("cadastro_usuario.php?api=cpf&cpf=" + encodeURIComponent(cpf))
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    campo.setCustomValidity(d.valido ? "" : (d.erro || "CPF inválido."));
+                    if (!d.valido) campo.reportValidity();
+                })
+                .catch(function () { /* o servidor valida no envio */ });
+        });
+    })();
+
+    // CEP: máscara e preenchimento automático (api/cep.php -> ViaCEP)
+    (function () {
+        const campoCep = document.getElementById("cep");
+        const mensagem = document.getElementById("cep-message");
+        const campos = ["logradouro", "bairro", "cidade", "uf"];
+
+        function aviso(texto, erro) {
+            mensagem.textContent = texto;
+            mensagem.style.color = erro ? "#b42332" : "#16805d";
+        }
+
+        function mascara() {
+            let v = campoCep.value.replace(/\D/g, "").slice(0, 8);
+
+            if (v.length > 5) {
+                v = v.substring(0, 5) + "-" + v.substring(5);
+            }
+
+            campoCep.value = v;
+        }
+
+        mascara();
+
+        campoCep.addEventListener("input", mascara);
+
+        campoCep.addEventListener("blur", async function () {
+            const cep = campoCep.value.replace(/\D/g, "");
+
+            campos.forEach(function (id) {
+                document.getElementById(id).value = "";
+            });
+
+            if (cep.length === 0) {
+                aviso("Deixe vazio para remover o endereço.", false);
+                return;
+            }
+
+            if (cep.length !== 8) {
+                aviso("Informe um CEP válido com 8 números.", true);
+                return;
+            }
+
+            aviso("Consultando ViaCEP...", false);
+
+            try {
+                const resposta = await fetch(
+                    "../api/cep.php?cep=" + encodeURIComponent(cep)
+                );
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(dados.erro || "Erro na consulta.");
+                }
+
+                campos.forEach(function (id) {
+                    document.getElementById(id).value = dados[id] || "";
+                });
+
+                aviso("Endereço encontrado com sucesso!", false);
+
+            } catch (erro) {
+                aviso(erro.message, true);
+            }
+        });
+    })();
+</script>
 
 </body>
 </html>
