@@ -887,6 +887,7 @@ function escaparCadastro($valor): string
                 <div>
                     <strong>Senha segura</strong>
                     <span>A senha deve possuir pelo menos 8 caracteres.</span>
+                    
                 </div>
             </div>
 
