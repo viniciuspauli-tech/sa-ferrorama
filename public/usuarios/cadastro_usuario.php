@@ -1,4 +1,3 @@
-
 <?php
 
 require_once "../../infra/auth.php";
@@ -332,13 +331,12 @@ function escaparCadastro($valor): string
 
         .layout {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) 285px;
+            grid-template-columns: minmax(0, 1fr);
             align-items: start;
             gap: 22px;
         }
 
-        .form-card,
-        .side-card {
+        .form-card {
             background: var(--white);
             border: 1px solid var(--border);
             border-radius: 17px;
@@ -512,77 +510,6 @@ function escaparCadastro($valor): string
             border-color: #c9c2ff;
         }
 
-        .side-card {
-            padding: 24px 22px;
-        }
-
-        .side-icon {
-            width: 47px;
-            height: 47px;
-            margin-bottom: 17px;
-            display: grid;
-            place-items: center;
-            color: #4b3ac8;
-            background: var(--purple-light);
-            border-radius: 14px;
-            font-size: 23px;
-        }
-
-        .side-card h3 {
-            margin-bottom: 9px;
-            font-size: 16px;
-        }
-
-        .side-card > p {
-            margin-bottom: 22px;
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.7;
-        }
-
-        .tip {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-top: 16px;
-        }
-
-        .tip-check {
-            flex: 0 0 22px;
-            width: 22px;
-            height: 22px;
-            display: grid;
-            place-items: center;
-            color: #5140d4;
-            background: #eeecff;
-            border-radius: 7px;
-            font-size: 12px;
-            font-weight: 800;
-        }
-
-        .tip strong {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 12px;
-        }
-
-        .tip span {
-            display: block;
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        .security-note {
-            margin-top: 20px;
-            padding: 13px;
-            color: #4c5b74;
-            background: #f6f7fb;
-            border-radius: 9px;
-            font-size: 11px;
-            line-height: 1.7;
-        }
-
         .footer {
             margin-top: 25px;
             color: #8a96aa;
@@ -593,10 +520,6 @@ function escaparCadastro($valor): string
         @media (max-width: 760px) {
             .layout {
                 grid-template-columns: 1fr;
-            }
-
-            .side-card {
-                order: 2;
             }
         }
 
@@ -863,50 +786,6 @@ function escaparCadastro($valor): string
             </form>
 
         </section>
-
-        <aside class="side-card">
-
-            <div class="side-icon">♙</div>
-
-            <h3>Orientações de cadastro</h3>
-
-            <p>
-                Confira estas informações antes de criar a conta.
-            </p>
-
-            <div class="tip">
-                <div class="tip-check">✓</div>
-                <div>
-                    <strong>Dados corretos</strong>
-                    <span>Utilize o nome completo e um e-mail válido.</span>
-                </div>
-            </div>
-
-            <div class="tip">
-                <div class="tip-check">✓</div>
-                <div>
-                    <strong>Senha segura</strong>
-                    <span>A senha deve possuir pelo menos 8 caracteres.</span>
-                </div>
-            </div>
-
-            <div class="tip">
-                <div class="tip-check">✓</div>
-                <div>
-                    <strong>Permissões adequadas</strong>
-                    <span>
-                        Conceda acesso de administrador apenas a quem
-                        realmente precisa dessas permissões.
-                    </span>
-                </div>
-            </div>
-
-            <div class="security-note">
-                <strong>Segurança:</strong> as senhas são armazenadas
-                utilizando hash, e o formulário mantém a proteção CSRF.
-            </div>
-
-        </aside>
 
     </div>
 
