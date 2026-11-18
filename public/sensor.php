@@ -133,7 +133,7 @@ function posicaoSensor($localizacao, $indice, $total, $maiorKm): float {
 
     
 
-<link rel="stylesheet" href="../style/style.css">
+<link rel="stylesheet" href="../style/style.css?v=3">
 </head>
 
 <body class="page-public_sensor_php">

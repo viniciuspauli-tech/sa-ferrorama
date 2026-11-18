@@ -116,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     
 
-<link rel="stylesheet" href="../style/style.css">
+<link rel="stylesheet" href="../style/style.css?v=3">
 </head>
 
 <body class="page-public_editar_sensor_php">

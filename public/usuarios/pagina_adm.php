@@ -43,7 +43,7 @@ $totalUsuarios = mysqli_num_rows($resultado);
     >
 
     
-<link rel="stylesheet" href="../../style/style.css">
+<link rel="stylesheet" href="../../style/style.css?v=3">
 </head>
 
 <body class="page-public_usuarios_pagina_adm_php">

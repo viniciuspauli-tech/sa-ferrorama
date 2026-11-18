@@ -106,7 +106,7 @@ function badgeStatus(string $status): string
         rel="stylesheet"
     >
 
-<link rel="stylesheet" href="../../style/style.css">
+<link rel="stylesheet" href="../../style/style.css?v=3">
 </head>
 
 <body class="bg-light page-public_trem_trens_php">

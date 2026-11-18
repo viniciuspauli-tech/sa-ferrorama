@@ -48,8 +48,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Sensor - Ferrorama</title>
+<<<<<<< HEAD
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style/style.css">
+=======
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    
+
+<link rel="stylesheet" href="../style/style.css?v=3">
+>>>>>>> 407f0342fb9bd9972593c7fea78bacdc199277cb
 </head>
 <body class="page-public_cadastrar_sensor_php">
 

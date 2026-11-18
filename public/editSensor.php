@@ -110,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <title>Editar sensor - Ferrorama</title>
 
     
-<link rel="stylesheet" href="../style/style.css">
+<link rel="stylesheet" href="../style/style.css?v=3">
 </head>
 
 <body class="page-public_editsensor_php">
