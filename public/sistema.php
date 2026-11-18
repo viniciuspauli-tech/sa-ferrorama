@@ -1,3 +1,4 @@
+
 <?php
 require_once __DIR__ . "/../infra/auth.php";
 
@@ -20,277 +21,277 @@ $ehAdministrador =
 
     <title>Ferrorama | Painel</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    
-<link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="../style/style.css?v=2">
 </head>
 
 <body class="page-public_sistema_php">
 
+    <header class="topbar">
 
-
-
-
-
-<header class="topbar">
-
-    <a class="brand" href="sistema.php">
-        FERRO<span>RAMA</span>
-    </a>
-
-    <div class="top-actions">
-
-        <span>Olá, <?= $nomeUsuario ?></span>
-
-        <a href="home.php">Meu perfil</a>
-
-        <?php if ($ehAdministrador): ?>
-            <a href="usuarios/pagina_adm.php">
-                Administração
-            </a>
-        <?php endif; ?>
-
-        <a class="logout" href="logout.php">
-            Sair
+        <a class="brand" href="sistema.php">
+            FERRO<span>RAMA</span>
         </a>
 
-    </div>
+        <div class="top-actions">
 
-</header>
+            <span>Olá, <?= $nomeUsuario ?></span>
 
-<section class="hero">
+            <a href="home.php">Meu perfil</a>
 
-    <div class="hero-inner">
+            <?php if ($ehAdministrador): ?>
+                <a href="usuarios/pagina_adm.php">
+                    Administração
+                </a>
+            <?php endif; ?>
 
-        <div class="eyebrow">PAINEL OPERACIONAL</div>
+            <a class="logout" href="logout.php">
+                Sair
+            </a>
 
-        <h1>Bem-vindo ao Ferrorama</h1>
+        </div>
 
-        <p>
-            Acompanhe informações ferroviárias, gerencie sensores
-            e consulte dados importantes para apoiar uma operação
-            mais segura e eficiente.
-        </p>
+    </header>
 
-    </div>
+    <section class="hero">
 
-</section>
+        <div class="hero-inner">
 
-<main class="main">
-
-    <!-- CLIMA -->
-
-    <h2 class="section-title">
-        Condições meteorológicas
-    </h2>
-
-    <section class="weather">
-
-        <div class="weather-main">
-
-            <small id="weather-location">
-                Consultando localização...
-            </small>
-
-            <div class="temperature" id="temperature">
-                --°C
+            <div class="eyebrow">
+                PAINEL OPERACIONAL
             </div>
 
-            <p id="condition">
-                Carregando condições atuais
+            <h1>Bem-vindo ao Ferrorama</h1>
+
+            <p>
+                Acompanhe informações ferroviárias, gerencie sensores
+                e consulte dados importantes para apoiar uma operação
+                mais segura e eficiente.
             </p>
 
-        </div>
-
-        <div class="weather-details">
-
-            <div class="metric">
-                <span>SENSAÇÃO TÉRMICA</span>
-                <strong id="feels">--</strong>
-            </div>
-
-            <div class="metric">
-                <span>UMIDADE</span>
-                <strong id="humidity">--</strong>
-            </div>
-
-            <div class="metric">
-                <span>VENTO</span>
-                <strong id="wind">--</strong>
-            </div>
-
-            <div class="metric">
-                <span>PRECIPITAÇÃO</span>
-                <strong id="rain">--</strong>
-            </div>
-
-        </div>
-
-        <div class="weather-footer" id="weather-updated">
-            Os dados são consultados pela API Open-Meteo.
         </div>
 
     </section>
 
-    <!-- FUNCIONALIDADES -->
+    <main class="main">
 
-    <h2 class="section-title">
-        Funcionalidades do sistema
-    </h2>
+        <h2 class="section-title">
+            Condições meteorológicas
+        </h2>
 
-    <section class="grid">
+        <section class="weather">
 
-           <article class="tile">
-            <div class="symbol">◈</div>
+            <div class="weather-main">
 
-            <h3>Sensores</h3>
+                <small id="weather-location">
+                    Consultando localização...
+                </small>
 
-            <p>
-                <?= $ehAdministrador
-                    ? "Cadastre, edite e consulte os sensores utilizados no monitoramento ferroviário."
-                    : "Consulte os sensores instalados nos trilhos e o que cada um monitora." ?>
-            </p>
+                <div class="temperature" id="temperature">
+                    --°C
+                </div>
 
-            <a href="<?= $ehAdministrador ? "cadastro_item.php" : "listarsensor.php" ?>">
-                <?= $ehAdministrador ? "Acessar sensores →" : "Visualizar sensores →" ?>
-            </a>
-        </article>
+                <p id="condition">
+                    Carregando condições atuais
+                </p>
 
-        <article class="tile">
-            <div class="symbol">▰</div>
-            <h3>Trens</h3>
-            <p>
-                <?= $ehAdministrador
-                    ? "Gerencie os trens cadastrados e consulte suas informações."
-                    : "Consulte os trens cadastrados e suas informações." ?>
-            </p>
-            <a href="trem/listagemtrem.php">
-                <?= $ehAdministrador ? "Acessar trens →" : "Visualizar trens →" ?>
-            </a>
-        </article>
+            </div>
 
-               <article class="tile">
-            <div class="symbol">⌁</div>
+            <div class="weather-details">
 
-            <h3>Rotas</h3>
+                <div class="metric">
+                    <span>SENSAÇÃO TÉRMICA</span>
+                    <strong id="feels">--</strong>
+                </div>
 
-            <p>
-                <?= $ehAdministrador
-                    ? "Organize e acompanhe os trajetos ferroviários."
-                    : "Consulte os trajetos ferroviários cadastrados." ?>
-            </p>
+                <div class="metric">
+                    <span>UMIDADE</span>
+                    <strong id="humidity">--</strong>
+                </div>
 
-            <a href="rotas/rotas.php">
-                <?= $ehAdministrador ? "Acessar rotas →" : "Visualizar rotas →" ?>
-            </a>
-        </article>
-        <article class="tile">
-            <div class="symbol">◎</div>
-            <h3>Meu perfil</h3>
-            <p>
-                Consulte as informações da sua conta.
-            </p>
-            <a href="home.php">
-                Visualizar perfil →
-            </a>
-        </article>
+                <div class="metric">
+                    <span>VENTO</span>
+                    <strong id="wind">--</strong>
+                </div>
 
-        <?php if ($ehAdministrador): ?>
+                <div class="metric">
+                    <span>PRECIPITAÇÃO</span>
+                    <strong id="rain">--</strong>
+                </div>
 
-        <article class="tile">
-            <div class="symbol">♙</div>
-            <h3>Usuários</h3>
-            <p>
-                Gerencie as contas e permissões de acesso.
-            </p>
-            <a href="usuarios/pagina_adm.php">
-                Administrar usuários →
-            </a>
-        </article>
+            </div>
 
-        <?php endif; ?>
+            <div class="weather-footer" id="weather-updated">
+                Os dados são consultados pela API Open-Meteo.
+            </div>
 
-    </section>
+        </section>
 
-</main>
+        <h2 class="section-title">
+            Funcionalidades do sistema
+        </h2>
 
-<footer>
-    Ferrorama · Sistema de monitoramento ferroviário
-</footer>
+        <section class="grid">
 
-<script>
+            <article class="tile">
 
-// ===================================
-// CONSULTA DE CLIMA
-// ===================================
+                <div class="symbol">◈</div>
 
-async function carregarClima() {
+                <h3>Sensores</h3>
 
-    const mensagem =
-        document.getElementById("weather-updated");
+                <p>
+                    <?= $ehAdministrador
+                        ? "Cadastre, edite e consulte os sensores utilizados no monitoramento ferroviário."
+                        : "Consulte os sensores instalados nos trilhos e o que cada um monitora." ?>
+                </p>
 
-    try {
+                <a href="<?= $ehAdministrador ? "cadastro_item.php" : "listarsensor.php" ?>">
+                    <?= $ehAdministrador ? "Acessar sensores →" : "Visualizar sensores →" ?>
+                </a>
 
-        const resposta = await fetch("api/clima.php", {
-            cache: "no-store"
-        });
+            </article>
 
-        const dados = await resposta.json();
+            <article class="tile">
 
-        if (!resposta.ok) {
-            throw new Error(
-                dados.erro || "Erro ao consultar o clima."
-            );
+                <div class="symbol">▰</div>
+
+                <h3>Trens</h3>
+
+                <p>
+                    <?= $ehAdministrador
+                        ? "Gerencie os trens cadastrados e consulte suas informações."
+                        : "Consulte os trens cadastrados e suas informações." ?>
+                </p>
+
+                <a href="trem/listagemtrem.php">
+                    <?= $ehAdministrador ? "Acessar trens →" : "Visualizar trens →" ?>
+                </a>
+
+            </article>
+
+            <article class="tile">
+
+                <div class="symbol">⌁</div>
+
+                <h3>Rotas</h3>
+
+                <p>
+                    <?= $ehAdministrador
+                        ? "Organize e acompanhe os trajetos ferroviários."
+                        : "Consulte os trajetos ferroviários cadastrados." ?>
+                </p>
+
+                <a href="rotas/rotas.php">
+                    <?= $ehAdministrador ? "Acessar rotas →" : "Visualizar rotas →" ?>
+                </a>
+
+            </article>
+
+            <article class="tile">
+
+                <div class="symbol">◎</div>
+
+                <h3>Meu perfil</h3>
+
+                <p>
+                    Consulte as informações da sua conta.
+                </p>
+
+                <a href="home.php">
+                    Visualizar perfil →
+                </a>
+
+            </article>
+
+            <?php if ($ehAdministrador): ?>
+
+                <article class="tile">
+
+                    <div class="symbol">♙</div>
+
+                    <h3>Usuários</h3>
+
+                    <p>
+                        Gerencie as contas e permissões de acesso.
+                    </p>
+
+                    <a href="usuarios/pagina_adm.php">
+                        Administrar usuários →
+                    </a>
+
+                </article>
+
+            <?php endif; ?>
+
+        </section>
+
+    </main>
+
+    <footer>
+        Ferrorama · Sistema de monitoramento ferroviário
+    </footer>
+
+    <script>
+        async function carregarClima() {
+
+            const mensagem = document.getElementById("weather-updated");
+
+            try {
+
+                const resposta = await fetch("api/clima.php", {
+                    cache: "no-store"
+                });
+
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    throw new Error(
+                        dados.erro || "Erro ao consultar o clima."
+                    );
+                }
+
+                document.getElementById("weather-location")
+                    .textContent = dados.localizacao;
+
+                document.getElementById("temperature")
+                    .textContent = Number(dados.temperatura).toFixed(1) + "°C";
+
+                document.getElementById("condition")
+                    .textContent = dados.condicao;
+
+                document.getElementById("feels")
+                    .textContent = Number(dados.sensacao).toFixed(1) + "°C";
+
+                document.getElementById("humidity")
+                    .textContent = dados.umidade + "%";
+
+                document.getElementById("wind")
+                    .textContent = dados.vento + " km/h";
+
+                document.getElementById("rain")
+                    .textContent = dados.precipitacao + " mm";
+
+                const hora = dados.atualizado_em
+                    ? new Date(dados.atualizado_em).toLocaleString("pt-BR")
+                    : new Date().toLocaleString("pt-BR");
+
+                mensagem.textContent =
+                    "Última atualização: " + hora +
+                    " | Fonte: Open-Meteo";
+
+            } catch (erro) {
+
+                mensagem.textContent = erro.message;
+
+                document.getElementById("condition")
+                    .textContent = "Clima indisponível";
+
+            }
         }
 
-        document.getElementById("weather-location")
-            .textContent = dados.localizacao;
-
-        document.getElementById("temperature")
-            .textContent =
-            Number(dados.temperatura).toFixed(1) + "°C";
-
-        document.getElementById("condition")
-            .textContent = dados.condicao;
-
-        document.getElementById("feels")
-            .textContent =
-            Number(dados.sensacao).toFixed(1) + "°C";
-
-        document.getElementById("humidity")
-            .textContent = dados.umidade + "%";
-
-        document.getElementById("wind")
-            .textContent = dados.vento + " km/h";
-
-        document.getElementById("rain")
-            .textContent = dados.precipitacao + " mm";
-
-        const hora = dados.atualizado_em
-            ? new Date(dados.atualizado_em)
-                .toLocaleString("pt-BR")
-            : new Date().toLocaleString("pt-BR");
-
-        mensagem.textContent =
-            "Última atualização: " + hora +
-            " | Fonte: Open-Meteo";
-
-    } catch (erro) {
-
-        mensagem.textContent = erro.message;
-
-        document.getElementById("condition")
-            .textContent = "Clima indisponível";
-
-    }
-}
-
-carregarClima();
-
-
-</script>
+        carregarClima();
+    </script>
 
 </body>
 </html>
