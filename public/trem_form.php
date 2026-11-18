@@ -226,11 +226,12 @@ function v($valor): string
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
+<link rel="stylesheet" href="../style/style.css">
 </head>
 
-<body class="bg-light">
+<body class="bg-light page-public_trem_form_php">
 
-<div class="container py-4" style="max-width: 640px;">
+<div class="container py-4 inline-style-1">
 
     <h1 class="h3 mb-4">
         <?= $id ? "Editar trem" : "Cadastrar trem" ?>

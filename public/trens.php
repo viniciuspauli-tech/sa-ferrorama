@@ -132,9 +132,10 @@ function badgeStatus(string $status): string
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
+<link rel="stylesheet" href="../style/style.css">
 </head>
 
-<body class="bg-light">
+<body class="bg-light page-public_trens_php">
 
 <div class="container py-4">
 

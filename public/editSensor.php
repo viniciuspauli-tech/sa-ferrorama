@@ -109,65 +109,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar sensor - Ferrorama</title>
 
-    <style>
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            padding: 30px 15px;
-            font-family: Arial, sans-serif;
-            background: #f1f3f8;
-            color: #111c30;
-        }
-
-        .card {
-            max-width: 650px;
-            margin: 20px auto;
-            padding: 28px;
-            background: white;
-            border: 1px solid #e0e6f0;
-            border-radius: 12px;
-        }
-
-        label {
-            display: block;
-            margin: 18px 0 7px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d5dce8;
-            border-radius: 7px;
-        }
-
-        button, .botao {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 16px;
-            border: 0;
-            border-radius: 7px;
-            background: #3324d9;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .voltar { background: #e8edf5; color: #172a42; }
-
-        .erro {
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 7px;
-            background: #ffe8eb;
-            color: #a51e32;
-        }
-    </style>
+    
+<link rel="stylesheet" href="../style/style.css">
 </head>
 
-<body>
+<body class="page-public_editsensor_php">
 <section class="card">
     <h1>Editar sensor</h1>
     <p>Altere os dados do sensor instalado nos trilhos.</p>

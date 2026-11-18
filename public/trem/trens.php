@@ -106,9 +106,10 @@ function badgeStatus(string $status): string
         rel="stylesheet"
     >
 
+<link rel="stylesheet" href="../../style/style.css">
 </head>
 
-<body class="bg-light">
+<body class="bg-light page-public_trem_trens_php">
 
 <div class="container py-4">
 

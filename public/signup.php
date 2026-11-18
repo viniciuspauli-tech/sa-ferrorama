@@ -113,10 +113,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <title>Criar conta | Ferrorama</title>
 
-    <link rel="stylesheet" href="../style/signup.css">
+    
+<link rel="stylesheet" href="../style/style.css">
 </head>
 
-<body class="auth-page">
+<body class="auth-page page-public_signup_php">
 
     <main class="auth-container">
 
