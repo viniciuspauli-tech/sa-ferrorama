@@ -32,9 +32,21 @@ CREATE TABLE trens (
     velocidade_atual DECIMAL(6,2) DEFAULT 0,
     localizacao_atual VARCHAR(150) DEFAULT NULL,
     consumo_energia DECIMAL(8,2) DEFAULT NULL,
+
+    -- Todo trem precisa de um usuário responsável
+    responsavel_id INT NOT NULL,
+
     criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
     atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_trens_responsavel (responsavel_id),
+
+    CONSTRAINT fk_trens_responsavel
+        FOREIGN KEY (responsavel_id)
+        REFERENCES usuarios(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- =========================================
@@ -82,82 +94,3 @@ CREATE TABLE rotas (
         ON UPDATE CASCADE,
 
     CONSTRAINT fk_rotas_usuario
-        FOREIGN KEY (usuario_id)
-        REFERENCES usuarios(id)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
--- =========================================
--- TABELA DE LEITURAS DOS SENSORES
--- =========================================
-
-CREATE TABLE dados_sensor (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    sensor_id INT NOT NULL,
-    valor DECIMAL(10,2) NOT NULL,
-    falha TINYINT(1) NOT NULL DEFAULT 0,
-    registrado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_dados_sensor
-        FOREIGN KEY (sensor_id)
-        REFERENCES sensores(id)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE
-) ENGINE=InnoDB;
-
--- =========================================
--- TRENS INICIAIS
--- =========================================
-
-INSERT INTO trens (
-    identificador,
-    modelo,
-    status,
-    velocidade_atual,
-    localizacao_atual,
-    consumo_energia
-)
-VALUES
-(
-    'TR-001',
-    'Expresso 4000',
-    'ativo',
-    87.50,
-    'KM 12 - Trecho Norte',
-    320.10
-),
-(
-    'TR-002',
-    'Regional 2200',
-    'manutencao',
-    0.00,
-    'Pátio Central',
-    0.00
-),
-(
-    'TR-003',
-    'Cargueiro 8800',
-    'ativo',
-    45.20,
-    'KM 56 - Trecho Sul',
-    510.75
-),
-(
-    'TR-004',
-    'Expresso 4000',
-    'falha',
-    0.00,
-    'KM 34 - Trecho Leste',
-    12.00
-);
-
--- =========================================
--- VERIFICACAO DAS TABELAS
--- =========================================
-
-SHOW CREATE TABLE usuarios;
-SHOW CREATE TABLE rotas;
-SHOW CREATE TABLE sensores;
-SHOW CREATE TABLE dados_sensor;
-SHOW CREATE TABLE trens;
