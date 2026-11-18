@@ -1,4 +1,3 @@
-```sql
 CREATE DATABASE IF NOT EXISTS ferrorama
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
@@ -162,4 +161,3 @@ SHOW CREATE TABLE rotas;
 SHOW CREATE TABLE sensores;
 SHOW CREATE TABLE dados_sensor;
 SHOW CREATE TABLE trens;
-```
