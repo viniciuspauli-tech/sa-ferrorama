@@ -91,7 +91,7 @@ $totalSensores = count($sensores);
 
     
 
-<link rel="stylesheet" href="../style/style.css">
+<link rel="stylesheet" href="../style/style.css?v=3">
 </head>
 
 <body class="page-public_listarsensor_php">

@@ -299,7 +299,7 @@ function escaparCadastro($valor): string
     >
 
     
-<link rel="stylesheet" href="../../style/style.css">
+<link rel="stylesheet" href="../../style/style.css?v=3">
 </head>
 
 <body class="page-public_usuarios_cadastro_usuario_php">
