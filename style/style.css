@@ -8871,3 +8871,218 @@ body:has(.form-grid) .hero-inner > a.btn {
         width: 100%;
     }
 }
+
+/* =========================================================
+   PADRONIZAÇÃO GERAL — TODAS AS TELAS INTERNAS DO FERRORAMA
+   Mantém os estilos específicos existentes e corrige apenas
+   alinhamento, contraste, largura e componentes compartilhados.
+   ========================================================= */
+
+:root {
+    --fr-navy: #0c192b;
+    --fr-navy-2: #17243e;
+    --fr-purple: #6252ed;
+    --fr-purple-light: #a99cff;
+    --fr-text: #132238;
+    --fr-muted: #71809a;
+    --fr-border: #dfe6f1;
+    --fr-surface: #ffffff;
+    --fr-page: #f2f4f9;
+    --fr-danger: #e5485d;
+}
+
+/* A classe é adicionada automaticamente às páginas PHP internas. */
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden;
+    color: var(--fr-text);
+    background: var(--fr-page);
+    font-family: "Roboto", "Inter", Arial, sans-serif;
+}
+
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) *,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) *::before,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) *::after {
+    box-sizing: border-box;
+}
+
+/* Cabeçalhos ocupam a largura toda, sem a moldura branca externa. */
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > header,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .topbar,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .navbar {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+}
+
+/* Banners: contraste consistente e títulos sempre legíveis. */
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    color: #fff;
+    background:
+        radial-gradient(circle at 84% 18%, rgba(98, 82, 237, .24), transparent 38%),
+        linear-gradient(115deg, var(--fr-navy), var(--fr-navy-2));
+}
+
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero h1,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero .hero-title {
+    color: #fff !important;
+    opacity: 1;
+    text-align: center;
+    line-height: 1.2;
+}
+
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero h1 span,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero .hero-title span {
+    color: var(--fr-purple-light) !important;
+    -webkit-text-fill-color: var(--fr-purple-light);
+    background: none;
+}
+
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero p,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero .hero-description {
+    color: #dce5f4 !important;
+    text-align: center;
+}
+
+/* Centraliza o conteúdo dos banners mesmo quando cada página usa
+   nomes diferentes para o elemento interno. */
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero .hero-inner,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero .hero-content {
+    width: min(1120px, calc(100% - 48px));
+    margin-right: auto;
+    margin-left: auto;
+    align-items: center;
+    text-align: center;
+}
+
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero .hero-label,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero .eyebrow {
+    justify-content: center;
+    text-align: center;
+}
+
+/* Áreas principais com largura controlada e alinhamento central. */
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > main,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .main {
+    width: min(1160px, calc(100% - 48px));
+    max-width: 1160px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* Cards e painéis seguem a mesma superfície visual. */
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .card,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .content-card,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .table-card,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .form-card {
+    background: var(--fr-surface);
+    border: 1px solid var(--fr-border);
+    border-radius: 15px;
+    box-shadow: 0 5px 18px rgba(20, 35, 60, .045);
+}
+
+/* Botões: mesma altura, centralização vertical e sem deslocamentos. */
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .button,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .botao,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .btn,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .btn-back,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .btn-submit,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .btn-hero {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 0;
+    line-height: 1.2;
+    vertical-align: middle;
+    text-align: center;
+    text-decoration: none;
+    white-space: normal;
+    box-sizing: border-box;
+}
+
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .form-actions,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .hero-actions,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .toolbar-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Formulários e campos. */
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) input:not([type="checkbox"]):not([type="radio"]),
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) select,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) textarea {
+    max-width: 100%;
+    border-color: #d7e0ee;
+    border-radius: 9px;
+    color: var(--fr-text);
+    background-color: #fff;
+}
+
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) input:focus,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) select:focus,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) textarea:focus {
+    border-color: var(--fr-purple);
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(98, 82, 237, .12);
+}
+
+/* Tabelas: leitura mais clara e rolagem horizontal em telas pequenas. */
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) th {
+    color: #52627c;
+    background: #f3f5f9;
+    font-weight: 700;
+}
+
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) td,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) th {
+    border-color: #e7ecf3;
+    vertical-align: middle;
+}
+
+/* Rodapés uniformes. */
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) footer,
+body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .footer {
+    color: #8491a7;
+    text-align: center;
+    font-size: 11px;
+}
+
+@media (max-width: 760px) {
+    body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > main,
+    body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .main {
+        width: calc(100% - 30px);
+    }
+
+    body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero .hero-inner,
+    body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) > .hero .hero-content {
+        width: calc(100% - 30px);
+    }
+
+    body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .page-heading,
+    body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .content-header,
+    body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .form-actions,
+    body[class*="page-public_"]:not(.auth-page):not(.page-public_sistema_php) .hero-actions {
+        width: 100%;
+    }
+}
