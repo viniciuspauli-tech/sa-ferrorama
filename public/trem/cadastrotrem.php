@@ -12,6 +12,18 @@ $status = "ativo";
 $velocidade = "0.00";
 $localizacao = "";
 $consumo = "0.00";
+$responsavelId = "";
+
+// Carrega os usuários disponíveis para atribuição do trem.
+$responsaveis = [];
+$resultadoUsuarios = $conn->query("SELECT id, nome, email FROM usuarios ORDER BY nome ASC");
+
+if ($resultadoUsuarios) {
+    while ($usuario = $resultadoUsuarios->fetch_assoc()) {
+        $responsaveis[] = $usuario;
+    }
+    $resultadoUsuarios->free();
+}
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
@@ -21,6 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $velocidade = $_POST["velocidade_atual"] ?? "0";
     $localizacao = trim($_POST["localizacao_atual"] ?? "");
     $consumo = $_POST["consumo_energia"] ?? "0";
+    $responsavelId = trim($_POST["responsavel_id"] ?? "");
 
     $statusValidos = [
         "ativo",
@@ -50,6 +63,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $mensagemErro = "Informe um consumo de energia válido.";
 
     } elseif (
+        $responsavelId !== "" &&
+        (!ctype_digit($responsavelId) || !in_array(
+            (int) $responsavelId,
+            array_map("intval", array_column($responsaveis, "id")),
+            true
+        ))
+    ) {
+        $mensagemErro = "Selecione um usuário responsável válido.";
+
+    } elseif (
         strlen($identificador) > 50 ||
         strlen($modelo) > 100 ||
         strlen($localizacao) > 150
@@ -65,6 +88,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ? null
             : $localizacao;
 
+        // O valor 0 é convertido em NULL no SQL quando não há responsável.
+        $responsavelBanco = $responsavelId === ""
+            ? 0
+            : (int) $responsavelId;
+
         $sql = "
             INSERT INTO trens (
                 identificador,
@@ -72,9 +100,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 status,
                 velocidade_atual,
                 localizacao_atual,
-                consumo_energia
+                consumo_energia,
+                responsavel_id
             )
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, NULLIF(?, 0))
         ";
 
         $stmt = $conn->prepare($sql);
@@ -82,13 +111,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($stmt) {
 
             $stmt->bind_param(
-                "sssdsd",
+                "sssdsdi",
                 $identificador,
                 $modelo,
                 $status,
                 $velocidade,
                 $localizacaoBanco,
-                $consumo
+                $consumo,
+                $responsavelBanco
             );
 
             try {
@@ -427,18 +457,37 @@ function escapar($valor): string
 
                 </div>
 
-                <div class="form-actions">
+                <div class="form-divider"></div>
 
-                    <div class="form-actions-note">
-                        <svg viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round"
-                            aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 11v5m0-9h.01"/>
-                        </svg>
-                        Confira os dados antes de salvar.
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label for="responsavel_id" class="form-label">
+                            Usuário responsável
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="responsavel_id"
+                            name="responsavel_id"
+                        >
+                            <option value="">Sem responsável definido</option>
+                            <?php foreach ($responsaveis as $usuario): ?>
+                                <option
+                                    value="<?= escapar($usuario["id"]) ?>"
+                                    <?= (string) $responsavelId === (string) $usuario["id"] ? "selected" : "" ?>
+                                >
+                                    <?= escapar($usuario["nome"]) ?> - <?= escapar($usuario["email"]) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <div class="field-hint">
+                            Selecione o usuário responsável por este trem. Campo opcional.
+                        </div>
                     </div>
+                </div>
+
+                <div class="form-actions">
 
                     <div class="actions-buttons">
 
